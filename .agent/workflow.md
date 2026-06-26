@@ -22,10 +22,6 @@ Format task:
     - kriteria terukur
 ```
 
-Copy to clipboard
-
-Insert at cursor
-
 Prinsip contract-first: Backend membuat entity + endpoint sesuai Kontrak API.
 Frontend tidak menunggu Backend selesai; Frontend memakai data tiruan (mock)
 sesuai Kontrak API agar dapat bekerja paralel. Keduanya bertemu di kontrak yang
@@ -35,6 +31,60 @@ Aturan eksekusi: satu slice fungsional = satu branch = satu merge request.
 Commit bertahap (tidak di-squash). Agen memperbarui progress.md setelah selesai.
 
 ---
+
+## Alur Tiga Fase per Task (wajib)
+
+Setiap task mengikuti alur: PLANNING -> IMPLEMENTASI -> REVIEW.
+
+1. PLANNING
+   - Agen membaca dokumen acuan yang relevan (sdd.md, AGENTS.md, skill terkait),
+     lalu menyusun rencana TANPA menulis kode.
+   - Rencana mencakup: file yang akan dibuat/diubah, dependency (bila ada),
+     pendekatan teknis, dan bagaimana Definition of Done akan dipenuhi.
+   - Manusia (atau orchestrator) menyetujui rencana sebelum implementasi dimulai.
+
+2. IMPLEMENTASI
+   - Agen menulis kode sesuai rencana yang disetujui, dalam satu branch
+     (git-convention), dengan commit bertahap.
+
+3. REVIEW
+   - seapedia-qa-agent memverifikasi Definition of Done dan aturan bisnis kritis.
+   - Manusia melakukan review akhir dan merge.
+
+Kedalaman PLANNING proporsional dengan risiko task:
+- Task kritis (checkout/penguncian stok, ambil pekerjaan/atomik,
+  keterlambatan/idempotent): planning WAJIB detail (algoritma, transaksi,
+  penanganan konkurensi, kasus gagal).
+- Task setup atau CRUD standar: planning ringkas cukup (struktur, file, langkah
+  utama). Hindari over-planning pada task sederhana.
+
+Aturan: jangan melompat langsung ke implementasi tanpa fase planning yang
+disetujui, terutama untuk task kritis.
+
+## Ekstraksi Skill (Skill Extraction Checkpoint)
+
+Selain skill yang sudah di-seed di .agent/skills/, skill baru dapat lahir dari
+pola berulang yang ditemukan selama implementasi. Aturannya:
+
+1. Waktu: dilakukan di akhir tiap tingkat, bersamaan dengan review QA tingkat
+   tersebut (bukan di tengah task).
+2. Identifikasi: seapedia-qa-agent (atau agen pelaksana) mengidentifikasi pola
+   yang berulang di >=2 tempat dan berpotensi dipakai lagi di tingkat berikutnya.
+3. Usulan, bukan keputusan: agen hanya MENGUSULKAN kandidat skill (nama + alasan
+   + di mana polanya muncul). Agen TIDAK membuat file skill sendiri tanpa
+   persetujuan.
+4. Keputusan: manusia memutuskan dengan uji kelayakan: "Apakah pola ini akan
+   dipakai lagi di fitur/tingkat lain?" Jika ya, layak; jika hanya sekali pakai,
+   tolak.
+5. Pembuatan: setelah disetujui, agen mengekstrak pola menjadi file skill baru
+   di .agent/skills/ mengikuti format skill yang ada (kapan dipakai, aturan
+   wajib, contoh, kesalahan yang dihindari).
+6. Penerapan: skill baru wajib dirujuk pada task-task berikutnya yang relevan,
+   dan ditambahkan ke daftar skill agen terkait di AGENTS.md bila perlu.
+
+Jangan meng-extract skill untuk pola yang hanya dipakai sekali. Skill adalah
+pola reusable, bukan catatan per-fitur.
+
 
 ## Tingkat 1: Fondasi (Auth, Peran, Katalog Publik, Ulasan, UI)
 
@@ -71,6 +121,7 @@ Commit bertahap (tidak di-squash). Agen memperbarui progress.md setelah selesai.
     - _roles kembalikan daftar peran user
     - _select-role terbitkan token baru berisi active_role
     - _current kembalikan profil user login
+    - Identifikasi & usulkan kandidat skill baru dari pola berulang (jika ada)
 
 [T1-06] Middleware role + proteksi route
   Agen: Backend   Skill: rbac-authorization   Depends: T1-05
@@ -117,6 +168,7 @@ Commit bertahap (tidak di-squash). Agen memperbarui progress.md setelah selesai.
   Done when:
     - Semua Done when di atas terverifikasi
     - Komentar ulasan tampil sebagai teks (tidak mengeksekusi script)
+    - Identifikasi & usulkan kandidat skill baru dari pola berulang (jika ada)
 
 Peta dependensi Tingkat 1:
 ```text
@@ -153,7 +205,9 @@ semua ─ T1-12 (QA)
 
 [T2-06] Review tingkat 2
   Agen: QA   Skill: semua   Depends: T2-02..T2-05
-  Done when: kepemilikan ditegakkan; nama toko unik teruji
+  Done when: 
+  - Kepemilikan ditegakkan; nama toko unik teruji
+  - Identifikasi & usulkan kandidat skill baru dari pola berulang (jika ada)
 
 Dependensi: T2-01 -> (T2-02 paralel T2-03) -> T2-04; T2-05 menunggu T2-03; QA terakhir.
 
@@ -229,6 +283,7 @@ Dependensi: T2-01 -> (T2-02 paralel T2-03) -> T2-04; T2-05 menunggu T2-03; QA te
     - Perhitungan uang benar (uji manual beberapa kasus)
     - Stok tidak negatif pada checkout bersamaan
     - Aturan satu toko ditegakkan di backend
+    - Identifikasi & usulkan kandidat skill baru dari pola berulang (jika ada)
 
 Dependensi inti: T3-06 + T3-05 -> T3-07 -> T3-08 -> T3-09. Jalur FE paralel via mock.
 
@@ -279,7 +334,9 @@ Dependensi inti: T3-06 + T3-05 -> T3-07 -> T3-08 -> T3-09. Jalur FE paralel via 
 
 [T4-10] Review tingkat 4
   Agen: QA   Skill: semua   Depends: T4-02..T4-09
-  Done when: kombinasi diskon benar; transisi penjual sah & tercatat
+  Done when:
+    - kombinasi diskon benar; transisi penjual sah & tercatat
+    - Identifikasi & usulkan kandidat skill baru dari pola berulang (jika ada)
 
 ---
 
@@ -318,7 +375,9 @@ Dependensi inti: T3-06 + T3-05 -> T3-07 -> T3-08 -> T3-09. Jalur FE paralel via 
 
 [T5-07] Review tingkat 5
   Agen: QA   Skill: semua   Depends: T5-02..T5-06
-  Done when: tidak ada double-take; earning 80% benar; status tercatat
+  Done when:
+    - Tidak ada double-take; earning 80% benar; status tercatat
+    - Identifikasi & usulkan kandidat skill baru dari pola berulang (jika ada)
 
 ---
 
@@ -359,7 +418,9 @@ Dependensi inti: T3-06 + T3-05 -> T3-07 -> T3-08 -> T3-09. Jalur FE paralel via 
 
 [T6-08] Review tingkat 6
   Agen: QA   Skill: semua   Depends: T6-02..T6-07
-  Done when: overdue benar; idempotensi teruji (picu dua kali aman)
+  Done when:
+    - overdue benar; idempotensi teruji (picu dua kali aman)
+    - Identifikasi & usulkan kandidat skill baru dari pola berulang (jika ada)
 
 ---
 
@@ -394,7 +455,10 @@ Dependensi inti: T3-06 + T3-05 -> T3-07 -> T3-08 -> T3-09. Jalur FE paralel via 
 
 [T7-07] Review akhir end-to-end
   Agen: QA   Skill: semua   Depends: T7-01..T7-06
-  Done when: demo end-to-end 4 peran berjalan; semua dokumentasi ada
+  Done when:
+    - demo end-to-end 4 peran berjalan
+    - Semua dokumentasi ada
+    - Identifikasi & usulkan kandidat skill baru dari pola berulang (jika ada)
 
 ---
 
