@@ -23,7 +23,6 @@
 ---
 
 ## Agen 1: Backend
-
 - Peran: implementasi API, logika bisnis, dan database.
 - Memiliki (owns):
   - BE/** (seluruh kode Go)
