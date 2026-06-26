@@ -2,29 +2,44 @@ package route
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/traa/seapedia/internal/config"
-	"gorm.io/gorm"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
-// InitRoutes registers all application routes.
-// This is a placeholder that will be populated as modules are implemented.
-func InitRoutes(app *fiber.App, db *gorm.DB, cfg *config.Config) {
-	// API group
-	api := app.Group("/api")
+type RouteConfig struct {
+	App                     *fiber.App
+	AuthMiddleware          fiber.Handler
+	// UserController          *controller.UserController
+}
 
-	// Health check
-	api.Get("/health", func(c *fiber.Ctx) error {
-		return c.SendString("OK")
-	})
+func (c *RouteConfig) Setup() {
+	c.App.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+		AllowMethods: "GET, POST, PUT, DELETE, PATCH",
+	}))
 
-	_ = db  // db will be used by route groups
-	_ = cfg // cfg will be used by route groups
+	c.SetupGuestRoute()
+	c.SetupPublicRoute()
+	c.SetupAuthRoute()
+}
 
-	// Route groups to be added in subsequent tasks:
-	// - Guest routes (public)
-	// - Auth routes (token required)
-	// - Admin routes (admin only)
-	// - Seller routes (seller role)
-	// - Buyer routes (buyer role)
-	// - Driver routes (driver role)
+func (c *RouteConfig) SetupGuestRoute() {
+	// c.App.Post("/api/users", c.UserController.Register)
+	// c.App.Post("/api/users/_otp", c.UserController.RequestOTP)
+	// c.App.Post("/api/users/_login", c.UserController.Login)
+
+}
+
+func (c *RouteConfig) SetupPublicRoute() {
+	
+}
+
+func (c *RouteConfig) SetupAuthRoute() {
+	c.App.Use(c.AuthMiddleware)
+
+	// c.App.Delete("/api/users", c.UserController.Logout)
+	// c.App.Patch("/api/users/_current", c.UserController.Update)
+	// c.App.Get("/api/users/_current", c.UserController.Current)
+
+	
 }

@@ -1,17 +1,15 @@
 package config
 
 import (
-	"os"
-
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
-// InitLogger initializes the global logrus logger with JSON formatter,
-// Info level, and stdout output.
-func InitLogger() {
-	logrus.SetFormatter(&logrus.JSONFormatter{})
-	logrus.SetLevel(logrus.InfoLevel)
-	logrus.SetOutput(os.Stdout)
+func NewLogger(viper *viper.Viper) *logrus.Logger {
+	log := logrus.New()
 
-	logrus.Info("logger initialized: json formatter, info level, stdout")
+	log.SetLevel(logrus.Level(viper.GetInt32("log.level")))
+	log.SetFormatter(&logrus.JSONFormatter{})
+
+	return log
 }
