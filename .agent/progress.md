@@ -28,7 +28,7 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 
 ## Tingkat 1: Fondasi
 
-- [ ] T1-01 Setup proyek BE (Backend)
+- [x] T1-01 Setup proyek BE (Backend) -- branch: chore/setup-backend
 - [ ] T1-02 Setup proyek FE (Frontend)
 - [ ] T1-03 Migration & entity: users, user_roles, revoked_tokens (Backend)
 - [ ] T1-04 Register + Login + Logout + JWT + denylist (Backend)
