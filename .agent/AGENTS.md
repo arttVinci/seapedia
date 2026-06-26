@@ -3,6 +3,7 @@
 > Dokumen ini mendefinisikan peran, tanggung jawab, dan batas (boundary) tiap
 > agen. Tujuannya agar agen tidak saling menimpa pekerjaan (overlap) dan setiap
 > bagian sistem punya pemilik yang jelas.
+>
 > Seluruh agen WAJIB mengikuti dokumen acuan: Software Design Document (SDD),
 > System Map, dan berkas di .agent/skills/. Agen adalah eksekutor; keputusan
 > arsitektur sudah dikunci di dokumen tersebut dan tidak boleh diubah sepihak.
@@ -14,21 +15,25 @@
 - Selalu baca progress.md sebelum mulai dan perbarui setelah selesai.
 - Patuh pada boundary kepemilikan di bawah; jangan menyentuh area agen lain.
 - Patuh pada .agent/skills/ yang relevan.
-- Satu slice fungsional = satu branch = satu merge request.
-- Tulis pesan commit bertahap (jangan satu commit besar / squash), sesuai
-  kebutuhan riwayat commit step-by-step.
+- Ikuti git-convention.skill untuk penamaan branch dan format commit.
+- Satu task/slice fungsional = satu branch = satu merge request. Bukan per
+  tingkat (level).
+- Tulis commit bertahap (banyak commit kecil per task, jangan satu commit besar,
+  jangan di-squash), sesuai kebutuhan riwayat commit step-by-step.
 - Jika menemui keputusan teknis yang belum ada di Software Design Document,
   HENTIKAN dan laporkan ke manusia, jangan mengarang keputusan.
 
 ---
 
 ## Agen 1: Backend
+
 - Peran: implementasi API, logika bisnis, dan database.
 - Memiliki (owns):
   - BE/** (seluruh kode Go)
   - db/migrations/** (file SQL migration)
 - Tidak boleh menyentuh: FE/**
 - Skill wajib:
+  - git-convention
   - api-response-convention
   - rbac-authorization
   - crud-pattern
@@ -49,6 +54,7 @@
   - FE/** (seluruh kode React + TypeScript)
 - Tidak boleh menyentuh: BE/**
 - Skill wajib:
+  - git-convention
   - api-response-convention (agar parsing respons konsisten)
 - Tanggung jawab utama:
   - Halaman publik (katalog, detail produk, ulasan, login, register).
@@ -76,6 +82,7 @@
       input.
     - Idempotensi proses keterlambatan (tidak ada refund/stok ganda).
   - Memastikan format respons API konsisten.
+  - Memastikan kepatuhan git-convention (branch & commit) pada merge request.
   - Menolak dan meminta revisi jika tidak sesuai; tidak meloloskan demi cepat.
 
 ---
@@ -84,10 +91,11 @@
 
 1. Orchestrator membaca progress.md dan workflow.md, memilih task/slice.
 2. Mengecek boundary di dokumen ini, lalu menugaskan ke agen yang sesuai.
-3. Agen mengerjakan di branch sendiri mengikuti skill, lalu memperbarui
-   progress.md.
+3. Agen membuat branch sesuai git-convention, mengerjakan mengikuti skill, lalu
+   memperbarui progress.md.
 4. Agen membuka merge request (satu slice).
-5. Reviewer/QA memeriksa terhadap Definition of Done dan aturan bisnis.
+5. Reviewer/QA memeriksa terhadap Definition of Done, aturan bisnis, dan
+   git-convention.
 6. Manusia melakukan review akhir dan menggabungkan (merge).
 7. Checkpoint: setelah satu tingkat selesai, manusia menyetujui sebelum lanjut
    ke tingkat berikutnya.
