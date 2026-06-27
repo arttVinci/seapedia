@@ -30,7 +30,7 @@ export function Sidebar({ role }: SidebarProps) {
       case "seller":
         return [
           ...baseLinks,
-          { name: "My Products", href: "/dashboard/products", icon: Package },
+          { name: "Produk Saya", href: "/seller/products", icon: Package },
           { name: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
         ];
       case "driver":
