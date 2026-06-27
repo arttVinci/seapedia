@@ -32,7 +32,7 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 - [x] T1-02 Setup proyek FE (Frontend) -- branch: chore/setup-frontend, MR: https://github.com/arttVinci/seapedia/pull/new/chore/setup-frontend
 - [x] T1-03 Migration & entity: users, user_roles, revoked_tokens (Backend) -- branch: feature/auth-migration-entity, MR: https://github.com/arttVinci/seapedia/pull/new/feature/auth-migration-entity
 - [x] T1-04 Register + Login + Logout + JWT + denylist (Backend)
-- [ ] T1-05 Endpoint peran: \_roles, \_select-role, \_current (Backend)
+- [x] T1-05 Endpoint peran: \_roles, \_select-role, \_current (Backend)
 - [ ] T1-06 Middleware role + proteksi route (Backend)
 - [ ] T1-07 Entity + endpoint katalog publik read-only (Backend)git pull origin main
 - [ ] T1-08 Entity + endpoint application_reviews (Backend)
