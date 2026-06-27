@@ -6,72 +6,74 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"gorm.io/gorm"
-
 	"github.com/traa/seapedia/server/internal/auth"
 	"github.com/traa/seapedia/server/internal/model"
 	"github.com/traa/seapedia/server/internal/repository"
+	"gorm.io/gorm"
 )
 
-// AuthMiddleware adalah middleware yang memvalidasi access token JWT pada
-// header Authorization. Middleware ini:
-//  1. Mengekstrak token Bearer dari header.
-//  2. Mem-parse dan memverifikasi signature token.
-//  3. Mengecek apakah jti token ada di denylist (revoked_tokens); jika ada,
-//     token ditolak walau belum kedaluwarsa.
-//  4. Menyimpan identitas (model.Auth) ke Fiber Locals untuk dipakai handler.
-//
-// Catatan: AuthMiddleware T1-04 tidak menolak role kosong (active_role = "").
-// Pemeriksaan role dilakukan oleh RoleMiddleware terpisah di T1-06.
-func AuthMiddleware(viper *viper.Viper, db *gorm.DB, revokedTokenRepo *repository.RevokedTokenRepository, log *logrus.Logger) fiber.Handler {
-	return func(ctx *fiber.Ctx) error {
-		// Ekstrak header Authorization
-		authorization := ctx.Get("Authorization")
-		if authorization == "" {
-			return fiber.NewError(fiber.StatusUnauthorized, "Token tidak ditemukan")
+func AuthMiddleware(config *viper.Viper, db *gorm.DB, revokedTokenRepo *repository.RevokedTokenRepository, log *logrus.Logger) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		authHeader := c.Get("Authorization")
+		if authHeader == "" {
+			log.Warn("Authorization header not found")
+			return c.Status(fiber.StatusUnauthorized).JSON(model.ApiErrorResponse{
+				Message:    "Token tidak ditemukan",
+				StatusCode: fiber.StatusUnauthorized,
+			})
 		}
 
-		// Validasi format "Bearer <token>"
-		parts := strings.Split(authorization, " ")
+		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			return fiber.NewError(fiber.StatusUnauthorized, "Format token tidak valid")
+			log.Warn("Invalid Authorization header format")
+			return c.Status(fiber.StatusUnauthorized).JSON(model.ApiErrorResponse{
+				Message:    "Token tidak valid",
+				StatusCode: fiber.StatusUnauthorized,
+			})
 		}
 
 		tokenString := parts[1]
+		secret := config.GetString("jwt.secret")
 
-		// Parse dan verifikasi token
-		claims, err := auth.ParseToken(viper.GetString("jwt.secret"), tokenString)
+		claims, err := auth.ParseToken(secret, tokenString)
 		if err != nil {
-			log.Warnf("Failed to parse token : %+v", err)
-			return fiber.NewError(fiber.StatusUnauthorized, "Token tidak valid atau kedaluwarsa")
+			log.Warnf("Failed to parse token: %+v", err)
+			return c.Status(fiber.StatusUnauthorized).JSON(model.ApiErrorResponse{
+				Message:    "Token tidak valid",
+				StatusCode: fiber.StatusUnauthorized,
+			})
 		}
 
-		// Cek denylist: apakah jti sudah di-revoke (logout)
-		isRevoked, err := revokedTokenRepo.ExistsByJTI(db.WithContext(ctx.UserContext()), claims.JTI)
+		exists, err := revokedTokenRepo.ExistsByJTI(db, claims.ID)
 		if err != nil {
-			log.Warnf("Failed to check denylist : %+v", err)
-			return fiber.NewError(fiber.StatusInternalServerError, "Terjadi kesalahan")
-		}
-		if isRevoked {
-			return fiber.NewError(fiber.StatusUnauthorized, "Token telah dicabut")
+			log.Warnf("Failed to check revoked token: %+v", err)
+			return c.Status(fiber.StatusInternalServerError).JSON(model.ApiErrorResponse{
+				Message:    "Internal Server Error",
+				StatusCode: fiber.StatusInternalServerError,
+			})
 		}
 
-		// Simpan identitas ke Fiber Locals untuk dipakai handler/usecase
-		ctx.Locals("auth", &model.Auth{
+		if exists {
+			log.Warn("Token has been revoked")
+			return c.Status(fiber.StatusUnauthorized).JSON(model.ApiErrorResponse{
+				Message:    "Token telah dicabut",
+				StatusCode: fiber.StatusUnauthorized,
+			})
+		}
+
+		authModel := &model.Auth{
 			ID:         claims.ID,
 			Username:   claims.Username,
 			ActiveRole: claims.ActiveRole,
-			JTI:        claims.JTI,
-			Exp:        claims.ExpiresAt.Time.Unix(),
-		})
+			JTI:        claims.RegisteredClaims.ID,
+			Exp:        claims.ExpiresAt.Unix(),
+		}
 
-		return ctx.Next()
+		c.Locals("auth", authModel)
+		return c.Next()
 	}
 }
 
-// GetUser mengambil identitas pengguna yang sudah terautentikasi dari Fiber
-// Locals. Harus dipanggil setelah AuthMiddleware. Jika dipanggil tanpa
-// AuthMiddleware, akan panic (by design: hanya untuk route terproteksi).
-func GetUser(ctx *fiber.Ctx) *model.Auth {
-	return ctx.Locals("auth").(*model.Auth)
+func GetUser(c *fiber.Ctx) *model.Auth {
+	return c.Locals("auth").(*model.Auth)
 }

@@ -1,5 +1,15 @@
 package model
 
+import "errors"
+
+var (
+	ErrValidation   = errors.New("validation error")
+	ErrConflict     = errors.New("conflict error")
+	ErrNotFound     = errors.New("not found error")
+	ErrUnauthorized = errors.New("unauthorized error")
+	ErrForbidden    = errors.New("forbidden error")
+)
+
 type WebResponse[T any] struct {
 	Data    T             `json:"data"`
 	Message string        `json:"message,omitempty"`
