@@ -32,7 +32,7 @@ func (c *UserController) Register(ctx *fiber.Ctx) error {
 		})
 	}
 
-	response, err := c.UserUseCase.Register(request)
+	response, err := c.UserUseCase.Register(ctx.UserContext(), request)
 	if err != nil {
 		if errors.Is(err, model.ErrValidation) {
 			return ctx.Status(fiber.StatusBadRequest).JSON(model.ApiErrorResponse{
@@ -69,7 +69,7 @@ func (c *UserController) Login(ctx *fiber.Ctx) error {
 		})
 	}
 
-	response, err := c.UserUseCase.Login(request)
+	response, err := c.UserUseCase.Login(ctx.UserContext(), request)
 	if err != nil {
 		if errors.Is(err, model.ErrValidation) {
 			return ctx.Status(fiber.StatusBadRequest).JSON(model.ApiErrorResponse{
@@ -105,7 +105,7 @@ func (c *UserController) Login(ctx *fiber.Ctx) error {
 func (c *UserController) Logout(ctx *fiber.Ctx) error {
 	authModel := middleware.GetUser(ctx)
 
-	_, err := c.UserUseCase.Logout(authModel)
+	_, err := c.UserUseCase.Logout(ctx.UserContext(), authModel)
 	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ApiErrorResponse{
 			Message:    "Internal Server Error",
@@ -123,7 +123,7 @@ func (c *UserController) Logout(ctx *fiber.Ctx) error {
 func (c *UserController) Roles(ctx *fiber.Ctx) error {
 	authModel := middleware.GetUser(ctx)
 
-	response, err := c.UserUseCase.Roles(authModel)
+	response, err := c.UserUseCase.Roles(ctx.UserContext(), authModel)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ApiErrorResponse{
@@ -156,7 +156,7 @@ func (c *UserController) SelectRole(ctx *fiber.Ctx) error {
 		})
 	}
 
-	response, err := c.UserUseCase.SelectRole(authModel, request)
+	response, err := c.UserUseCase.SelectRole(ctx.UserContext(), authModel, request)
 	if err != nil {
 		if errors.Is(err, model.ErrValidation) {
 			return ctx.Status(fiber.StatusBadRequest).JSON(model.ApiErrorResponse{
@@ -192,7 +192,7 @@ func (c *UserController) SelectRole(ctx *fiber.Ctx) error {
 func (c *UserController) Current(ctx *fiber.Ctx) error {
 	authModel := middleware.GetUser(ctx)
 
-	response, err := c.UserUseCase.Current(authModel)
+	response, err := c.UserUseCase.Current(ctx.UserContext(), authModel)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
 			return ctx.Status(fiber.StatusNotFound).JSON(model.ApiErrorResponse{

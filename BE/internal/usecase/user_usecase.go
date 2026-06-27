@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -46,8 +47,8 @@ func NewUserUseCase(
 	}
 }
 
-func (c *UserUseCase) Register(request *model.RegisterUserRequest) (*model.RegisterUserResponse, error) {
-	tx := c.DB.Begin()
+func (c *UserUseCase) Register(ctx context.Context, request *model.RegisterUserRequest) (*model.RegisterUserResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
 	defer tx.Rollback()
 
 	err := c.Validate.Struct(request)
@@ -117,8 +118,8 @@ func (c *UserUseCase) Register(request *model.RegisterUserRequest) (*model.Regis
 	}, nil
 }
 
-func (c *UserUseCase) Login(request *model.LoginUserRequest) (*model.LoginUserResponse, error) {
-	tx := c.DB.Begin()
+func (c *UserUseCase) Login(ctx context.Context, request *model.LoginUserRequest) (*model.LoginUserResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
 	defer tx.Rollback()
 
 	err := c.Validate.Struct(request)
@@ -165,8 +166,8 @@ func (c *UserUseCase) Login(request *model.LoginUserRequest) (*model.LoginUserRe
 	}, nil
 }
 
-func (c *UserUseCase) Logout(authModel *model.Auth) (*model.LogoutUserResponse, error) {
-	tx := c.DB.Begin()
+func (c *UserUseCase) Logout(ctx context.Context, authModel *model.Auth) (*model.LogoutUserResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
 	defer tx.Rollback()
 
 	expiredAt := time.Unix(authModel.Exp, 0).UnixMilli()
@@ -190,8 +191,8 @@ func (c *UserUseCase) Logout(authModel *model.Auth) (*model.LogoutUserResponse, 
 	return nil, nil
 }
 
-func (c *UserUseCase) Roles(authModel *model.Auth) (*model.RolesResponse, error) {
-	tx := c.DB.Begin()
+func (c *UserUseCase) Roles(ctx context.Context, authModel *model.Auth) (*model.RolesResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
 	defer tx.Rollback()
 
 	user := new(entity.User)
@@ -227,8 +228,8 @@ func (c *UserUseCase) Roles(authModel *model.Auth) (*model.RolesResponse, error)
 	}, nil
 }
 
-func (c *UserUseCase) SelectRole(authModel *model.Auth, request *model.SelectRoleRequest) (*model.SelectRoleResponse, error) {
-	tx := c.DB.Begin()
+func (c *UserUseCase) SelectRole(ctx context.Context, authModel *model.Auth, request *model.SelectRoleRequest) (*model.SelectRoleResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
 	defer tx.Rollback()
 
 	err := c.Validate.Struct(request)
@@ -290,8 +291,8 @@ func (c *UserUseCase) SelectRole(authModel *model.Auth, request *model.SelectRol
 	}, nil
 }
 
-func (c *UserUseCase) Current(authModel *model.Auth) (*model.CurrentResponse, error) {
-	tx := c.DB.Begin()
+func (c *UserUseCase) Current(ctx context.Context, authModel *model.Auth) (*model.CurrentResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
 	defer tx.Rollback()
 
 	user := new(entity.User)
