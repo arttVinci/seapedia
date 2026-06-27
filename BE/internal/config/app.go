@@ -44,11 +44,13 @@ func Bootstrap(config *BootstrapConfig) {
 
 	// Setup Middleware
 	authMiddleware := middleware.AuthMiddleware(config.Config, config.DB, revokedTokenRepository, config.Log)
+	roleMiddleware := middleware.RoleMiddleware
 
 	routeConfig := route.RouteConfig{
 		App:            config.App,
 		AuthMiddleware: authMiddleware,
 		UserController: userController,
+		RoleMiddleware: roleMiddleware,
 	}
 	routeConfig.Setup()
 }
