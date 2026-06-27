@@ -25,3 +25,42 @@ func (c *StoreController) Detail(ctx *fiber.Ctx) error {
 	}
 	return ctx.JSON(model.WebResponse[*model.StoreResponse]{Data: response, Message: "Detail toko", Success: true})
 }
+
+func (c *StoreController) GetMyStore(ctx *fiber.Ctx) error {
+	userID := ctx.Locals("user").(string)
+	response, err := c.UseCase.FindByUserID(ctx.UserContext(), userID)
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(model.WebResponse[*model.StoreResponse]{Data: response, Message: "Toko saya", Success: true})
+}
+
+func (c *StoreController) CreateStore(ctx *fiber.Ctx) error {
+	userID := ctx.Locals("user").(string)
+	request := new(model.CreateStoreRequest)
+	if err := ctx.BodyParser(request); err != nil {
+		c.Log.Warnf("Failed to parse request body : %+v", err)
+		return fiber.ErrBadRequest
+	}
+
+	response, err := c.UseCase.Create(ctx.UserContext(), userID, request)
+	if err != nil {
+		return err
+	}
+	return ctx.Status(fiber.StatusCreated).JSON(model.WebResponse[*model.StoreResponse]{Data: response, Message: "Toko berhasil dibuat", Success: true})
+}
+
+func (c *StoreController) UpdateStore(ctx *fiber.Ctx) error {
+	userID := ctx.Locals("user").(string)
+	request := new(model.UpdateStoreRequest)
+	if err := ctx.BodyParser(request); err != nil {
+		c.Log.Warnf("Failed to parse request body : %+v", err)
+		return fiber.ErrBadRequest
+	}
+
+	response, err := c.UseCase.Update(ctx.UserContext(), userID, request)
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(model.WebResponse[*model.StoreResponse]{Data: response, Message: "Toko berhasil diperbarui", Success: true})
+}
