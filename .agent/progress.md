@@ -14,7 +14,7 @@
 
 | Tingkat | Status | Catatan |
 |---------|--------|---------|
-| 1 Fondasi | belum mulai | - |
+| 1 Fondasi | dalam progres | T1-01, T1-02, T1-03 selesai |
 | 2 Toko & Produk | belum mulai | - |
 | 3 Dompet, Keranjang, Checkout | belum mulai | - |
 | 4 Diskon, Proses Pesanan, Laporan | belum mulai | - |
@@ -30,7 +30,7 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 
 - [x] T1-01 Setup proyek BE (Backend) -- branch: chore/setup-backend, MR: https://github.com/arttVinci/seapedia/pull/new/chore/setup-backend
 - [x] T1-02 Setup proyek FE (Frontend) -- branch: chore/setup-frontend, MR: https://github.com/arttVinci/seapedia/pull/new/chore/setup-frontend
-- [ ] T1-03 Migration & entity: users, user_roles, revoked_tokens (Backend)
+- [x] T1-03 Migration & entity: users, user_roles, revoked_tokens (Backend) -- branch: feature/auth-migration-entity, MR: https://github.com/arttVinci/seapedia/pull/new/feature/auth-migration-entity
 - [ ] T1-04 Register + Login + Logout + JWT + denylist (Backend)
 - [ ] T1-05 Endpoint peran: _roles, _select-role, _current (Backend)
 - [ ] T1-06 Middleware role + proteksi route (Backend)
