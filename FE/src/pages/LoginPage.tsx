@@ -1,3 +1,100 @@
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useLogin } from "../hooks/useLogin";
+import { Button, Input, Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui";
+
 export function LoginPage() {
-  return <div className="p-4">Login Page</div>;
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  
+  const loginMutation = useLogin();
+  const navigate = useNavigate();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    loginMutation.mutate(
+      { email, password },
+      {
+        onSuccess: (data) => {
+          if (data.user.roles.length > 1) {
+            navigate("/select-role");
+          } else {
+            navigate(`/${data.user.roles[0]}`);
+          }
+        },
+        onError: () => {
+          setError("Login gagal. Periksa kembali email dan password Anda.");
+        },
+      }
+    );
+  };
+
+  return (
+    <div className="flex min-h-[calc(100vh-130px)] items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl text-center font-bold">Log in ke akun Anda</CardTitle>
+          <CardDescription className="text-center">
+            Masukkan email Anda di bawah ini untuk masuk ke akun Anda
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {error && (
+              <div className="p-3 text-sm text-red-500 bg-red-50 rounded-md">
+                {error}
+              </div>
+            )}
+            <div className="space-y-2">
+              <Input
+                label="Email"
+                type="email"
+                placeholder="m@example.com"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Input
+                label="Password"
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <Button
+              className="w-full"
+              type="submit"
+              isLoading={loginMutation.isPending}
+            >
+              Log In
+            </Button>
+          </form>
+          
+          <div className="mt-6 text-center text-sm">
+            <span className="text-gray-500">Belum punya akun? </span>
+            <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
+              Daftar sekarang
+            </Link>
+          </div>
+          
+          {/* Demo Accounts Helper */}
+          <div className="mt-8 pt-6 border-t border-gray-200">
+            <p className="text-xs text-gray-500 mb-2 font-medium">Akun Demo:</p>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <button onClick={() => setEmail("buyer@seapedia.com")} className="text-left px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">buyer@seapedia.com</button>
+              <button onClick={() => setEmail("seller@seapedia.com")} className="text-left px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">seller@seapedia.com</button>
+              <button onClick={() => setEmail("driver@seapedia.com")} className="text-left px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">driver@seapedia.com</button>
+              <button onClick={() => setEmail("multi@seapedia.com")} className="text-left px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">multi@seapedia.com</button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
