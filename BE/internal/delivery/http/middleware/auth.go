@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"gorm.io/gorm"
 
 	"github.com/traa/seapedia/server/internal/auth"
 	"github.com/traa/seapedia/server/internal/model"
@@ -22,7 +23,7 @@ import (
 //
 // Catatan: AuthMiddleware T1-04 tidak menolak role kosong (active_role = "").
 // Pemeriksaan role dilakukan oleh RoleMiddleware terpisah di T1-06.
-func AuthMiddleware(viper *viper.Viper, revokedTokenRepo *repository.RevokedTokenRepository, log *logrus.Logger) fiber.Handler {
+func AuthMiddleware(viper *viper.Viper, db *gorm.DB, revokedTokenRepo *repository.RevokedTokenRepository, log *logrus.Logger) fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 		// Ekstrak header Authorization
 		authorization := ctx.Get("Authorization")
@@ -46,7 +47,7 @@ func AuthMiddleware(viper *viper.Viper, revokedTokenRepo *repository.RevokedToke
 		}
 
 		// Cek denylist: apakah jti sudah di-revoke (logout)
-		isRevoked, err := revokedTokenRepo.ExistsByJTI(ctx.Context(), claims.JTI)
+		isRevoked, err := revokedTokenRepo.ExistsByJTI(db.WithContext(ctx.UserContext()), claims.JTI)
 		if err != nil {
 			log.Warnf("Failed to check denylist : %+v", err)
 			return fiber.NewError(fiber.StatusInternalServerError, "Terjadi kesalahan")
