@@ -193,3 +193,30 @@ func (c *UserUseCase) Login(ctx context.Context, request *model.LoginUserRequest
 		Token: token,
 	}, nil
 }
+
+// Logout mencabut token pengguna dengan memasukkan jti ke tabel revoked_tokens
+// (denylist). Setelah dicabut, token tersebut akan ditolak oleh AuthMiddleware
+// walau belum kedaluwarsa. Operasi ini idempotent: revoke jti yang sama dua
+// kali tidak menyebabkan error (OnConflict DoNothing di repository).
+func (c *UserUseCase) Logout(ctx context.Context, authModel *model.Auth) (*model.LogoutUserResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	// Simpan jti ke revoked_tokens
+	revokedToken := &entity.RevokedToken{
+		JTI:       authModel.JTI,
+		ExpiredAt: authModel.Exp,
+	}
+
+	if err := c.RevokedTokenRepository.Create(tx, revokedToken); err != nil {
+		c.Log.Warnf("Failed to revoke token : %+v", err)
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "Terjadi kesalahan")
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.Log.Warnf("Failed to commit transaction : %+v", err)
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "Terjadi kesalahan")
+	}
+
+	return &model.LogoutUserResponse{}, nil
+}
