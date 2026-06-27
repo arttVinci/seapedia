@@ -83,7 +83,11 @@ export function ProductDetailPage() {
               <div className="flex items-center">
                 <Store className="h-8 w-8 text-gray-400 mr-3" />
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900">{product.seller.store_name}</h3>
+                  <h3 className="text-lg font-medium text-gray-900">
+                    <Link to={`/stores/${product.seller.id}`} className="text-blue-600 hover:text-blue-500">
+                      {product.seller.store_name}
+                    </Link>
+                  </h3>
                   <div className="flex items-center mt-1">
                     <Star className="h-4 w-4 text-yellow-400" />
                     <span className="ml-1 text-sm text-gray-600">{product.seller.rating} Rating Toko</span>

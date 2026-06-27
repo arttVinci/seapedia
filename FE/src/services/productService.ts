@@ -37,4 +37,11 @@ export const productService = {
       },
     };
   },
+
+  getProductsByStore: async (storeUserId: string): Promise<Product[]> => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    const sellerId = parseInt(storeUserId, 10);
+    if (isNaN(sellerId)) return [];
+    return MOCK_PRODUCTS.filter((p) => p.seller_id === sellerId);
+  },
 };
