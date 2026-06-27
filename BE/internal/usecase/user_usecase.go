@@ -11,6 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
+	"github.com/traa/seapedia/server/internal/auth"
 	"github.com/traa/seapedia/server/internal/entity"
 	"github.com/traa/seapedia/server/internal/model"
 	"github.com/traa/seapedia/server/internal/model/converter"
@@ -129,5 +130,66 @@ func (c *UserUseCase) Register(ctx context.Context, request *model.RegisterUserR
 
 	return &model.RegisterUserResponse{
 		User: *converter.UserToResponse(user),
+	}, nil
+}
+
+// Login memverifikasi kredensial pengguna dan menerbitkan access token JWT.
+// Password dibandingkan dengan hash bcrypt yang tersimpan. Token berisi
+// active_role = "" (string kosong) sesuai keputusan desain (role dipilih
+// terpisah via _select-role). Masa berlaku token default 72 jam jika
+// jwt.expired tidak di-set atau bernilai 0.
+func (c *UserUseCase) Login(ctx context.Context, request *model.LoginUserRequest) (*model.LoginUserResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	if err := c.Validate.Struct(request); err != nil {
+		c.Log.Warnf("Invalid request body : %+v", err)
+		return nil, fiber.NewError(fiber.StatusBadRequest, "Invalid request body")
+	}
+
+	// Cari user berdasarkan username
+	user := new(entity.User)
+	if err := c.UserRepository.FindByUsername(tx, user, request.Username); err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.Log.Warnf("User not found : %s", request.Username)
+			return nil, fiber.NewError(fiber.StatusUnauthorized, "Username atau password salah")
+		}
+		c.Log.Warnf("Failed to find user : %+v", err)
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "Terjadi kesalahan")
+	}
+
+	// Verifikasi password terhadap hash bcrypt
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(request.Password)); err != nil {
+		c.Log.Warnf("Invalid password for user : %s", request.Username)
+		return nil, fiber.NewError(fiber.StatusUnauthorized, "Username atau password salah")
+	}
+
+	// Tentukan masa berlaku token; default 72 jam jika jwt.expired = 0 atau tidak di-set
+	expiredHours := c.Viper.GetInt("jwt.expired")
+	if expiredHours <= 0 {
+		expiredHours = 72
+	}
+
+	// Generate JWT; active_role = "" (string kosong) sesuai keputusan desain
+	token, err := auth.GenerateJWT(
+		c.Viper.GetString("jwt.secret"),
+		user.ID,
+		user.Username,
+		"",
+		expiredHours,
+	)
+	if err != nil {
+		c.Log.Warnf("Failed to generate JWT : %+v", err)
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "Terjadi kesalahan")
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		c.Log.Warnf("Failed to commit transaction : %+v", err)
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "Terjadi kesalahan")
+	}
+
+	return &model.LoginUserResponse{
+		User:  *converter.UserToResponse(user),
+		Token: token,
 	}, nil
 }
