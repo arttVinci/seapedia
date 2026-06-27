@@ -41,4 +41,9 @@ func (c *RouteConfig) SetupAuthRoute() {
 
 	// Logout membutuhkan token valid; jti token akan dicabut (denylist)
 	c.App.Post("/api/users/_logout", c.UserController.Logout)
+
+	// Role routes
+	c.App.Get("/api/users/_roles", c.UserController.Roles)
+	c.App.Post("/api/users/_select-role", c.UserController.SelectRole)
+	c.App.Get("/api/users/_current", c.UserController.Current)
 }

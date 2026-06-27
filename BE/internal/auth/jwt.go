@@ -1,29 +1,27 @@
 package auth
 
 import (
+	"errors"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
-
 	"github.com/traa/seapedia/server/internal/model"
 )
 
-// GenerateJWT menerbitkan access token JWT yang berisi klaim {id, username,
-// active_role, jti, exp, iat}. Token ditandatangani dengan HMAC SHA256.
-// expiredHours menentukan masa berlaku token dalam jam.
-func GenerateJWT(secret, id, username, activeRole string, expiredHours int) (string, error) {
-	now := time.Now()
-	exp := now.Add(time.Duration(expiredHours) * time.Hour)
+func GenerateJWT(secret string, id string, username string, activeRole string, expiredHours int) (string, error) {
+	if expiredHours == 0 {
+		expiredHours = 72
+	}
 
 	claims := model.JWTCustomClaims{
 		ID:         id,
 		Username:   username,
 		ActiveRole: activeRole,
-		JTI:        uuid.NewString(),
 		RegisteredClaims: jwt.RegisteredClaims{
-			IssuedAt:  jwt.NewNumericDate(now),
-			ExpiresAt: jwt.NewNumericDate(exp),
+			ID:        uuid.NewString(),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Duration(expiredHours) * time.Hour)),
 		},
 	}
 
@@ -31,21 +29,21 @@ func GenerateJWT(secret, id, username, activeRole string, expiredHours int) (str
 	return token.SignedString([]byte(secret))
 }
 
-// ParseToken mem-parse dan memverifikasi signature token JWT. Mengembalikan
-// klaim kustom (JWTCustomClaims) jika token valid. Error dikembalikan jika
-// signature tidak valid atau token kedaluwarsa.
-func ParseToken(secret, tokenString string) (*model.JWTCustomClaims, error) {
-	claims := &model.JWTCustomClaims{}
-	token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+func ParseToken(secret string, tokenString string) (*model.JWTCustomClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &model.JWTCustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
 		return []byte(secret), nil
 	})
+
 	if err != nil {
 		return nil, err
 	}
 
-	if !token.Valid {
-		return nil, jwt.ErrTokenInvalidClaims
+	if claims, ok := token.Claims.(*model.JWTCustomClaims); ok && token.Valid {
+		return claims, nil
 	}
 
-	return claims, nil
+	return nil, errors.New("invalid token")
 }
