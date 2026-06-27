@@ -1,4 +1,4 @@
-import { Review, CreateReviewPayload } from "../@types/models";
+import type { Review, CreateReviewPayload } from "../@types/models";
 
 const MOCK_REVIEWS: Review[] = Array.from({ length: 15 }).map((_, i) => ({
   id: i + 1,
