@@ -2,7 +2,7 @@
 
 oke kita akan memulai task T01-03 yaitu Migration & entity users/user_roles/revoked_tokens, Backend.
 
-gw mau nanti saat buat entity mengikuti pola ini :
+saya mau nanti saat buat entity mengikuti pola ini :
 
 type User struct {
 ID string `gorm:"column:id;primaryKey"`
