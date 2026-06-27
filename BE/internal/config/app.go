@@ -41,7 +41,7 @@ func Bootstrap(config *BootstrapConfig) {
 		userRoleRepository,
 		revokedTokenRepository,
 	)
-	productUseCase := usecase.NewProductUseCase(config.DB, config.Log, config.Validate, productRepository)
+	productUseCase := usecase.NewProductUseCase(config.DB, config.Log, config.Validate, productRepository, storeRepository)
 	storeUseCase := usecase.NewStoreUseCase(config.DB, config.Log, config.Validate, storeRepository)
 	applicationReviewUseCase := usecase.NewApplicationReviewUseCase(config.DB, config.Log, config.Validate, applicationReviewRepository)
 
