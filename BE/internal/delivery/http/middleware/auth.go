@@ -17,19 +17,13 @@ func AuthMiddleware(config *viper.Viper, db *gorm.DB, revokedTokenRepo *reposito
 		authHeader := c.Get("Authorization")
 		if authHeader == "" {
 			log.Warn("Authorization header not found")
-			return c.Status(fiber.StatusUnauthorized).JSON(model.ApiErrorResponse{
-				Message:    "Token tidak ditemukan",
-				StatusCode: fiber.StatusUnauthorized,
-			})
+			return fiber.NewError(fiber.StatusUnauthorized, "Token tidak ditemukan")
 		}
 
 		parts := strings.Split(authHeader, " ")
 		if len(parts) != 2 || parts[0] != "Bearer" {
 			log.Warn("Invalid Authorization header format")
-			return c.Status(fiber.StatusUnauthorized).JSON(model.ApiErrorResponse{
-				Message:    "Token tidak valid",
-				StatusCode: fiber.StatusUnauthorized,
-			})
+			return fiber.NewError(fiber.StatusUnauthorized, "Token tidak valid")
 		}
 
 		tokenString := parts[1]
@@ -38,27 +32,18 @@ func AuthMiddleware(config *viper.Viper, db *gorm.DB, revokedTokenRepo *reposito
 		claims, err := auth.ParseToken(secret, tokenString)
 		if err != nil {
 			log.Warnf("Failed to parse token: %+v", err)
-			return c.Status(fiber.StatusUnauthorized).JSON(model.ApiErrorResponse{
-				Message:    "Token tidak valid",
-				StatusCode: fiber.StatusUnauthorized,
-			})
+			return fiber.NewError(fiber.StatusUnauthorized, "Token tidak valid")
 		}
 
 		exists, err := revokedTokenRepo.ExistsByJTI(db, claims.ID)
 		if err != nil {
 			log.Warnf("Failed to check revoked token: %+v", err)
-			return c.Status(fiber.StatusInternalServerError).JSON(model.ApiErrorResponse{
-				Message:    "Internal Server Error",
-				StatusCode: fiber.StatusInternalServerError,
-			})
+			return fiber.NewError(fiber.StatusInternalServerError, "Internal Server Error")
 		}
 
 		if exists {
 			log.Warn("Token has been revoked")
-			return c.Status(fiber.StatusUnauthorized).JSON(model.ApiErrorResponse{
-				Message:    "Token telah dicabut",
-				StatusCode: fiber.StatusUnauthorized,
-			})
+			return fiber.NewError(fiber.StatusUnauthorized, "Token telah dicabut")
 		}
 
 		authModel := &model.Auth{
