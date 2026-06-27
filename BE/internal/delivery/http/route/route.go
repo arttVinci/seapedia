@@ -36,14 +36,13 @@ func (c *RouteConfig) SetupPublicRoute() {
 }
 
 func (c *RouteConfig) SetupAuthRoute() {
-	// Semua route di bawah ini wajib token valid (AuthMiddleware)
-	c.App.Use(c.AuthMiddleware)
+	authGroup := c.App.Group("/api/users", c.AuthMiddleware)
 
 	// Logout membutuhkan token valid; jti token akan dicabut (denylist)
-	c.App.Post("/api/users/_logout", c.UserController.Logout)
+	authGroup.Post("/_logout", c.UserController.Logout)
 
 	// Role routes
-	c.App.Get("/api/users/_roles", c.UserController.Roles)
-	c.App.Post("/api/users/_select-role", c.UserController.SelectRole)
-	c.App.Get("/api/users/_current", c.UserController.Current)
+	authGroup.Get("/_roles", c.UserController.Roles)
+	authGroup.Post("/_select-role", c.UserController.SelectRole)
+	authGroup.Get("/_current", c.UserController.Current)
 }
