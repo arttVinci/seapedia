@@ -4,7 +4,7 @@
 > task berubah status. Orchestrator membaca file ini sebelum menugaskan task baru.
 >
 > Penanda:
-> [ ] todo  |  [/] in progress  |  [x] done (sudah merge)  |  [!] blocked
+> [ ] todo | [/] in progress | [x] done (sudah merge) | [!] blocked
 >
 > Format baris: [status] ID - nama (Agen) -- catatan/branch/MR bila ada
 
@@ -12,15 +12,15 @@
 
 ## Ringkasan Tingkat
 
-| Tingkat | Status | Catatan |
-|---------|--------|---------|
-| 1 Fondasi | dalam progres | T1-01, T1-02, T1-03 selesai |
-| 2 Toko & Produk | belum mulai | - |
-| 3 Dompet, Keranjang, Checkout | belum mulai | - |
-| 4 Diskon, Proses Pesanan, Laporan | belum mulai | - |
-| 5 Pengiriman & Pengemudi | belum mulai | - |
-| 6 Admin, Keterlambatan, Simulasi | belum mulai | - |
-| 7 Keamanan & Dokumentasi | belum mulai | - |
+| Tingkat                           | Status        | Catatan                     |
+| --------------------------------- | ------------- | --------------------------- |
+| 1 Fondasi                         | dalam progres | T1-01, T1-02, T1-03 selesai |
+| 2 Toko & Produk                   | belum mulai   | -                           |
+| 3 Dompet, Keranjang, Checkout     | belum mulai   | -                           |
+| 4 Diskon, Proses Pesanan, Laporan | belum mulai   | -                           |
+| 5 Pengiriman & Pengemudi          | belum mulai   | -                           |
+| 6 Admin, Keterlambatan, Simulasi  | belum mulai   | -                           |
+| 7 Keamanan & Dokumentasi          | belum mulai   | -                           |
 
 Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 
@@ -31,8 +31,8 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 - [x] T1-01 Setup proyek BE (Backend) -- branch: chore/setup-backend, MR: https://github.com/arttVinci/seapedia/pull/new/chore/setup-backend
 - [x] T1-02 Setup proyek FE (Frontend) -- branch: chore/setup-frontend, MR: https://github.com/arttVinci/seapedia/pull/new/chore/setup-frontend
 - [x] T1-03 Migration & entity: users, user_roles, revoked_tokens (Backend) -- branch: feature/auth-migration-entity, MR: https://github.com/arttVinci/seapedia/pull/new/feature/auth-migration-entity
-- [ ] T1-04 Register + Login + Logout + JWT + denylist (Backend)
-- [ ] T1-05 Endpoint peran: _roles, _select-role, _current (Backend)
+- [x] T1-04 Register + Login + Logout + JWT + denylist (Backend)
+- [ ] T1-05 Endpoint peran: \_roles, \_select-role, \_current (Backend)
 - [ ] T1-06 Middleware role + proteksi route (Backend)
 - [ ] T1-07 Entity + endpoint katalog publik read-only (Backend)
 - [ ] T1-08 Entity + endpoint application_reviews (Backend)
