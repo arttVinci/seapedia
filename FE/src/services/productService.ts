@@ -1,4 +1,4 @@
-import { Product, ProductDetail } from "../@types/models";
+import type { Product, ProductDetail } from "../@types/models";
 
 const MOCK_PRODUCTS: Product[] = Array.from({ length: 12 }).map((_, i) => ({
   id: i + 1,

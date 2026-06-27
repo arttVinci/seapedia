@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { authService } from "../services/authService";
 import { useAuth } from "../contexts/AuthContext";
-import { RegisterPayload } from "../@types/models";
+import type { RegisterPayload } from "../@types/models";
 
 export function useRegister() {
   const { login } = useAuth();

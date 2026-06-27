@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { reviewService } from '../services/reviewService';
-import { CreateReviewPayload } from '../@types/models';
+import type { CreateReviewPayload } from "../@types/models";
 
 export function useCreateReview() {
   const queryClient = useQueryClient();

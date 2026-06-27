@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import { useSelectRole } from "../../hooks/useSelectRole";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button } from "../ui";
+import { useAuth } from "../contexts/AuthContext";
+import { useSelectRole } from "../hooks/useSelectRole";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button } from "../components/ui";
 import { Store, ShoppingBag, Truck, ShieldCheck } from "lucide-react";
 
 export function RoleSelectionPage() {

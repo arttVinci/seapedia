@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useReviews } from "../hooks/useReviews";
 import { useProductDetail } from "../hooks/useProductDetail";
 import { useCreateReview } from "../hooks/useCreateReview";
-import { Button, Card, CardContent, Input } from "../components/ui";
+import { Button, Card, CardContent } from "../components/ui";
 import { Star } from "lucide-react";
 
 export function ReviewsPage() {
@@ -103,7 +103,7 @@ export function ReviewsPage() {
           <p className="text-gray-500">Belum ada ulasan untuk produk ini.</p>
         ) : (
           <div className="space-y-6">
-            {reviewsData?.data.map((review) => (
+            {reviewsData?.data.map((review: any) => (
               <div key={review.id} className="border-b border-gray-200 pb-6">
                 <div className="flex items-center mb-2">
                   <div className="font-medium text-gray-900 mr-2">{review.user_name}</div>

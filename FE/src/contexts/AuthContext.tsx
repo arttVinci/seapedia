@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { User } from "../@types/models";
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import type { User } from "../@types/models";
 
 interface AuthContextType {
   user: User | null;
@@ -17,20 +17,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [activeRole, setActiveRoleState] = useState<string | null>(null);
 
+  const [isInitialized, setIsInitialized] = useState(false);
+
   useEffect(() => {
     // Check localStorage on mount
     const storedUser = localStorage.getItem("seapedia_user");
     const storedToken = localStorage.getItem("seapedia_token");
     const storedRole = localStorage.getItem("seapedia_active_role");
 
-    if (storedUser && storedToken) {
+    if (storedUser && storedToken && !isInitialized) {
       setUser(JSON.parse(storedUser));
       setToken(storedToken);
       if (storedRole) {
         setActiveRoleState(storedRole);
       }
+      setIsInitialized(true);
     }
-  }, []);
+  }, [isInitialized]);
 
   const login = (newUser: User, newToken: string) => {
     setUser(newUser);

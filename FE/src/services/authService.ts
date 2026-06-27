@@ -1,4 +1,4 @@
-import { User, AuthResponse, LoginPayload, RegisterPayload } from "../@types/models";
+import type { User, AuthResponse, LoginPayload, RegisterPayload } from "../@types/models";
 
 const MOCK_USERS: User[] = [
   { id: 1, email: "buyer@seapedia.com", name: "Buyer User", roles: ["buyer"] },
