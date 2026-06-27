@@ -34,8 +34,8 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 - [x] T1-04 Register + Login + Logout + JWT + denylist (Backend) -- branch: feature/auth-register-login, MR: https://github.com/arttVinci/seapedia/pull/new/feature/auth-register-login
 - [x] T1-05 Endpoint peran: _roles, _select-role, _current (Backend) -- branch: feature/auth-register-login, MR: https://github.com/arttVinci/seapedia/pull/new/feature/auth-register-login
 - [x] T1-06 Middleware role + proteksi route (Backend) -- branch: feature/role-middleware, MR: https://github.com/arttVinci/seapedia/pull/new/feature/role-middleware
-- [ ] T1-07 Entity + endpoint katalog publik read-only (Backend)
-- [ ] T1-08 Entity + endpoint application_reviews (Backend)
+- [x] T1-07 Entity + endpoint katalog publik read-only (Backend) -- branch: feature/public-catalog, MR: https://github.com/arttVinci/seapedia/pull/new/feature/public-catalog
+- [x] T1-08 Entity + endpoint application_reviews (Backend) -- branch: feature/application-reviews, MR: https://github.com/arttVinci/seapedia/pull/new/feature/application-reviews
 - [ ] T1-09 UI komponen reusable + layout (Frontend)
 - [ ] T1-10 Halaman publik: home, katalog, detail, ulasan (Frontend)
 - [ ] T1-11 Halaman login, register, pemilihan peran, shell dashboard (Frontend)

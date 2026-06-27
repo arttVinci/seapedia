@@ -8,12 +8,13 @@ import (
 )
 
 type RouteConfig struct {
-	App               *fiber.App
-	AuthMiddleware    fiber.Handler
-	UserController    *controller.UserController
-	ProductController *controller.ProductController
-	StoreController   *controller.StoreController
-	RoleMiddleware    func(allowedRoles ...string) fiber.Handler
+	App                         *fiber.App
+	AuthMiddleware              fiber.Handler
+	UserController              *controller.UserController
+	ProductController           *controller.ProductController
+	StoreController             *controller.StoreController
+	ApplicationReviewController *controller.ApplicationReviewController
+	RoleMiddleware              func(allowedRoles ...string) fiber.Handler
 }
 
 func (c *RouteConfig) Setup() {
@@ -42,6 +43,10 @@ func (c *RouteConfig) SetupPublicRoute() {
 	c.App.Get("/api/products", c.ProductController.List)
 	c.App.Get("/api/products/:id", c.ProductController.Detail)
 	c.App.Get("/api/stores/:id", c.StoreController.Detail)
+
+	// Reviews
+	c.App.Get("/api/reviews", c.ApplicationReviewController.List)
+	c.App.Post("/api/reviews", c.ApplicationReviewController.Create)
 }
 
 func (c *RouteConfig) SetupAuthRoute() {
