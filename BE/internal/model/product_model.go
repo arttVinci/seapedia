@@ -21,6 +21,7 @@ type ProductResponse struct {
 type ProductDetailResponse struct {
 	ID          string         `json:"id"`
 	StoreID     string         `json:"store_id"`
+	Store       *StoreResponse `json:"store"`
 	Name        string         `json:"name"`
 	Description string         `json:"description"`
 	Price       int64          `json:"price"`
@@ -28,5 +29,26 @@ type ProductDetailResponse struct {
 	ImageURL    string         `json:"image_url"`
 	CreatedAt   int64          `json:"created_at"`
 	UpdatedAt   int64          `json:"updated_at"`
-	Store       *StoreResponse `json:"store"`
+}
+
+type CreateProductRequest struct {
+	Name        string `json:"name" validate:"required,max=100"`
+	Description string `json:"description" validate:"max=2000"`
+	Price       int64  `json:"price" validate:"required,min=1"`
+	Stock       int    `json:"stock" validate:"required,min=0"`
+	ImageURL    string `json:"image_url" validate:"omitempty,url"`
+}
+
+type UpdateProductRequest struct {
+	Name        string `json:"name" validate:"required,max=100"`
+	Description string `json:"description" validate:"max=2000"`
+	Price       int64  `json:"price" validate:"required,min=1"`
+	Stock       int    `json:"stock" validate:"required,min=0"`
+	ImageURL    string `json:"image_url" validate:"omitempty,url"`
+}
+
+type SellerProductSearchRequest struct {
+	Name string `json:"name"`
+	Page int    `json:"page" validate:"required,min=1"`
+	Size int    `json:"size" validate:"required,min=1,max=100"`
 }

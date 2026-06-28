@@ -47,3 +47,65 @@ func (c *ProductController) Detail(ctx *fiber.Ctx) error {
 	}
 	return ctx.JSON(model.WebResponse[*model.ProductDetailResponse]{Data: response, Message: "Detail produk", Success: true})
 }
+
+func (c *ProductController) ListMyProducts(ctx *fiber.Ctx) error {
+	userID := ctx.Locals("user").(string)
+	request := &model.SellerProductSearchRequest{
+		Name: ctx.Query("name"),
+		Page: ctx.QueryInt("page", 1),
+		Size: ctx.QueryInt("size", 10),
+	}
+	responses, total, err := c.UseCase.ListByStore(ctx.UserContext(), userID, request)
+	if err != nil {
+		return err
+	}
+	paging := &model.PageMetadata{
+		Page:      request.Page,
+		Size:      request.Size,
+		TotalItem: total,
+		TotalPage: int64(math.Ceil(float64(total) / float64(request.Size))),
+	}
+	return ctx.JSON(model.WebResponse[[]model.ProductResponse]{Data: responses, Paging: paging, Message: "Daftar produk toko", Success: true})
+}
+
+func (c *ProductController) CreateProduct(ctx *fiber.Ctx) error {
+	userID := ctx.Locals("user").(string)
+	request := new(model.CreateProductRequest)
+	if err := ctx.BodyParser(request); err != nil {
+		c.Log.Warnf("Failed to parse request body : %+v", err)
+		return fiber.ErrBadRequest
+	}
+
+	response, err := c.UseCase.Create(ctx.UserContext(), userID, request)
+	if err != nil {
+		return err
+	}
+	return ctx.Status(fiber.StatusCreated).JSON(model.WebResponse[*model.ProductResponse]{Data: response, Message: "Produk berhasil dibuat", Success: true})
+}
+
+func (c *ProductController) UpdateProduct(ctx *fiber.Ctx) error {
+	userID := ctx.Locals("user").(string)
+	productID := ctx.Params("id")
+	request := new(model.UpdateProductRequest)
+	if err := ctx.BodyParser(request); err != nil {
+		c.Log.Warnf("Failed to parse request body : %+v", err)
+		return fiber.ErrBadRequest
+	}
+
+	response, err := c.UseCase.Update(ctx.UserContext(), userID, productID, request)
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(model.WebResponse[*model.ProductResponse]{Data: response, Message: "Produk berhasil diperbarui", Success: true})
+}
+
+func (c *ProductController) DeleteProduct(ctx *fiber.Ctx) error {
+	userID := ctx.Locals("user").(string)
+	productID := ctx.Params("id")
+
+	err := c.UseCase.Delete(ctx.UserContext(), userID, productID)
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(model.WebResponse[any]{Data: nil, Message: "Produk berhasil dihapus", Success: true})
+}

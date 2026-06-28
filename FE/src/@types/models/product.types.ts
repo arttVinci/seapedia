@@ -20,3 +20,21 @@ export interface SellerInfo {
 export interface ProductDetail extends Product {
   seller: SellerInfo;
 }
+
+export interface CreateProductPayload {
+  name: string;
+  description?: string;
+  price: number;
+  stock: number;
+  category?: string;
+  image_url?: string;
+}
+
+export interface UpdateProductPayload {
+  name?: string;
+  description?: string;
+  price?: number;
+  stock?: number;
+  category?: string;
+  image_url?: string;
+}

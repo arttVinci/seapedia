@@ -1,6 +1,6 @@
 import type { Product, ProductDetail } from "../@types/models";
 
-const MOCK_PRODUCTS: Product[] = Array.from({ length: 12 }).map((_, i) => ({
+export const MOCK_PRODUCTS: Product[] = Array.from({ length: 12 }).map((_, i) => ({
   id: i + 1,
   seller_id: (i % 3) + 1,
   name: `Ikan Segar ${i + 1}`,

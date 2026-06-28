@@ -6,3 +6,13 @@ export interface Store {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface CreateStorePayload {
+  name: string;
+  description?: string;
+}
+
+export interface UpdateStorePayload {
+  name?: string;
+  description?: string;
+}

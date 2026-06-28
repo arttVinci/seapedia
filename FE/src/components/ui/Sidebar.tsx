@@ -6,7 +6,8 @@ import {
   Users, 
   Truck, 
   Settings,
-  Star
+  Star,
+  Store
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 
@@ -30,7 +31,8 @@ export function Sidebar({ role }: SidebarProps) {
       case "seller":
         return [
           ...baseLinks,
-          { name: "My Products", href: "/dashboard/products", icon: Package },
+          { name: "Toko Saya", href: "/seller/store", icon: Store },
+          { name: "Produk Saya", href: "/seller/products", icon: Package },
           { name: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
         ];
       case "driver":
