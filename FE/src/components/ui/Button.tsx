@@ -12,6 +12,7 @@ const buttonVariants = cva(
         secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200",
         outline: "border border-gray-300 bg-transparent hover:bg-gray-100",
         ghost: "hover:bg-gray-100 hover:text-gray-900",
+        danger: "bg-red-600 text-white hover:bg-red-700 shadow-sm",
       },
       size: {
         sm: "h-8 px-3 text-xs",
