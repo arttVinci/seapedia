@@ -21,6 +21,7 @@ type RouteConfig struct {
 	OrderController             *controller.OrderController
 	SellerOrderController       *controller.SellerOrderController
 	BuyerReportController       *controller.BuyerReportController
+	SellerReportController      *controller.SellerReportController
 	RoleMiddleware              func(allowedRoles ...string) fiber.Handler
 }
 
@@ -83,6 +84,11 @@ func (c *RouteConfig) SetupSellerRoute() {
 	if c.SellerOrderController != nil {
 		sellerGroup.Get("/orders", c.SellerOrderController.ListSellerOrders)
 		sellerGroup.Post("/orders/:id/_process", c.SellerOrderController.ProcessOrder)
+	}
+
+	// Reports
+	if c.SellerReportController != nil {
+		sellerGroup.Get("/reports/_income", c.SellerReportController.GetIncome)
 	}
 }
 func (c *RouteConfig) SetupBuyerRoute() {
