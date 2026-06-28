@@ -6,7 +6,7 @@ import { useDeleteCartItem } from '../../hooks/mutations/buyer/useDeleteCartItem
 import { Button } from '../../components/ui/Button';
 import { formatCurrency } from '../../utils/formatters';
 import { AxiosError } from 'axios';
-import { ApiErrorResponse } from '../../@types/api/response.types';
+import type { ApiErrorResponse } from '../../@types/api/response.types';
 
 export const CartPage: React.FC = () => {
   const { data: cart, isLoading, error } = useCart();

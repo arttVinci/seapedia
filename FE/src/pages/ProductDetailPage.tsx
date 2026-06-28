@@ -6,7 +6,7 @@ import { Button } from "../components/ui";
 import { ShoppingCart, Store } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { AxiosError } from "axios";
-import { ApiErrorResponse } from "../@types/api/response.types";
+import type { ApiErrorResponse } from "../@types/api/response.types";
 
 export function ProductDetailPage() {
   const { id } = useParams();
