@@ -93,10 +93,10 @@ export const CartPage: React.FC = () => {
               <div key={item.id} className="p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4">
                 {/* Image Placeholder */}
                 <div className="w-24 h-24 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
-                  {item.product.image_url ? (
+                  {item.image_url ? (
                     <img
-                      src={item.product.image_url}
-                      alt={item.product.name}
+                      src={item.image_url}
+                      alt={item.product_name}
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -108,9 +108,9 @@ export const CartPage: React.FC = () => {
 
                 {/* Product Info */}
                 <div className="flex-grow">
-                  <h3 className="text-lg font-semibold text-gray-800">{item.product.name}</h3>
+                  <h3 className="text-lg font-semibold text-gray-800">{item.product_name}</h3>
                   <p className="text-primary-600 font-medium mt-1">
-                    {formatCurrency(item.product.price)}
+                    {formatCurrency(item.price)}
                   </p>
                 </div>
 
@@ -133,7 +133,7 @@ export const CartPage: React.FC = () => {
                     <button
                       className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
                       onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                      disabled={item.quantity >= item.product.stock || updateCartItemMutation.isPending}
+                      disabled={updateCartItemMutation.isPending}
                     >
                       +
                     </button>

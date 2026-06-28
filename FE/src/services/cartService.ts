@@ -32,7 +32,7 @@ class CartService {
    * Update cart item quantity
    */
   async updateCartItem(
-    itemId: number,
+    itemId: string,
     payload: UpdateCartItemPayload
   ): Promise<ApiResponse<null>> {
     const response = await apiClient.put<ApiResponse<null>>(
@@ -45,7 +45,7 @@ class CartService {
   /**
    * Delete item from cart
    */
-  async deleteCartItem(itemId: number): Promise<ApiResponse<null>> {
+  async deleteCartItem(itemId: string): Promise<ApiResponse<null>> {
     const response = await apiClient.delete<ApiResponse<null>>(
       `/buyer/cart/_items/${itemId}`
     );

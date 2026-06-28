@@ -9,7 +9,7 @@ export function useUpdateCartItem(options?: { onSuccess?: () => void; onError?: 
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, payload }: { id: number; payload: UpdateCartItemPayload }) => cartService.updateCartItem(id, payload),
+    mutationFn: ({ id, payload }: { id: string; payload: UpdateCartItemPayload }) => cartService.updateCartItem(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
       options?.onSuccess?.();
