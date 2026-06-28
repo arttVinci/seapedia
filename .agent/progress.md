@@ -68,9 +68,9 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 
 ## Tingkat 4: Diskon, Pemrosesan Pesanan Penjual, Laporan
 
-- [ ] T4-01 Migration + entity: vouchers, promos (Backend)
-- [ ] T4-02 Admin generate & list/detail voucher dan promo (Backend)
-- [ ] T4-03 Integrasi diskon ke checkout (Backend)
+- [x] T4-01 Migration + entity: vouchers, promos (Backend) -- branch: feature/discounts-backend, MR: -
+- [x] T4-02 Admin generate & list/detail voucher dan promo (Backend) -- branch: feature/discounts-backend, MR: -
+- [x] T4-03 Integrasi diskon ke checkout (Backend) -- branch: feature/discounts-backend, MR: -
 - [ ] T4-04 Pemrosesan pesanan penjual (Backend)
 - [ ] T4-05 Laporan: pengeluaran pembeli & pendapatan penjual (Backend)
 - [ ] T4-06 UI admin: voucher & promo (Frontend)
