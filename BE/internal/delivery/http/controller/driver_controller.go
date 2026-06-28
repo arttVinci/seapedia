@@ -62,3 +62,34 @@ func (c *DriverController) TakeJob(ctx *fiber.Ctx) error {
 		Success: true,
 	})
 }
+
+func (c *DriverController) CompleteJob(ctx *fiber.Ctx) error {
+	orderID := ctx.Params("id")
+	userID := ctx.Locals("user_id").(string)
+
+	response, err := c.UseCase.CompleteJob(ctx.UserContext(), userID, orderID)
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(model.WebResponse[*model.CompleteJobResponse]{
+		Data:    response,
+		Message: "Pekerjaan berhasil diselesaikan",
+		Success: true,
+	})
+}
+
+func (c *DriverController) Dashboard(ctx *fiber.Ctx) error {
+	userID := ctx.Locals("user_id").(string)
+
+	response, err := c.UseCase.Dashboard(ctx.UserContext(), userID)
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(model.WebResponse[*model.DashboardResponse]{
+		Data:    response,
+		Message: "Dashboard driver",
+		Success: true,
+	})
+}
