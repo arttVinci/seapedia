@@ -1,5 +1,5 @@
 import React from "react";
-import { StatusHistory } from "../../@types/models/order.types";
+import type { StatusHistory } from "../../@types/models";
 
 interface OrderTimelineProps {
   histories: StatusHistory[];
