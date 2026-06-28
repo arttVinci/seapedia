@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useSellerStore } from '../../hooks/useSellerStore';
-import { useCreateStore } from '../../hooks/useCreateStore';
-import { useUpdateStore } from '../../hooks/useUpdateStore';
+import { useSellerStore } from '../../hooks/queries/stores/useSellerStore';
+import { useCreateStore } from '../../hooks/mutations/stores/useCreateStore';
+import { useUpdateStore } from '../../hooks/mutations/stores/useUpdateStore';
 import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 
 export function StoreManagementPage() {
-  const { user } = useAuth();
-  const userId = String(user?.id || '');
   
   const { data: store, isLoading, isError, error } = useSellerStore();
-  const createStoreMutation = useCreateStore(userId);
-  const updateStoreMutation = useUpdateStore(userId);
+  const createStoreMutation = useCreateStore();
+  const updateStoreMutation = useUpdateStore();
 
   const [formData, setFormData] = useState({
     name: '',

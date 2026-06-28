@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useReviews } from "../hooks/useReviews";
-import { useProductDetail } from "../hooks/useProductDetail";
+import { useProductDetail } from "../hooks/queries/products/useProductDetail";
 import { useCreateReview } from "../hooks/useCreateReview";
 import { Button, Card, CardContent } from "../components/ui";
 import { Star } from "lucide-react";
 
 export function ReviewsPage() {
   const { id } = useParams();
-  const productId = Number(id);
+  const productId = String(id);
   const [page, setPage] = useState(1);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");

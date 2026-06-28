@@ -1,11 +1,11 @@
 import { useParams, Link } from "react-router-dom";
-import { useProductDetail } from "../hooks/useProductDetail";
+import { useProductDetail } from "../hooks/queries/products/useProductDetail";
 import { Button } from "../components/ui";
-import { ShoppingCart, Store, Star } from "lucide-react";
+import { ShoppingCart, Store } from "lucide-react";
 
 export function ProductDetailPage() {
   const { id } = useParams();
-  const { data: product, isLoading, isError } = useProductDetail(Number(id));
+  const { data: product, isLoading, isError } = useProductDetail(String(id));
 
   if (isLoading) {
     return (
@@ -70,9 +70,6 @@ export function ProductDetailPage() {
             </div>
 
             <div className="mt-6 flex items-center">
-              <p className="text-sm text-gray-500 mr-4">
-                Kategori: <span className="font-medium text-gray-900">{product.category}</span>
-              </p>
               <p className="text-sm text-gray-500">
                 Stok: <span className="font-medium text-gray-900">{product.stock}</span>
               </p>
@@ -84,14 +81,10 @@ export function ProductDetailPage() {
                 <Store className="h-8 w-8 text-gray-400 mr-3" />
                 <div>
                   <h3 className="text-lg font-medium text-gray-900">
-                    <Link to={`/stores/${product.seller.id}`} className="text-blue-600 hover:text-blue-500">
-                      {product.seller.store_name}
+                    <Link to={`/stores/${product.store.id}`} className="text-blue-600 hover:text-blue-500">
+                      {product.store.name}
                     </Link>
                   </h3>
-                  <div className="flex items-center mt-1">
-                    <Star className="h-4 w-4 text-yellow-400" />
-                    <span className="ml-1 text-sm text-gray-600">{product.seller.rating} Rating Toko</span>
-                  </div>
                 </div>
               </div>
             </div>

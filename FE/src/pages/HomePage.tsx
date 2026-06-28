@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui";
-import { useProducts } from "../hooks/useProducts";
+import { useProducts } from "../hooks/queries/products/useProducts";
 import { Card, CardContent, CardDescription, CardFooter, CardTitle } from "../components/ui";
 
 export function HomePage() {
-  const { data, isLoading } = useProducts(1, 4);
+  const { data, isLoading } = useProducts({ page: 1, size: 4 });
 
   return (
     <div>
@@ -68,7 +68,6 @@ export function HomePage() {
                   />
                 </div>
                 <CardContent className="flex-1 p-4">
-                  <p className="text-xs text-gray-500 mb-1">{product.category}</p>
                   <CardTitle className="text-lg">{product.name}</CardTitle>
                   <CardDescription className="line-clamp-2 mt-2">{product.description}</CardDescription>
                 </CardContent>
