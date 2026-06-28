@@ -134,8 +134,20 @@ const CheckoutPage = () => {
                 </div>
                 {summary.discount > 0 && (
                   <div className="flex justify-between text-green-600">
-                    <span>Diskon</span>
+                    <span>Total Diskon</span>
                     <span>-Rp {summary.discount.toLocaleString("id-ID")}</span>
+                  </div>
+                )}
+                {summary.promo_applied && (
+                  <div className="flex justify-between text-green-600 text-xs pl-2">
+                    <span>Promo ({summary.promo_applied.code})</span>
+                    <span>-Rp {summary.promo_applied.amount.toLocaleString("id-ID")}</span>
+                  </div>
+                )}
+                {summary.voucher_applied && (
+                  <div className="flex justify-between text-green-600 text-xs pl-2">
+                    <span>Voucher ({summary.voucher_applied.code})</span>
+                    <span>-Rp {summary.voucher_applied.amount.toLocaleString("id-ID")}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-gray-500">

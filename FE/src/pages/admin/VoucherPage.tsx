@@ -1,0 +1,89 @@
+import React, { useState } from 'react';
+import { useVouchers } from '../../hooks/queries/admin/useVouchers';
+import { useCreateVoucher } from '../../hooks/mutations/admin/useCreateVoucher';
+import type { CreateVoucherPayload } from '../../@types/models';
+
+export default function VoucherPage() {
+  const { data, isLoading } = useVouchers();
+  const createMutation = useCreateVoucher();
+
+  const [form, setForm] = useState<CreateVoucherPayload>({
+    code: '',
+    discount_amount: 0,
+    expired_at: new Date().toISOString().slice(0, 16),
+    remaining_usage: 100,
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createMutation.mutate(form, {
+      onSuccess: () => {
+        setForm({ ...form, code: '' });
+      }
+    });
+  };
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-2xl font-bold">Manajemen Voucher</h1>
+
+      <div className="bg-white p-6 rounded shadow">
+        <h2 className="text-xl font-semibold mb-4">Buat Voucher Baru</h2>
+        <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Kode</label>
+            <input type="text" required value={form.code} onChange={e => setForm({...form, code: e.target.value})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Diskon (Rp)</label>
+            <input type="number" required min={0} value={form.discount_amount} onChange={e => setForm({...form, discount_amount: Number(e.target.value)})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Expired At (UTC)</label>
+            <input type="datetime-local" required value={form.expired_at} onChange={e => setForm({...form, expired_at: e.target.value})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Kuota</label>
+            <input type="number" required min={1} value={form.remaining_usage} onChange={e => setForm({...form, remaining_usage: Number(e.target.value)})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border" />
+          </div>
+          <button type="submit" disabled={createMutation.isPending} className="bg-blue-600 text-white px-4 py-2 rounded">
+            {createMutation.isPending ? 'Menyimpan...' : 'Simpan'}
+          </button>
+        </form>
+      </div>
+
+      <div className="bg-white p-6 rounded shadow">
+        <h2 className="text-xl font-semibold mb-4">Daftar Voucher</h2>
+        {isLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Kode</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Diskon</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Expired</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sisa Kuota</th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {data?.data?.map(v => (
+                  <tr key={v.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">{v.code}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">Rp{v.discount_amount.toLocaleString()}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{new Date(v.expired_at).toLocaleString()}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{v.remaining_usage}</td>
+                  </tr>
+                ))}
+                {data?.data?.length === 0 && (
+                  <tr><td colSpan={4} className="px-6 py-4 text-center">Belum ada data</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

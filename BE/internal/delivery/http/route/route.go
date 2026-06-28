@@ -19,6 +19,8 @@ type RouteConfig struct {
 	CartController              *controller.CartController
 	CheckoutController          *controller.CheckoutController
 	OrderController             *controller.OrderController
+	VoucherController           *controller.VoucherController
+	PromoController             *controller.PromoController
 	SellerOrderController       *controller.SellerOrderController
 	BuyerReportController       *controller.BuyerReportController
 	SellerReportController      *controller.SellerReportController
@@ -117,10 +119,25 @@ func (c *RouteConfig) SetupBuyerRoute() {
 	// Orders
 	buyerGroup.Get("/orders", c.OrderController.ListBuyerOrders)
 	buyerGroup.Get("/orders/:id", c.OrderController.GetBuyerOrderDetail)
+
+	// Reports
+	if c.BuyerReportController != nil {
+		buyerGroup.Get("/reports/_expense", c.BuyerReportController.GetExpense)
+	}
 }
 func (c *RouteConfig) SetupDriverRoute() {
 	c.App.Group("/api/driver", c.AuthMiddleware, c.RoleMiddleware("driver"))
 }
 func (c *RouteConfig) SetupAdminRoute() {
-	c.App.Group("/api/admin", c.AuthMiddleware, c.RoleMiddleware("admin"))
+	adminGroup := c.App.Group("/api/admin", c.AuthMiddleware, c.RoleMiddleware("admin"))
+
+	// Vouchers
+	adminGroup.Get("/vouchers", c.VoucherController.List)
+	adminGroup.Post("/vouchers", c.VoucherController.Create)
+	adminGroup.Get("/vouchers/:id", c.VoucherController.Detail)
+
+	// Promos
+	adminGroup.Get("/promos", c.PromoController.List)
+	adminGroup.Post("/promos", c.PromoController.Create)
+	adminGroup.Get("/promos/:id", c.PromoController.Detail)
 }
