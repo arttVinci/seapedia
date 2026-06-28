@@ -15,7 +15,7 @@ export const CartPage: React.FC = () => {
 
   const [conflictError, setConflictError] = useState<string | null>(null);
 
-  const handleUpdateQuantity = (itemId: number, newQuantity: number) => {
+  const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
     
     updateCartItemMutation.mutate(
