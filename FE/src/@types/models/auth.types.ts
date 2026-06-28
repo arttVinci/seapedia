@@ -21,7 +21,7 @@ export interface SelectRoleResponse {
 }
 
 export interface LoginPayload {
-  username: string;
+  email: string;
   password: string;
 }
 

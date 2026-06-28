@@ -129,9 +129,9 @@ func (c *UserUseCase) Login(ctx context.Context, request *model.LoginUserRequest
 	}
 
 	user := new(entity.User)
-	err = c.UserRepository.FindByUsername(tx, user, request.Username)
+	err = c.UserRepository.FindByEmail(tx, user, request.Email)
 	if err != nil {
-		c.Log.Warnf("Failed find user by username : %+v", err)
+		c.Log.Warnf("Failed find user by email : %+v", err)
 		return nil, model.ErrNotFound
 	}
 

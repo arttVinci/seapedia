@@ -4,7 +4,7 @@ import { useLogin } from "../hooks/mutations/auth/useLogin";
 import { Button, Input, Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui";
 
 export function LoginPage() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   
@@ -16,14 +16,14 @@ export function LoginPage() {
     setError("");
 
     loginMutation.mutate(
-      { username, password },
+      { email, password },
       {
         onSuccess: () => {
           // Arahkan ke halaman select role setelah berhasil login
           navigate("/select-role");
         },
         onError: () => {
-          setError("Login gagal. Periksa kembali username dan password Anda.");
+          setError("Login gagal. Periksa kembali email dan password Anda.");
         },
       }
     );
@@ -35,7 +35,7 @@ export function LoginPage() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center font-bold">Log in ke akun Anda</CardTitle>
           <CardDescription className="text-center">
-            Masukkan username Anda di bawah ini untuk masuk ke akun Anda
+            Masukkan email Anda di bawah ini untuk masuk ke akun Anda
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -47,12 +47,12 @@ export function LoginPage() {
             )}
             <div className="space-y-2">
               <Input
-                label="Username"
-                type="text"
-                placeholder="johndoe"
+                label="Email"
+                type="email"
+                placeholder="m@example.com"
                 required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="space-y-2">
