@@ -6,6 +6,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
+	"github.com/microcosm-cc/bluemonday"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 
@@ -52,7 +53,7 @@ func (u *ApplicationReviewUseCase) Create(ctx context.Context, request *model.Cr
 		ID:           uuid.NewString(),
 		ReviewerName: request.ReviewerName,
 		Rating:       request.Rating,
-		Comment:      request.Comment,
+		Comment:      bluemonday.StrictPolicy().Sanitize(request.Comment),
 	}
 	if err := u.ReviewRepository.Create(tx, review); err != nil {
 		u.Log.Warnf("Failed to create review : %+v", err)
