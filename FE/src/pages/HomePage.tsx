@@ -1,13 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui";
 import { useProducts } from "../hooks/queries/products/useProducts";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardTitle,
-} from "../components/ui";
 import { usePublicStores } from "../hooks/queries/stores/usePublicStores";
 import { Store as StoreIcon } from "lucide-react";
 
@@ -18,8 +11,8 @@ export function HomePage() {
   return (
     <div>
       {/* Hero Section */}
-      <div className="bg-blue-600 py-20 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+      <div className="bg-gradient-to-br from-blue-600 to-blue-800 py-20 text-white">
+        <div className="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
             Hasil Laut Segar, <br className="hidden sm:block" /> Langsung ke
             Dapur Anda
@@ -52,9 +45,9 @@ export function HomePage() {
       </div>
 
       {/* Featured Products */}
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+          <h2 className="text-xl font-bold md:text-2xl md:leading-tight text-gray-900">
             Produk Pilihan
           </h2>
           <Link
@@ -66,11 +59,11 @@ export function HomePage() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="animate-pulse flex flex-col">
+              <div key={i} className="animate-pulse">
                 <div className="bg-gray-200 h-48 rounded-t-lg w-full"></div>
-                <div className="flex-1 space-y-4 py-4 px-2">
+                <div className="space-y-3 py-4 px-2">
                   <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                   <div className="h-4 bg-gray-200 rounded w-1/2"></div>
                 </div>
@@ -78,34 +71,39 @@ export function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {data?.data.map((product) => (
-              <Card
+              <div
                 key={product.id}
-                className="flex flex-col h-full overflow-hidden"
+                className="rounded-lg border border-gray-200 bg-white shadow-sm"
               >
-                <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-200">
+                <div className="h-48 w-full">
                   <img
                     src={product.image_url}
                     alt={product.name}
-                    className="h-48 w-full object-cover object-center"
+                    className="mx-auto h-full w-full object-cover rounded-t-lg"
                   />
                 </div>
-                <CardContent className="flex-1 p-4">
-                  <CardTitle className="text-lg">{product.name}</CardTitle>
-                  <CardDescription className="line-clamp-2 mt-2">
-                    {product.description}
-                  </CardDescription>
-                </CardContent>
-                <CardFooter className="p-4 pt-0 flex items-center justify-between">
-                  <p className="text-lg font-bold text-gray-900">
-                    Rp {product.price.toLocaleString("id-ID")}
-                  </p>
-                  <Link to={`/products/${product.id}`}>
-                    <Button size="sm">Beli</Button>
+                <div className="p-4">
+                  <Link
+                    to={`/products/${product.id}`}
+                    className="text-lg font-semibold leading-tight text-gray-900 hover:underline line-clamp-2"
+                  >
+                    {product.name}
                   </Link>
-                </CardFooter>
-              </Card>
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-900">
+                      Rp{product.price?.toLocaleString("id-ID")}
+                    </span>
+                    <Link
+                      to={`/products/${product.id}`}
+                      className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-xs font-medium text-white hover:bg-blue-700"
+                    >
+                      Lihat
+                    </Link>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -113,58 +111,43 @@ export function HomePage() {
         {/* Popular Stores Section */}
         <div className="mt-24">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+            <h2 className="text-xl font-bold md:text-2xl md:leading-tight text-gray-900">
               Toko Populer
             </h2>
           </div>
 
           {storesLoading ? (
-            <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="animate-pulse flex flex-col">
-                  <div className="bg-gray-200 h-48 rounded-t-lg w-full"></div>
-                  <div className="flex-1 space-y-4 py-6 px-4">
-                    <div className="h-6 bg-gray-200 rounded w-1/2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  </div>
+                <div key={i} className="animate-pulse border border-gray-200 rounded-lg bg-white p-5">
+                  <div className="h-6 bg-gray-200 rounded w-1/2 mb-3"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                 </div>
               ))}
             </div>
           ) : stores && stores.length > 0 ? (
-            <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {stores.map((store) => (
-                <Card
+                <div
                   key={store.id}
-                  className="flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow"
+                  className="border border-gray-200 rounded-lg bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
                 >
-                  <div className="aspect-w-3 aspect-h-2 w-full overflow-hidden bg-gray-200">
-                    <img
-                      src={store.image_url || "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop"}
-                      alt={store.name}
-                      className="h-48 w-full object-cover object-center"
-                    />
-                  </div>
-                  <CardContent className="flex-1 p-6">
-                    <div className="flex items-center mb-3">
-                      <div className="bg-blue-100 p-2 rounded-full mr-3">
-                        <StoreIcon className="h-5 w-5 text-blue-600" />
-                      </div>
-                      <CardTitle className="text-xl">{store.name}</CardTitle>
+                  <div className="flex items-center mb-3">
+                    <div className="bg-blue-100 p-2 rounded-full mr-3">
+                      <StoreIcon className="h-5 w-5 text-blue-600" />
                     </div>
-                    <CardDescription className="text-base">
-                      {store.description}
-                    </CardDescription>
-                  </CardContent>
-                  <CardFooter className="p-6 pt-0">
-                    <Button variant="outline" className="w-full">
-                      Kunjungi Toko
-                    </Button>
-                  </CardFooter>
-                </Card>
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {store.name}
+                    </h3>
+                  </div>
+                  <p className="text-sm text-gray-500 line-clamp-2">
+                    {store.description}
+                  </p>
+                </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 bg-gray-50 rounded-xl">
+            <div className="text-center py-16 bg-gray-50 rounded-xl border border-gray-200">
               <StoreIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">
                 Belum ada toko.
