@@ -48,7 +48,8 @@ func Bootstrap(config *BootstrapConfig) {
 	applicationReviewUseCase := usecase.NewApplicationReviewUseCase(config.DB, config.Log, config.Validate, applicationReviewRepository)
 	cartUseCase := usecase.NewCartUsecase(config.DB, config.Log, config.Validate, cartRepository, cartItemRepository, productRepository)
 	orderRepository := repository.NewOrderRepository(config.Log)
-	sellerOrderUseCase := usecase.NewSellerOrderUseCase(config.DB, config.Log, orderRepository, storeRepository)
+	orderStatusHistoryRepository := repository.NewOrderStatusHistoryRepository(config.Log)
+	sellerOrderUseCase := usecase.NewSellerOrderUseCase(config.DB, config.Log, orderRepository, storeRepository, orderStatusHistoryRepository)
 
 	// Setup Controller
 	userController := controller.NewUserController(userUseCase, config.Log)

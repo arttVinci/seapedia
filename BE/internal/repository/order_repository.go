@@ -32,3 +32,12 @@ func (r *OrderRepository) FindByBuyerAndID(db *gorm.DB, buyerID string, orderID 
 	}
 	return &order, nil
 }
+
+func (r *OrderRepository) FindByStoreAndID(db *gorm.DB, storeID string, orderID string) (*entity.Order, error) {
+	var order entity.Order
+	err := db.Where("store_id = ? AND id = ?", storeID, orderID).Take(&order).Error
+	if err != nil {
+		return nil, err
+	}
+	return &order, nil
+}

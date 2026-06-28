@@ -81,6 +81,7 @@ func (c *RouteConfig) SetupSellerRoute() {
 	// Orders
 	if c.SellerOrderController != nil {
 		sellerGroup.Get("/orders", c.SellerOrderController.ListSellerOrders)
+		sellerGroup.Post("/orders/:id/_process", c.SellerOrderController.ProcessOrder)
 	}
 }
 func (c *RouteConfig) SetupBuyerRoute() {
