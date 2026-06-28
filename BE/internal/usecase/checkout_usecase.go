@@ -175,7 +175,7 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 		return fiber.NewError(fiber.StatusInternalServerError, "Gagal mendapatkan dompet")
 	}
 
-	if wallet.Balance < finalTotal {
+	if int64(wallet.Balance) < finalTotal {
 		return fiber.NewError(fiber.StatusBadRequest, "Saldo tidak mencukupi")
 	}
 
@@ -189,7 +189,7 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 	}
 
 	// Update wallet
-	wallet.Balance -= finalTotal
+	wallet.Balance -= int(finalTotal)
 	if err := u.WalletRepository.Update(tx, wallet); err != nil {
 		return fiber.NewError(fiber.StatusInternalServerError, "Gagal memotong saldo dompet")
 	}
@@ -199,7 +199,7 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 		ID:          uuid.NewString(),
 		WalletID:    wallet.ID,
 		Type:        "payment",
-		Amount:      finalTotal,
+		Amount:      int(finalTotal),
 		Description: "Pembayaran pesanan",
 	}
 	if err := u.WalletTransactionRepo.Create(tx, walletTx); err != nil {
