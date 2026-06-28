@@ -85,7 +85,7 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 - [ ] T5-02 Ambil pekerjaan (modul kritis: update atomik) (Backend)
 - [ ] T5-03 Selesaikan pekerjaan + earning (Backend)
 - [ ] T5-04 Dashboard pengemudi (Backend)
-- [ ] T5-05 UI pengemudi: job, ambil, selesai, dashboard (Frontend)
+- [x] T5-05 UI pengemudi: job, ambil, selesai, dashboard (Frontend) -- branch: feature/driver-ui
 - [ ] T5-06 UI pelacakan pengiriman (buyer & seller) (Frontend)
 - [ ] T5-07 Review tingkat 5 (QA)
 
