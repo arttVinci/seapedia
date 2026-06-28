@@ -5,7 +5,7 @@ import type {
   CreatePromoPayload,
 } from '../@types/models';
 import type { ApiResponse, Paging } from '../@types/api/response.types';
-import { apiClient } from '../api/apiClient';
+import apiClient from '../api/apiClient';
 
 class DiscountService {
   /** VOUCHERS **/

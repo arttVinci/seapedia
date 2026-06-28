@@ -1,6 +1,6 @@
 import type { ReportExpense, ReportIncome } from '../@types/models';
 import type { ApiResponse } from '../@types/api/response.types';
-import { apiClient } from '../api/apiClient';
+import apiClient from '../api/apiClient';
 
 class ReportService {
   async getBuyerExpense(): Promise<ApiResponse<ReportExpense>> {
