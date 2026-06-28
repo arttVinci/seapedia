@@ -1,0 +1,21 @@
+import type { Order, OrderDetail } from "@/@types/models";
+import type { ApiResponse } from "@/@types/base/api.types";
+import apiClient from "@/api/apiClient";
+
+class OrderService {
+  private readonly BASE_PATH = "/buyer/orders";
+
+  async getOrders(): Promise<Order[]> {
+    const response = await apiClient.get<ApiResponse<Order[]>>(this.BASE_PATH);
+    return response.data.data;
+  }
+
+  async getOrderById(id: string): Promise<OrderDetail> {
+    const response = await apiClient.get<ApiResponse<OrderDetail>>(
+      `${this.BASE_PATH}/${id}`
+    );
+    return response.data.data;
+  }
+}
+
+export default new OrderService();
