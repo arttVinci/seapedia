@@ -16,6 +16,7 @@ type RouteConfig struct {
 	ApplicationReviewController *controller.ApplicationReviewController
 	WalletController            *controller.WalletController
 	AddressController           *controller.AddressController
+	CartController              *controller.CartController
 	RoleMiddleware              func(allowedRoles ...string) fiber.Handler
 }
 
@@ -86,6 +87,12 @@ func (c *RouteConfig) SetupBuyerRoute() {
 	buyerGroup.Post("/addresses", c.AddressController.Create)
 	buyerGroup.Put("/addresses/:id", c.AddressController.Update)
 	buyerGroup.Delete("/addresses/:id", c.AddressController.Delete)
+
+	// Cart
+	buyerGroup.Get("/cart", c.CartController.GetCart)
+	buyerGroup.Post("/cart/_items", c.CartController.AddItem)
+	buyerGroup.Put("/cart/_items/:id", c.CartController.UpdateItem)
+	buyerGroup.Delete("/cart/_items/:id", c.CartController.DeleteItem)
 }
 func (c *RouteConfig) SetupDriverRoute() {
 	c.App.Group("/api/driver", c.AuthMiddleware, c.RoleMiddleware("driver"))
