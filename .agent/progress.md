@@ -46,8 +46,8 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 - [x] T2-01 Migration + entity: stores, products (Backend) -- branch: feature/seller-store, MR: https://github.com/arttVinci/seapedia/pull/new/feature/seller-store
 - [x] T2-02 CRUD store penjual (nama unik) (Backend) -- branch: feature/seller-store, MR: https://github.com/arttVinci/seapedia/pull/new/feature/seller-store
 - [ ] T2-03 CRUD produk penjual (cek kepemilikan) (Backend)
-- [ ] T2-04 UI dashboard penjual: kelola store & produk (Frontend)
-- [ ] T2-05 Integrasi katalog publik dengan data nyata (Frontend)
+- [/] T2-04 UI dashboard penjual: kelola store & produk (Frontend) -- branch: refactor/t2-api-integration
+- [/] T2-05 Integrasi katalog publik dengan data nyata (Frontend) -- branch: refactor/t2-api-integration
 - [ ] T2-06 Review tingkat 2 (QA)
 
 ## Tingkat 3: Dompet, Alamat, Keranjang, Checkout Dasar
