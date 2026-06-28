@@ -14,6 +14,7 @@ type RouteConfig struct {
 	ProductController           *controller.ProductController
 	StoreController             *controller.StoreController
 	ApplicationReviewController *controller.ApplicationReviewController
+	WalletController            *controller.WalletController
 	RoleMiddleware              func(allowedRoles ...string) fiber.Handler
 }
 
@@ -73,7 +74,11 @@ func (c *RouteConfig) SetupSellerRoute() {
 	sellerGroup.Delete("/products/:id", c.ProductController.DeleteProduct)
 }
 func (c *RouteConfig) SetupBuyerRoute() {
-	c.App.Group("/api/buyer", c.AuthMiddleware, c.RoleMiddleware("buyer"))
+	buyerGroup := c.App.Group("/api/buyer", c.AuthMiddleware, c.RoleMiddleware("buyer"))
+
+	// Wallet
+	buyerGroup.Get("/wallet", c.WalletController.GetWallet)
+	buyerGroup.Post("/wallet/_topup", c.WalletController.Topup)
 }
 func (c *RouteConfig) SetupDriverRoute() {
 	c.App.Group("/api/driver", c.AuthMiddleware, c.RoleMiddleware("driver"))
