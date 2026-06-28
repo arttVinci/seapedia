@@ -1,47 +1,29 @@
 import type { Product, ProductDetail } from "../@types/models";
-
-export const MOCK_PRODUCTS: Product[] = Array.from({ length: 12 }).map((_, i) => ({
-  id: i + 1,
-  seller_id: (i % 3) + 1,
-  name: `Ikan Segar ${i + 1}`,
-  description: `Deskripsi ikan segar kualitas terbaik nomor ${i + 1}.`,
-  price: 50000 + i * 10000,
-  stock: 10 + i * 5,
-  category: i % 2 === 0 ? "Ikan Laut" : "Ikan Tawar",
-  image_url: `https://via.placeholder.com/300?text=Ikan+${i + 1}`,
-}));
+import apiClient from "../api/apiClient";
+import type { ApiResponse } from "../@types/base/api.types";
+import type { SearchParams } from "../@types/base/api.types";
 
 export const productService = {
-  getProducts: async (page = 1, limit = 8): Promise<{ data: Product[]; total: number }> => {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const start = (page - 1) * limit;
-    const end = start + limit;
+  getProducts: async (params: SearchParams): Promise<{ data: Product[]; total: number }> => {
+    const response = await apiClient.get<ApiResponse<Product[]>>('/products', { params });
     return {
-      data: MOCK_PRODUCTS.slice(start, end),
-      total: MOCK_PRODUCTS.length,
+      data: response.data.data,
+      total: response.data.paging?.total_item || 0,
     };
   },
 
-  getProductDetail: async (id: number): Promise<ProductDetail> => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const product = MOCK_PRODUCTS.find((p) => p.id === id);
-    if (!product) throw new Error("Product not found");
-
-    return {
-      ...product,
-      seller: {
-        id: product.seller_id,
-        store_name: `Toko Lautan ${product.seller_id}`,
-        rating: 4.5,
-      },
-    };
+  getProductDetail: async (id: string): Promise<ProductDetail> => {
+    const response = await apiClient.get<ApiResponse<ProductDetail>>(`/products/${id}`);
+    return response.data.data;
   },
 
-  getProductsByStore: async (storeUserId: string): Promise<Product[]> => {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    const sellerId = parseInt(storeUserId, 10);
-    if (isNaN(sellerId)) return [];
-    return MOCK_PRODUCTS.filter((p) => p.seller_id === sellerId);
+  getProductsByStore: async (storeId: string): Promise<Product[]> => {
+    // We can just reuse getProducts with store_id param if backend supports it,
+    // or we assume this is covered by a specific query in the real API.
+    // For now, mapping to /products with store_id query param:
+    const response = await apiClient.get<ApiResponse<Product[]>>('/products', {
+      params: { store_id: storeId }
+    });
+    return response.data.data;
   },
 };

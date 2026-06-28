@@ -1,81 +1,29 @@
-import { MOCK_PRODUCTS } from "./productService";
 import type { Product, CreateProductPayload, UpdateProductPayload } from "../@types/models";
+import apiClient from "../api/apiClient";
+import type { ApiResponse } from "../@types/base/api.types";
+import type { SearchParams } from "../@types/base/api.types";
 
 class SellerProductService {
-  private products = MOCK_PRODUCTS; // mutable reference for mock
-  private nextId = 13; // since MOCK_PRODUCTS has 12 items
-
-  async getMyProducts(
-    sellerId: number,
-    page = 1,
-    limit = 10,
-    name?: string
-  ): Promise<{ data: Product[]; total: number }> {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
-    let filtered = this.products.filter((p) => p.seller_id === sellerId);
-
-    if (name) {
-      filtered = filtered.filter((p) =>
-        p.name.toLowerCase().includes(name.toLowerCase())
-      );
-    }
-
-    const total = filtered.length;
-    const start = (page - 1) * limit;
-    const data = filtered.slice(start, start + limit);
-
-    return { data, total };
-  }
-
-  async createProduct(sellerId: number, payload: CreateProductPayload): Promise<Product> {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
-    const newProduct: Product = {
-      id: this.nextId++,
-      seller_id: sellerId,
-      name: payload.name,
-      description: payload.description || "",
-      price: payload.price,
-      stock: payload.stock,
-      category: payload.category || "Umum",
-      image_url: payload.image_url || "https://via.placeholder.com/300?text=Produk",
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+  async getMyProducts(params: SearchParams): Promise<{ data: Product[]; total: number }> {
+    const response = await apiClient.get<ApiResponse<Product[]>>('/seller/products', { params });
+    return {
+      data: response.data.data,
+      total: response.data.paging?.total_item || 0,
     };
-
-    this.products.push(newProduct);
-    return newProduct;
   }
 
-  async updateProduct(sellerId: number, id: number, payload: UpdateProductPayload): Promise<Product> {
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
-    const index = this.products.findIndex((p) => p.id === id && p.seller_id === sellerId);
-    if (index === -1) {
-      throw new Error("Produk tidak ditemukan atau bukan milik Anda.");
-    }
-
-    const existing = this.products[index];
-    const updated: Product = {
-      ...existing,
-      ...payload,
-      updated_at: new Date().toISOString(),
-    };
-
-    this.products[index] = updated;
-    return updated;
+  async createProduct(payload: CreateProductPayload): Promise<Product> {
+    const response = await apiClient.post<ApiResponse<Product>>('/seller/products', payload);
+    return response.data.data;
   }
 
-  async deleteProduct(sellerId: number, id: number): Promise<void> {
-    await new Promise((resolve) => setTimeout(resolve, 300));
+  async updateProduct(id: string, payload: UpdateProductPayload): Promise<Product> {
+    const response = await apiClient.put<ApiResponse<Product>>(`/seller/products/${id}`, payload);
+    return response.data.data;
+  }
 
-    const index = this.products.findIndex((p) => p.id === id && p.seller_id === sellerId);
-    if (index === -1) {
-      throw new Error("Produk tidak ditemukan atau bukan milik Anda.");
-    }
-
-    this.products.splice(index, 1);
+  async deleteProduct(id: string): Promise<void> {
+    await apiClient.delete(`/seller/products/${id}`);
   }
 }
 
