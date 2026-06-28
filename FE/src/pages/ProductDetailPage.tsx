@@ -89,12 +89,14 @@ export function ProductDetailPage() {
               </div>
             </div>
 
-            <div className="mt-8 flex gap-4">
-              <Button size="lg" className="flex-1 flex items-center justify-center">
-                <ShoppingCart className="mr-2 h-5 w-5" />
-                Tambah ke Keranjang
-              </Button>
-            </div>
+            {token && (
+              <div className="mt-8 flex gap-4">
+                <Button size="lg" className="flex-1 flex items-center justify-center">
+                  <ShoppingCart className="mr-2 h-5 w-5" />
+                  Tambah ke Keranjang
+                </Button>
+              </div>
+            )}
 
             {/* Link to Reviews */}
             <div className="mt-8 text-center sm:text-left">

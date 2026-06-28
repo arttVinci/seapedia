@@ -62,9 +62,11 @@ export function CatalogPage() {
                   <p className="text-lg font-bold text-gray-900">
                     Rp {product.price.toLocaleString("id-ID")}
                   </p>
-                  <Link to={`/products/${product.id}`}>
-                    <Button size="sm">Beli</Button>
-                  </Link>
+                  {token && (
+                    <Link to={`/products/${product.id}`}>
+                      <Button size="sm">Beli</Button>
+                    </Link>
+                  )}
                 </CardFooter>
               </Card>
             ))}
