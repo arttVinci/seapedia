@@ -1,22 +1,36 @@
 export interface User {
-  id: number;
+  id: string;
+  username: string;
   email: string;
-  name: string;
-  roles: string[];
+  is_admin: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
-export interface AuthResponse {
-  user: User;
+export interface RoleResponse {
+  roles: string[]; // ["buyer", "seller", "driver"]
+}
+
+export interface SelectRolePayload {
+  role: "buyer" | "seller" | "driver";
+}
+
+export interface SelectRoleResponse {
   token: string;
+  active_role: string;
 }
 
 export interface LoginPayload {
-  email: string;
-  password?: string;
+  username: string;
+  password: string;
 }
 
 export interface RegisterPayload {
-  name: string;
+  username: string;
   email: string;
-  password?: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  token: string;
 }
