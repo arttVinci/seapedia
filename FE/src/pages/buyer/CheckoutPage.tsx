@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCheckoutPreview } from "../../hooks/mutations/buyer/useCheckoutPreview";
 import { useCheckout } from "../../hooks/mutations/buyer/useCheckout";
-import Button from "../../components/ui/Button";
-import Card from "../../components/ui/Card";
-import Input from "../../components/ui/Input";
+import { Button, Card, Input } from "../../components/ui";
 
 const CheckoutPage = () => {
   const navigate = useNavigate();

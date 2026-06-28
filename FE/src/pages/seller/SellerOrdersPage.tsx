@@ -1,8 +1,7 @@
 import { useSellerOrders } from '../../hooks/queries/seller/useSellerOrders';
 import { useProcessOrder } from '../../hooks/mutations/seller/useProcessOrder';
 import { Link } from 'react-router-dom';
-import Card from '../../components/ui/Card';
-import Button from '../../components/ui/Button';
+import { Card, Button } from '../../components/ui';
 
 export default function SellerOrdersPage() {
   const { data: orders, isLoading } = useSellerOrders();

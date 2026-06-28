@@ -1,5 +1,5 @@
 import { useSellerIncome } from '../../hooks/queries/reports/useSellerIncome';
-import Card from '../../components/ui/Card';
+import { Card } from '../../components/ui';
 
 export default function SellerIncomePage() {
   const { data, isLoading } = useSellerIncome();

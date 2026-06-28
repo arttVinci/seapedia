@@ -1,5 +1,5 @@
 import { useBuyerExpense } from '../../hooks/queries/reports/useBuyerExpense';
-import Card from '../../components/ui/Card';
+import { Card } from '../../components/ui';
 
 export default function BuyerExpensePage() {
   const { data, isLoading } = useBuyerExpense();

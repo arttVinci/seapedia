@@ -1,7 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useOrderDetail } from "../../hooks/queries/buyer/useOrderDetail";
-import Card from "../../components/ui/Card";
-import Button from "../../components/ui/Button";
+import { Card, Button } from "../../components/ui";
 import OrderTimeline from "../../components/ui/OrderTimeline";
 
 const OrderDetailPage = () => {

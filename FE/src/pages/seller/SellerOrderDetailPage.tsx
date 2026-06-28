@@ -1,8 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useSellerOrderDetail } from "../../hooks/queries/seller/useSellerOrderDetail";
 import { useProcessOrder } from "../../hooks/mutations/seller/useProcessOrder";
-import Card from "../../components/ui/Card";
-import Button from "../../components/ui/Button";
+import { Card, Button } from "../../components/ui";
 import OrderTimeline from "../../components/ui/OrderTimeline";
 
 const SellerOrderDetailPage = () => {
