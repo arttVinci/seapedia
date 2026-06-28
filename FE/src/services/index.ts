@@ -11,4 +11,5 @@ export * from './sellerProductService';
 export * from './storeService';
 export * from './cartService';
 export * from './orderService';
+export * from './driverService';
 export * from './reportService';
