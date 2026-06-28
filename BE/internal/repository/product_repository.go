@@ -5,6 +5,7 @@ import (
 	"github.com/traa/seapedia/server/internal/entity"
 	"github.com/traa/seapedia/server/internal/model"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type ProductRepository struct {
@@ -78,4 +79,13 @@ func (r *ProductRepository) ListByStore(db *gorm.DB, storeID string, request *mo
 
 func (r *ProductRepository) FindByStoreIDAndID(db *gorm.DB, product *entity.Product, storeID string, id string) error {
 	return db.Where("store_id = ? AND id = ?", storeID, id).Take(product).Error
+}
+
+func (r *ProductRepository) FindByIDsForUpdate(db *gorm.DB, ids []string) ([]entity.Product, error) {
+	var products []entity.Product
+	err := db.Clauses(clause.Locking{Strength: "UPDATE"}).Where("id IN ?", ids).Find(&products).Error
+	if err != nil {
+		return nil, err
+	}
+	return products, nil
 }
