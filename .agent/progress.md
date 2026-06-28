@@ -38,6 +38,7 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 - [x] T1-08 Entity + endpoint application_reviews (Backend) -- branch: feature/application-reviews, MR: https://github.com/arttVinci/seapedia/pull/new/feature/application-reviews
 - [x] T1-09 UI komponen reusable + layout (Frontend)
 - [x] T1-10 Halaman publik: home, katalog, detail, ulasan (Frontend)
+  - Update: section Toko Populer sekarang ambil data dari API GET /api/stores (commit fd9d3dc)
 - [x] T1-11 Halaman login, register, pemilihan peran, shell dashboard (Frontend)
 - [x] T1-12 Review tingkat 1 (QA)
 
@@ -124,3 +125,4 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 - Saat task blocked, ubah ke [!] dan tulis alasannya di bagian Blocker Aktif.
 - Setelah seluruh task satu tingkat [x], minta persetujuan manusia (checkpoint)
   sebelum memulai tingkat berikutnya.
+- 2026-06-29: Tambah endpoint publik `GET /api/stores` untuk list toko (commit `8def35f` di `main`).
