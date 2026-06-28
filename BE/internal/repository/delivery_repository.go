@@ -17,6 +17,15 @@ func NewDeliveryRepository(log *logrus.Logger) *DeliveryRepository {
 	return &DeliveryRepository{Log: log}
 }
 
+func (r *DeliveryRepository) FindByOrderID(db *gorm.DB, orderID string) (*entity.Delivery, error) {
+	var delivery entity.Delivery
+	err := db.Where("order_id = ?", orderID).Take(&delivery).Error
+	if err != nil {
+		return nil, err
+	}
+	return &delivery, nil
+}
+
 // TakeAtomic performs an atomic conditional UPDATE on the deliveries table,
 // using optimistic locking to prevent double-take.
 // The UPDATE only succeeds if:
