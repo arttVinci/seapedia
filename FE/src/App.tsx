@@ -21,6 +21,7 @@ import { StoreManagementPage } from './pages/seller/StoreManagementPage';
 import { DriverDashboardPage } from './pages/DriverDashboardPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { CartPage } from './pages/buyer/CartPage';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           <Route element={<DashboardShell />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/buyer" element={<BuyerDashboardPage />} />
+<Route path="/buyer/cart" element={<CartPage />} />
             <Route path="/buyer/wallet" element={<WalletPage />} />
             <Route path="/buyer/addresses" element={<AddressPage />} />
             <Route path="/seller" element={<SellerDashboardPage />} />
