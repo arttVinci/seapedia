@@ -25,6 +25,7 @@ type UserUseCase struct {
 	UserRepository         *repository.UserRepository
 	UserRoleRepository     *repository.UserRoleRepository
 	RevokedTokenRepository *repository.RevokedTokenRepository
+	StoreRepository        *repository.StoreRepository
 }
 
 func NewUserUseCase(
@@ -35,6 +36,7 @@ func NewUserUseCase(
 	userRepository *repository.UserRepository,
 	userRoleRepository *repository.UserRoleRepository,
 	revokedTokenRepository *repository.RevokedTokenRepository,
+	storeRepository *repository.StoreRepository,
 ) *UserUseCase {
 	return &UserUseCase{
 		DB:                     db,
@@ -44,6 +46,7 @@ func NewUserUseCase(
 		UserRepository:         userRepository,
 		UserRoleRepository:     userRoleRepository,
 		RevokedTokenRepository: revokedTokenRepository,
+		StoreRepository:        storeRepository,
 	}
 }
 
@@ -106,6 +109,20 @@ func (c *UserUseCase) Register(ctx context.Context, request *model.RegisterUserR
 	if err != nil {
 		c.Log.Warnf("Failed create user role : %+v", err)
 		return nil, err
+	}
+
+	// Jika role seller, langsung buatkan toko
+	if role == "seller" {
+		store := &entity.Store{
+			ID:          uuid.NewString(),
+			UserID:      user.ID,
+			Name:        "Toko " + request.Username,
+			Description: "Toko milik " + request.Username,
+		}
+		if err := c.StoreRepository.Create(tx, store); err != nil {
+			c.Log.Warnf("Failed create store for seller : %+v", err)
+			return nil, err
+		}
 	}
 
 	if err := tx.Commit().Error; err != nil {
