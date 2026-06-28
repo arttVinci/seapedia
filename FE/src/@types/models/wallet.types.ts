@@ -16,7 +16,9 @@ export interface Wallet {
 }
 
 export interface WalletResponse {
-  wallet: Wallet;
+  id: string;
+  user_id: string;
+  balance: number;
   transactions: WalletTransaction[];
 }
 

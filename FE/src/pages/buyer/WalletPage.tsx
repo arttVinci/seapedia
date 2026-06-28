@@ -42,7 +42,7 @@ const WalletPage: React.FC = () => {
           <div>
             <p className="text-sm text-gray-600 mb-1">Total Saldo</p>
             <p className="text-3xl font-bold text-blue-700">
-              {formatCurrency(walletData?.wallet?.balance || 0)}
+              {formatCurrency(walletData?.balance || 0)}
             </p>
           </div>
           <div className="mt-4 md:mt-0">
