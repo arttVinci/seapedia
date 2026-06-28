@@ -1,7 +1,7 @@
 export interface ApiResponse<T = unknown> {
   data: T;
   message?: string;
-  Success?: string;
+  success?: boolean;
   paging?: PageMetadata;
 }
 

@@ -1,24 +1,19 @@
+import type { Store } from "./store.types";
+
 export interface Product {
-  id: number;
-  seller_id: number;
+  id: string;
+  store_id: string;
   name: string;
   description: string;
   price: number;
   stock: number;
-  category: string;
   image_url: string;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface SellerInfo {
-  id: number;
-  store_name: string;
-  rating: number;
+  created_at?: number;
+  updated_at?: number;
 }
 
 export interface ProductDetail extends Product {
-  seller: SellerInfo;
+  store: Store;
 }
 
 export interface CreateProductPayload {
@@ -26,7 +21,6 @@ export interface CreateProductPayload {
   description?: string;
   price: number;
   stock: number;
-  category?: string;
   image_url?: string;
 }
 
@@ -35,6 +29,5 @@ export interface UpdateProductPayload {
   description?: string;
   price?: number;
   stock?: number;
-  category?: string;
   image_url?: string;
 }

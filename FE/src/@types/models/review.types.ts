@@ -1,6 +1,6 @@
 export interface Review {
   id: number;
-  product_id: number;
+  product_id: string;
   user_id: number;
   rating: number;
   comment: string;
@@ -9,7 +9,7 @@ export interface Review {
 }
 
 export interface CreateReviewPayload {
-  product_id: number;
+  product_id: string;
   rating: number;
   comment: string;
 }
