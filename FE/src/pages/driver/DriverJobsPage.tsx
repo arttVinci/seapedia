@@ -25,7 +25,7 @@ export default function DriverJobsPage() {
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {jobs.map((job: any) => (
-            <Card key={job.id} className="flex flex-col">
+            <Card key={job.order_id} className="flex flex-col">
               <CardHeader>
                 <CardTitle className="text-lg">Toko: {job.store_name}</CardTitle>
                 <p className="text-sm text-gray-500">Order ID: {job.order_id}</p>
@@ -45,7 +45,7 @@ export default function DriverJobsPage() {
                     <span className="text-sm">{new Date(job.created_at).toLocaleString('id-ID')}</span>
                   </div>
                 </div>
-                <Button className="w-full" onClick={() => navigate(`/driver/jobs/${job.id}`)}>
+                <Button className="w-full" onClick={() => navigate(`/driver/jobs/${job.order_id}`)}>
                   Lihat Detail
                 </Button>
               </CardContent>

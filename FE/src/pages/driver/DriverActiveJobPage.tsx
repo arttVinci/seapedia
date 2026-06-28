@@ -9,7 +9,7 @@ export default function DriverActiveJobPage() {
   const navigate = useNavigate();
   const { data: dashboardRes, isLoading: isLoadingDashboard } = useDashboard();
   
-  const activeJobId = dashboardRes?.data?.active_job?.id;
+  const activeJobId = dashboardRes?.data?.active_job?.order_id;
 
   const { data: jobRes, isLoading: isLoadingJob } = useJobDetail(activeJobId || '');
   const completeJobMutation = useCompleteJob();
@@ -30,7 +30,7 @@ export default function DriverActiveJobPage() {
 
   const handleCompleteJob = () => {
     if (window.confirm('Apakah Anda yakin telah menyelesaikan pengiriman ini?')) {
-      completeJobMutation.mutate(job.id, {
+      completeJobMutation.mutate(job.order_id, {
         onSuccess: () => {
           navigate('/driver'); // Kembali ke dashboard
         },
