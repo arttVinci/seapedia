@@ -148,7 +148,7 @@ func (u *DriverUseCase) Dashboard(ctx context.Context, userID string) (*model.Da
 			continue
 		}
 
-		if d.Status == "in_progress" {
+		if d.Status == "Sedang Dikirim" {
 			response.ActiveJob = &model.DashboardActiveJob{
 				OrderID:        order.ID,
 				StoreID:        order.StoreID,
@@ -158,7 +158,7 @@ func (u *DriverUseCase) Dashboard(ctx context.Context, userID string) (*model.Da
 			}
 		}
 
-		if d.Status == "completed" {
+		if d.Status == "Pesanan Selesai" {
 			response.TotalEarning += d.Earning
 			if d.CompletedAt != nil && *d.CompletedAt >= startOfDay && *d.CompletedAt <= endOfDay {
 				response.CompletedToday++
@@ -207,7 +207,7 @@ func (u *DriverUseCase) CompleteJob(ctx context.Context, userID, orderID string)
 		return nil, fiber.NewError(fiber.StatusForbidden, "Pekerjaan ini tidak diambil oleh Anda")
 	}
 
-	if delivery.Status != "in_progress" {
+	if delivery.Status != "Sedang Dikirim" {
 		return nil, fiber.NewError(fiber.StatusBadRequest, "Pekerjaan ini tidak sedang diproses")
 	}
 
@@ -215,7 +215,7 @@ func (u *DriverUseCase) CompleteJob(ctx context.Context, userID, orderID string)
 	now := time.Now().UnixMilli()
 	driverEarning := int64(float64(order.DeliveryFee) * 0.8)
 
-	delivery.Status = "completed"
+	delivery.Status = "Pesanan Selesai"
 	delivery.CompletedAt = &now
 	delivery.Earning = driverEarning
 
