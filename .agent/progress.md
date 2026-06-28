@@ -16,7 +16,7 @@
 | --------------------------------- | ------------- | --------------------------- |
 | 1 Fondasi                         | dalam progres | T1-01, T1-02, T1-03 selesai |
 | 2 Toko & Produk                   | belum mulai   | -                           |
-| 3 Dompet, Keranjang, Checkout     | belum mulai   | -                           |
+| 3 Dompet, Keranjang, Checkout     | dalam progres | T3-01, T3-02, T3-03 selesai |
 | 4 Diskon, Proses Pesanan, Laporan | belum mulai   | -                           |
 | 5 Pengiriman & Pengemudi          | belum mulai   | -                           |
 | 6 Admin, Keterlambatan, Simulasi  | belum mulai   | -                           |
@@ -32,35 +32,35 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 - [x] T1-02 Setup proyek FE (Frontend) -- branch: chore/setup-frontend, MR: https://github.com/arttVinci/seapedia/pull/new/chore/setup-frontend
 - [x] T1-03 Migration & entity: users, user_roles, revoked_tokens (Backend) -- branch: feature/auth-migration-entity, MR: https://github.com/arttVinci/seapedia/pull/new/feature/auth-migration-entity
 - [x] T1-04 Register + Login + Logout + JWT + denylist (Backend) -- branch: feature/auth-register-login, MR: https://github.com/arttVinci/seapedia/pull/new/feature/auth-register-login
-- [x] T1-05 Endpoint peran: _roles, _select-role, _current (Backend) -- branch: feature/auth-register-login, MR: https://github.com/arttVinci/seapedia/pull/new/feature/auth-register-login
+- [x] T1-05 Endpoint peran: \_roles, \_select-role, \_current (Backend) -- branch: feature/auth-register-login, MR: https://github.com/arttVinci/seapedia/pull/new/feature/auth-register-login
 - [x] T1-06 Middleware role + proteksi route (Backend) -- branch: feature/role-middleware, MR: https://github.com/arttVinci/seapedia/pull/new/feature/role-middleware
 - [x] T1-07 Entity + endpoint katalog publik read-only (Backend) -- branch: feature/public-catalog, MR: https://github.com/arttVinci/seapedia/pull/new/feature/public-catalog
 - [x] T1-08 Entity + endpoint application_reviews (Backend) -- branch: feature/application-reviews, MR: https://github.com/arttVinci/seapedia/pull/new/feature/application-reviews
-- [ ] T1-09 UI komponen reusable + layout (Frontend)
-- [ ] T1-10 Halaman publik: home, katalog, detail, ulasan (Frontend)
-- [ ] T1-11 Halaman login, register, pemilihan peran, shell dashboard (Frontend)
-- [ ] T1-12 Review tingkat 1 (QA)
+- [x] T1-09 UI komponen reusable + layout (Frontend)
+- [x] T1-10 Halaman publik: home, katalog, detail, ulasan (Frontend)
+- [x] T1-11 Halaman login, register, pemilihan peran, shell dashboard (Frontend)
+- [x] T1-12 Review tingkat 1 (QA)
 
 ## Tingkat 2: Toko & Produk
 
 - [x] T2-01 Migration + entity: stores, products (Backend) -- branch: feature/seller-store, MR: https://github.com/arttVinci/seapedia/pull/new/feature/seller-store
 - [x] T2-02 CRUD store penjual (nama unik) (Backend) -- branch: feature/seller-store, MR: https://github.com/arttVinci/seapedia/pull/new/feature/seller-store
-- [ ] T2-03 CRUD produk penjual (cek kepemilikan) (Backend)
-- [/] T2-04 UI dashboard penjual: kelola store & produk (Frontend) -- branch: refactor/t2-api-integration
-- [/] T2-05 Integrasi katalog publik dengan data nyata (Frontend) -- branch: refactor/t2-api-integration
-- [ ] T2-06 Review tingkat 2 (QA)
+- [x] T2-03 CRUD produk penjual (cek kepemilikan) (Backend)
+- [x] T2-04 UI dashboard penjual: kelola store & produk (Frontend) -- branch: refactor/t2-api-integration
+- [x] T2-05 Integrasi katalog publik dengan data nyata (Frontend) -- branch: refactor/t2-api-integration
+- [x] T2-06 Review tingkat 2 (QA)
 
 ## Tingkat 3: Dompet, Alamat, Keranjang, Checkout Dasar
 
-- [ ] T3-01 Migration + entity: wallets, wallet_transactions, addresses (Backend)
-- [ ] T3-02 Wallet: saldo, top-up dummy, riwayat (Backend)
-- [ ] T3-03 Address: CRUD alamat pembeli (Backend)
-- [ ] T3-04 Migration + entity: carts, cart_items (Backend)
-- [ ] T3-05 Cart: tambah/ubah/hapus item + aturan satu toko (Backend)
-- [ ] T3-06 Migration + entity: orders, order_items, order_status_histories, deliveries (Backend)
-- [ ] T3-07 Checkout preview (hitung ringkasan) (Backend)
-- [ ] T3-08 Checkout (modul kritis: penguncian stok) (Backend)
-- [ ] T3-09 Order history & detail pembeli (Backend)
+- [x] T3-01 Migration + entity: wallets, wallet_transactions, addresses (Backend) -- branch: feature/buyer-wallet-address, MR: pending
+- [x] T3-02 Wallet: saldo, top-up dummy, riwayat (Backend) -- branch: feature/buyer-wallet-address, MR: pending
+- [x] T3-03 Address: CRUD alamat pembeli (Backend) -- branch: feature/buyer-wallet-address, MR: pending
+- [x] T3-04 Migration + entity: carts, cart_items (Backend) -- branch: feature/buyer-cart, MR: https://github.com/arttVinci/seapedia/pull/new/feature/buyer-cart
+- [x] T3-05 Cart: tambah/ubah/hapus item + aturan satu toko (Backend) -- branch: feature/buyer-cart, MR: https://github.com/arttVinci/seapedia/pull/new/feature/buyer-cart
+- [x] T3-06 Migration + entity: orders, order_items, order_status_histories, deliveries (Backend) -- branch: feature/buyer-checkout
+- [x] T3-07 Checkout preview (hitung ringkasan) (Backend) -- branch: feature/buyer-checkout
+- [x] T3-08 Checkout (modul kritis: penguncian stok) (Backend) -- branch: feature/buyer-checkout
+- [x] T3-09 Order history & detail pembeli (Backend) -- branch: feature/buyer-checkout
 - [ ] T3-10 UI dompet & alamat (Frontend)
 - [ ] T3-11 UI keranjang (Frontend)
 - [ ] T3-12 UI checkout + order history (Frontend)
