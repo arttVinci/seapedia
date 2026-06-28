@@ -3,6 +3,8 @@ package controller
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
+
+	"github.com/traa/seapedia/server/internal/delivery/http/middleware"
 	"github.com/traa/seapedia/server/internal/model"
 	"github.com/traa/seapedia/server/internal/usecase"
 )

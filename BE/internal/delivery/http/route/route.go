@@ -14,6 +14,7 @@ type RouteConfig struct {
 	ProductController           *controller.ProductController
 	StoreController             *controller.StoreController
 	ApplicationReviewController *controller.ApplicationReviewController
+	CartController              *controller.CartController
 	RoleMiddleware              func(allowedRoles ...string) fiber.Handler
 }
 
