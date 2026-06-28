@@ -19,6 +19,7 @@ type RouteConfig struct {
 	CartController              *controller.CartController
 	CheckoutController          *controller.CheckoutController
 	OrderController             *controller.OrderController
+	VoucherController           *controller.VoucherController
 	RoleMiddleware              func(allowedRoles ...string) fiber.Handler
 }
 
@@ -108,5 +109,10 @@ func (c *RouteConfig) SetupDriverRoute() {
 	c.App.Group("/api/driver", c.AuthMiddleware, c.RoleMiddleware("driver"))
 }
 func (c *RouteConfig) SetupAdminRoute() {
-	c.App.Group("/api/admin", c.AuthMiddleware, c.RoleMiddleware("admin"))
+	adminGroup := c.App.Group("/api/admin", c.AuthMiddleware, c.RoleMiddleware("admin"))
+
+	// Vouchers
+	adminGroup.Get("/vouchers", c.VoucherController.List)
+	adminGroup.Post("/vouchers", c.VoucherController.Create)
+	adminGroup.Get("/vouchers/:id", c.VoucherController.Detail)
 }
