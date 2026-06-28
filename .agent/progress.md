@@ -52,9 +52,9 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 
 ## Tingkat 3: Dompet, Alamat, Keranjang, Checkout Dasar
 
-- [ ] T3-01 Migration + entity: wallets, wallet_transactions, addresses (Backend)
-- [ ] T3-02 Wallet: saldo, top-up dummy, riwayat (Backend)
-- [ ] T3-03 Address: CRUD alamat pembeli (Backend)
+- [x] T3-01 Migration + entity: wallets, wallet_transactions, addresses (Backend) -- branch: feature/buyer-wallet-address, MR: pending
+- [x] T3-02 Wallet: saldo, top-up dummy, riwayat (Backend) -- branch: feature/buyer-wallet-address, MR: pending
+- [x] T3-03 Address: CRUD alamat pembeli (Backend) -- branch: feature/buyer-wallet-address, MR: pending
 - [ ] T3-04 Migration + entity: carts, cart_items (Backend)
 - [ ] T3-05 Cart: tambah/ubah/hapus item + aturan satu toko (Backend)
 - [ ] T3-06 Migration + entity: orders, order_items, order_status_histories, deliveries (Backend)
