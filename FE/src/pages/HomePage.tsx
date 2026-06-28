@@ -1,32 +1,19 @@
 import { Link } from "react-router-dom";
 import { Button } from "../components/ui";
 import { useProducts } from "../hooks/queries/products/useProducts";
-import { Card, CardContent, CardDescription, CardFooter, CardTitle } from "../components/ui";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardTitle,
+} from "../components/ui";
+import { usePublicStores } from "../hooks/queries/stores/usePublicStores";
 import { Store as StoreIcon } from "lucide-react";
-
-const popularStores = [
-  {
-    id: "1",
-    name: "Nelayan Bahari",
-    description: "Ikan segar langsung dari tangkapan harian.",
-    image_url: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop",
-  },
-  {
-    id: "2",
-    name: "Toko Laut Selatan",
-    description: "Menjual berbagai jenis udang dan cumi segar.",
-    image_url: "https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=1974&auto=format&fit=crop",
-  },
-  {
-    id: "3",
-    name: "Seafood Nusantara",
-    description: "Pusat grosir dan eceran ikan laut terpercaya.",
-    image_url: "https://images.unsplash.com/photo-1615141982883-c7ad0e69fd62?q=80&w=1974&auto=format&fit=crop",
-  }
-];
 
 export function HomePage() {
   const { data, isLoading } = useProducts({ page: 1, size: 4 });
+  const { data: stores, isLoading: storesLoading } = usePublicStores();
 
   return (
     <div>
@@ -34,7 +21,8 @@ export function HomePage() {
       <div className="bg-blue-600 py-20 text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-            Hasil Laut Segar, <br className="hidden sm:block" /> Langsung ke Dapur Anda
+            Hasil Laut Segar, <br className="hidden sm:block" /> Langsung ke
+            Dapur Anda
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-blue-100 sm:mt-6">
             Seapedia menghubungkan Anda dengan nelayan dan penjual ikan terbaik.
@@ -42,12 +30,20 @@ export function HomePage() {
           </p>
           <div className="mt-8 flex justify-center gap-4">
             <Link to="/catalog">
-              <Button size="lg" variant="secondary" className="font-semibold text-blue-700">
+              <Button
+                size="lg"
+                variant="secondary"
+                className="font-semibold text-blue-700"
+              >
                 Mulai Belanja
               </Button>
             </Link>
             <Link to="/register">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-blue-600"
+              >
                 Daftar Sekarang
               </Button>
             </Link>
@@ -61,7 +57,10 @@ export function HomePage() {
           <h2 className="text-3xl font-bold tracking-tight text-gray-900">
             Produk Pilihan
           </h2>
-          <Link to="/catalog" className="text-blue-600 hover:text-blue-500 font-medium">
+          <Link
+            to="/catalog"
+            className="text-blue-600 hover:text-blue-500 font-medium"
+          >
             Lihat Semua &rarr;
           </Link>
         </div>
@@ -81,7 +80,10 @@ export function HomePage() {
         ) : (
           <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
             {data?.data.map((product) => (
-              <Card key={product.id} className="flex flex-col h-full overflow-hidden">
+              <Card
+                key={product.id}
+                className="flex flex-col h-full overflow-hidden"
+              >
                 <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-200">
                   <img
                     src={product.image_url}
@@ -91,7 +93,9 @@ export function HomePage() {
                 </div>
                 <CardContent className="flex-1 p-4">
                   <CardTitle className="text-lg">{product.name}</CardTitle>
-                  <CardDescription className="line-clamp-2 mt-2">{product.description}</CardDescription>
+                  <CardDescription className="line-clamp-2 mt-2">
+                    {product.description}
+                  </CardDescription>
                 </CardContent>
                 <CardFooter className="p-4 pt-0 flex items-center justify-between">
                   <p className="text-lg font-bold text-gray-900">
@@ -113,32 +117,63 @@ export function HomePage() {
               Toko Populer
             </h2>
           </div>
-          
-          <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
-            {popularStores.map((store) => (
-              <Card key={store.id} className="flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="aspect-w-3 aspect-h-2 w-full overflow-hidden bg-gray-200">
-                  <img
-                    src={store.image_url}
-                    alt={store.name}
-                    className="h-48 w-full object-cover object-center"
-                  />
-                </div>
-                <CardContent className="flex-1 p-6">
-                  <div className="flex items-center mb-3">
-                    <div className="bg-blue-100 p-2 rounded-full mr-3">
-                      <StoreIcon className="h-5 w-5 text-blue-600" />
-                    </div>
-                    <CardTitle className="text-xl">{store.name}</CardTitle>
+
+          {storesLoading ? (
+            <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="animate-pulse flex flex-col">
+                  <div className="bg-gray-200 h-48 rounded-t-lg w-full"></div>
+                  <div className="flex-1 space-y-4 py-6 px-4">
+                    <div className="h-6 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                   </div>
-                  <CardDescription className="text-base">{store.description}</CardDescription>
-                </CardContent>
-                <CardFooter className="p-6 pt-0">
-                  <Button variant="outline" className="w-full">Kunjungi Toko</Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
+                </div>
+              ))}
+            </div>
+          ) : stores && stores.length > 0 ? (
+            <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
+              {stores.map((store) => (
+                <Card
+                  key={store.id}
+                  className="flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow"
+                >
+                  <div className="aspect-w-3 aspect-h-2 w-full overflow-hidden bg-gray-200">
+                    <img
+                      src={store.image_url || "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop"}
+                      alt={store.name}
+                      className="h-48 w-full object-cover object-center"
+                    />
+                  </div>
+                  <CardContent className="flex-1 p-6">
+                    <div className="flex items-center mb-3">
+                      <div className="bg-blue-100 p-2 rounded-full mr-3">
+                        <StoreIcon className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <CardTitle className="text-xl">{store.name}</CardTitle>
+                    </div>
+                    <CardDescription className="text-base">
+                      {store.description}
+                    </CardDescription>
+                  </CardContent>
+                  <CardFooter className="p-6 pt-0">
+                    <Button variant="outline" className="w-full">
+                      Kunjungi Toko
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-gray-50 rounded-xl">
+              <StoreIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Belum ada toko.
+              </h3>
+              <p className="text-gray-500">
+                Toko akan muncul di sini setelah penjual mendaftarkan tokonya.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

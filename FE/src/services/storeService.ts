@@ -29,6 +29,11 @@ class StoreService {
     const response = await apiClient.get<ApiResponse<Store>>(`/stores/${id}`);
     return response.data.data;
   }
+
+  async getAllStores(): Promise<Store[]> {
+    const response = await apiClient.get<ApiResponse<Store[]>>('/stores');
+    return response.data.data;
+  }
 }
 
 export const storeService = new StoreService();
