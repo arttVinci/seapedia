@@ -1,4 +1,4 @@
-import { apiClient } from './apiClient';
+import apiClient from '../api/apiClient';
 import type { ApiResponse } from '../@types/api/response.types';
 import type {
   Cart,

@@ -6,6 +6,7 @@ import type {
   RoleResponse,
   AuthResponse,
   SelectRoleResponse,
+  RegisterResponse,
 } from "@/@types/models";
 import type { ApiResponse } from "@/@types/base/api.types";
 
@@ -14,8 +15,8 @@ import apiClient from "@/api/apiClient";
 class AuthService {
   private readonly BASE_PATH = "/users";
 
-  async register(payload: RegisterPayload): Promise<AuthResponse> {
-    const response = await apiClient.post<ApiResponse<AuthResponse>>(
+  async register(payload: RegisterPayload): Promise<RegisterResponse> {
+    const response = await apiClient.post<ApiResponse<RegisterResponse>>(
       this.BASE_PATH,
       payload
     );
