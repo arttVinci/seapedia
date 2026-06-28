@@ -93,6 +93,9 @@ func (c *RouteConfig) SetupBuyerRoute() {
 	buyerGroup.Post("/cart/_items", c.CartController.AddItem)
 	buyerGroup.Put("/cart/_items/:id", c.CartController.UpdateItem)
 	buyerGroup.Delete("/cart/_items/:id", c.CartController.DeleteItem)
+
+	// Checkout
+	buyerGroup.Post("/checkout/_preview", c.CheckoutController.Preview)
 }
 func (c *RouteConfig) SetupDriverRoute() {
 	c.App.Group("/api/driver", c.AuthMiddleware, c.RoleMiddleware("driver"))
