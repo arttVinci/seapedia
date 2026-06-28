@@ -17,6 +17,8 @@ import CheckoutPage from './pages/buyer/CheckoutPage';
 import OrderHistoryPage from './pages/buyer/OrderHistoryPage';
 import OrderDetailPage from './pages/buyer/OrderDetailPage';
 import CartPage from './pages/buyer/CartPage';
+import WalletPage from './pages/buyer/WalletPage';
+import AddressPage from './pages/buyer/AddressPage';
 import { SellerDashboardPage } from './pages/SellerDashboardPage';
 import { ProductManagementPage } from './pages/seller/ProductManagementPage';
 import { StoreManagementPage } from './pages/seller/StoreManagementPage';
@@ -45,6 +47,12 @@ function App() {
           <Route element={<DashboardShell />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/buyer" element={<BuyerDashboardPage />} />
+            <Route path="/buyer/cart" element={<CartPage />} />
+            <Route path="/buyer/checkout" element={<CheckoutPage />} />
+            <Route path="/buyer/orders" element={<OrderHistoryPage />} />
+            <Route path="/buyer/orders/:id" element={<OrderDetailPage />} />
+            <Route path="/buyer/wallet" element={<WalletPage />} />
+            <Route path="/buyer/addresses" element={<AddressPage />} />
             <Route path="/seller" element={<SellerDashboardPage />} />
             <Route path="/seller/products" element={<ProductManagementPage />} />
             <Route path="/seller/store" element={<StoreManagementPage />} />

@@ -1,10 +1,19 @@
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui';
+import { Card, CardContent, CardHeader, CardTitle, Button } from '../components/ui';
+import { ShoppingCart } from 'lucide-react';
 
 export function BuyerDashboardPage() {
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Dashboard Pembeli</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard Pembeli</h1>
+        <Link to="/buyer/cart">
+          <Button className="flex items-center gap-2">
+            <ShoppingCart className="h-5 w-5" />
+            Keranjang
+          </Button>
+        </Link>
+      </div>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -24,15 +33,46 @@ export function BuyerDashboardPage() {
         </Card>
       </div>
 
-      <div className="flex gap-4 mt-8">
-        <Link to="/buyer/cart" className="text-blue-600 hover:underline">
-          Lihat Keranjang
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-6">
+        <Link to="/buyer/wallet" className="block">
+          <Card className="hover:bg-gray-50 transition-colors">
+            <CardHeader>
+              <CardTitle className="text-lg">Dompet Saya</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">Cek saldo dan riwayat top up Anda.</p>
+            </CardContent>
+          </Card>
         </Link>
-        <Link to="/buyer/checkout" className="text-blue-600 hover:underline">
-          Checkout
+        <Link to="/buyer/addresses" className="block">
+          <Card className="hover:bg-gray-50 transition-colors">
+            <CardHeader>
+              <CardTitle className="text-lg">Buku Alamat</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">Kelola alamat pengiriman Anda.</p>
+            </CardContent>
+          </Card>
         </Link>
-        <Link to="/buyer/orders" className="text-blue-600 hover:underline">
-          Riwayat Pesanan
+        <Link to="/buyer/checkout" className="block">
+          <Card className="hover:bg-gray-50 transition-colors">
+            <CardHeader>
+              <CardTitle className="text-lg">Checkout</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">Selesaikan pesanan Anda.</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link to="/buyer/orders" className="block">
+          <Card className="hover:bg-gray-50 transition-colors">
+            <CardHeader>
+              <CardTitle className="text-lg">Riwayat Pesanan</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">Lihat status pesanan Anda.</p>
+            </CardContent>
+          </Card>
         </Link>
       </div>
     </div>

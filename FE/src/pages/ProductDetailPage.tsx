@@ -1,11 +1,42 @@
-import { useParams, Link } from "react-router-dom";
+import { useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useProductDetail } from "../hooks/queries/products/useProductDetail";
+import { useAddToCart } from "../hooks/mutations/buyer/useAddToCart";
 import { Button } from "../components/ui";
 import { ShoppingCart, Store } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
+import { AxiosError } from "axios";
+import { ApiErrorResponse } from "../@types/api/response.types";
 
 export function ProductDetailPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { token, activeRole } = useAuth();
   const { data: product, isLoading, isError } = useProductDetail(String(id));
+  const addToCartMutation = useAddToCart();
+
+  const [quantity, setQuantity] = useState(1);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const handleAddToCart = () => {
+    if (!product) return;
+    setErrorMsg(null);
+    addToCartMutation.mutate(
+      { product_id: product.id, quantity },
+      {
+        onSuccess: () => {
+          alert('Berhasil ditambahkan ke keranjang!');
+        },
+        onError: (err: AxiosError<ApiErrorResponse>) => {
+          if (err.response?.status === 409) {
+            setErrorMsg(err.response.data.message || 'Konflik: Produk dari toko berbeda.');
+          } else {
+            alert(err.response?.data?.message || 'Gagal menambahkan ke keranjang');
+          }
+        },
+      }
+    );
+  };
 
   if (isLoading) {
     return (
@@ -89,11 +120,50 @@ export function ProductDetailPage() {
               </div>
             </div>
 
-            {token && (
-              <div className="mt-8 flex gap-4">
-                <Button size="lg" className="flex-1 flex items-center justify-center">
+            {errorMsg && (
+              <div className="mt-4 p-4 bg-red-50 text-red-700 border border-red-200 rounded-md flex justify-between items-center">
+                <span>{errorMsg}</span>
+                <Button variant="danger" size="sm" onClick={() => navigate('/buyer/cart')}>
+                  Lihat Keranjang
+                </Button>
+              </div>
+            )}
+
+            {token && activeRole === 'buyer' && (
+              <div className="mt-8 flex gap-4 items-center">
+                <div className="flex items-center border border-gray-300 rounded-md">
+                  <button
+                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                    disabled={quantity <= 1}
+                  >
+                    -
+                  </button>
+                  <input
+                    type="number"
+                    className="w-16 text-center py-2 border-x border-gray-300 focus:outline-none focus:ring-0"
+                    value={quantity}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val)) setQuantity(Math.min(product.stock, Math.max(1, val)));
+                    }}
+                  />
+                  <button
+                    className="px-4 py-2 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                    onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
+                    disabled={quantity >= product.stock}
+                  >
+                    +
+                  </button>
+                </div>
+                <Button 
+                  size="lg" 
+                  className="flex-1 flex items-center justify-center"
+                  onClick={handleAddToCart}
+                  disabled={addToCartMutation.isPending || product.stock < 1}
+                >
                   <ShoppingCart className="mr-2 h-5 w-5" />
-                  Tambah ke Keranjang
+                  {addToCartMutation.isPending ? 'Menambahkan...' : 'Tambah ke Keranjang'}
                 </Button>
               </div>
             )}
