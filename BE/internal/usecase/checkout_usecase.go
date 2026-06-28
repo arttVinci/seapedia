@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"math"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
@@ -110,6 +111,9 @@ func (u *CheckoutUseCase) Preview(ctx context.Context, userID string, request *m
 		if err := u.PromoRepository.FindByCode(db, promo, request.PromoCode); err != nil {
 			return nil, fiber.NewError(fiber.StatusBadRequest, "Kode promo tidak valid")
 		}
+		if time.Now().Unix() > promo.ExpiredAt {
+			return nil, fiber.NewError(fiber.StatusBadRequest, "Kode promo telah kedaluwarsa")
+		}
 		discount += promo.DiscountAmount
 		promoApplied = &model.AppliedDiscountDetail{
 			Code:   promo.Code,
@@ -121,6 +125,9 @@ func (u *CheckoutUseCase) Preview(ctx context.Context, userID string, request *m
 		voucher := new(entity.Voucher)
 		if err := u.VoucherRepository.FindByCode(db, voucher, request.VoucherCode); err != nil {
 			return nil, fiber.NewError(fiber.StatusBadRequest, "Kode voucher tidak valid")
+		}
+		if time.Now().Unix() > voucher.ExpiredAt {
+			return nil, fiber.NewError(fiber.StatusBadRequest, "Kode voucher telah kedaluwarsa")
 		}
 		if voucher.RemainingUsage <= 0 {
 			return nil, fiber.NewError(fiber.StatusBadRequest, "Voucher telah habis digunakan")
@@ -199,6 +206,9 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 		if err := u.PromoRepository.FindByCode(tx, promo, request.PromoCode); err != nil {
 			return "", 0, fiber.NewError(fiber.StatusBadRequest, "Kode promo tidak valid")
 		}
+		if time.Now().Unix() > promo.ExpiredAt {
+			return "", 0, fiber.NewError(fiber.StatusBadRequest, "Kode promo telah kedaluwarsa")
+		}
 		discount += promo.DiscountAmount
 	}
 
@@ -208,6 +218,9 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 		// use Lock for update for voucher since we decrement usage
 		if err := tx.Where("code = ?", request.VoucherCode).Clauses(clause.Locking{Strength: "UPDATE"}).Take(voucher).Error; err != nil {
 			return "", 0, fiber.NewError(fiber.StatusBadRequest, "Kode voucher tidak valid")
+		}
+		if time.Now().Unix() > voucher.ExpiredAt {
+			return "", 0, fiber.NewError(fiber.StatusBadRequest, "Kode voucher telah kedaluwarsa")
 		}
 		if voucher.RemainingUsage <= 0 {
 			return "", 0, fiber.NewError(fiber.StatusBadRequest, "Voucher telah habis digunakan")

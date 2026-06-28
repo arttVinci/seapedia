@@ -35,6 +35,22 @@ func NewSellerOrderController(log *logrus.Logger, useCase *usecase.SellerOrderUs
 	}
 }
 
+func (c *SellerOrderController) GetSellerOrderDetail(ctx *fiber.Ctx) error {
+	user := middleware.GetUser(ctx)
+	orderID := ctx.Params("id")
+
+	order, err := c.UseCase.GetSellerOrderDetail(ctx.UserContext(), user.ID, orderID)
+	if err != nil {
+		return err
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(model.WebResponse[*model.OrderDetailResponse]{
+		Data:    order,
+		Message: "Detail pesanan",
+		Success: true,
+	})
+}
+
 func (c *SellerOrderController) ListSellerOrders(ctx *fiber.Ctx) error {
 	user := middleware.GetUser(ctx)
 

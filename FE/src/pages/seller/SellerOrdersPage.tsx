@@ -1,6 +1,8 @@
 import { useSellerOrders } from '../../hooks/queries/seller/useSellerOrders';
 import { useProcessOrder } from '../../hooks/mutations/seller/useProcessOrder';
+import { Link } from 'react-router-dom';
 import Card from '../../components/ui/Card';
+import Button from '../../components/ui/Button';
 
 export default function SellerOrdersPage() {
   const { data: orders, isLoading } = useSellerOrders();
@@ -20,7 +22,9 @@ export default function SellerOrdersPage() {
           <Card key={order.id} className="p-4">
             <div className="flex justify-between items-center">
               <div>
-                <p className="font-semibold">Order #{order.id.slice(0, 8)}</p>
+                <Link to={`/seller/orders/${order.id}`} className="hover:underline">
+                  <p className="font-semibold text-blue-700">Order #{order.id.slice(0, 8)}</p>
+                </Link>
                 <p className="text-sm text-gray-600">
                   Total: Rp {order.final_total?.toLocaleString('id-ID')}
                 </p>
@@ -28,7 +32,11 @@ export default function SellerOrdersPage() {
                   {order.status}
                 </span>
               </div>
-              {order.status === 'Sedang Dikemas' && (
+              <div className="flex items-center gap-2">
+                <Link to={`/seller/orders/${order.id}`}>
+                  <Button variant="outline" size="sm">Detail</Button>
+                </Link>
+                {order.status === 'Sedang Dikemas' && (
                 <button
                   onClick={() => processMutation.mutate(order.id)}
                   disabled={processMutation.isPending}
@@ -37,6 +45,7 @@ export default function SellerOrdersPage() {
                   {processMutation.isPending ? 'Memproses...' : 'Proses Pesanan'}
                 </button>
               )}
+              </div>
             </div>
           </Card>
         ))}
