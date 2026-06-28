@@ -8,3 +8,13 @@ type StoreResponse struct {
 	CreatedAt   int64  `json:"created_at"`
 	UpdatedAt   int64  `json:"updated_at"`
 }
+
+type CreateStoreRequest struct {
+	Name        string `json:"name" validate:"required,max=100"`
+	Description string `json:"description" validate:"max=1000"`
+}
+
+type UpdateStoreRequest struct {
+	Name        string `json:"name" validate:"required,max=100"`
+	Description string `json:"description" validate:"max=1000"`
+}

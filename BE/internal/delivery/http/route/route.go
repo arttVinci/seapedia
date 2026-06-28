@@ -62,7 +62,10 @@ func (c *RouteConfig) SetupAuthRoute() {
 }
 
 func (c *RouteConfig) SetupSellerRoute() {
-	c.App.Group("/api/seller", c.AuthMiddleware, c.RoleMiddleware("seller"))
+	sellerGroup := c.App.Group("/api/seller", c.AuthMiddleware, c.RoleMiddleware("seller"))
+	sellerGroup.Get("/store", c.StoreController.GetMyStore)
+	sellerGroup.Post("/store", c.StoreController.CreateStore)
+	sellerGroup.Put("/store", c.StoreController.UpdateStore)
 }
 func (c *RouteConfig) SetupBuyerRoute() {
 	c.App.Group("/api/buyer", c.AuthMiddleware, c.RoleMiddleware("buyer"))
