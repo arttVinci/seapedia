@@ -37,6 +37,7 @@ func (r *OrderRepository) ListAvailableJobs(db *gorm.DB) ([]entity.Order, error)
 	var orders []entity.Order
 	// Menunggu Pengiriman in SDD state machine
 	err := db.Joins("JOIN deliveries ON deliveries.order_id = orders.id").
+		Preload("Store").
 		Where("orders.status = ? AND deliveries.driver_id IS NULL", "Menunggu Pengiriman").
 		Order("orders.created_at asc").
 		Find(&orders).Error

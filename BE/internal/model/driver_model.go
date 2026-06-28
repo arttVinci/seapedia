@@ -8,6 +8,7 @@ type ListJobsRequest struct {
 type JobResponse struct {
 	OrderID         string  `json:"order_id"`
 	StoreID         string  `json:"store_id"`
+	StoreName       string  `json:"store_name"`
 	Status          string  `json:"status"`
 	DeliveryMethod  string  `json:"delivery_method"`
 	DeliveryFee     int64   `json:"delivery_fee"`
