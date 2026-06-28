@@ -2,6 +2,28 @@ import { Link } from "react-router-dom";
 import { Button } from "../components/ui";
 import { useProducts } from "../hooks/queries/products/useProducts";
 import { Card, CardContent, CardDescription, CardFooter, CardTitle } from "../components/ui";
+import { Store as StoreIcon } from "lucide-react";
+
+const popularStores = [
+  {
+    id: "1",
+    name: "Nelayan Bahari",
+    description: "Ikan segar langsung dari tangkapan harian.",
+    image_url: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?q=80&w=2070&auto=format&fit=crop",
+  },
+  {
+    id: "2",
+    name: "Toko Laut Selatan",
+    description: "Menjual berbagai jenis udang dan cumi segar.",
+    image_url: "https://images.unsplash.com/photo-1578916171728-46686eac8d58?q=80&w=1974&auto=format&fit=crop",
+  },
+  {
+    id: "3",
+    name: "Seafood Nusantara",
+    description: "Pusat grosir dan eceran ikan laut terpercaya.",
+    image_url: "https://images.unsplash.com/photo-1615141982883-c7ad0e69fd62?q=80&w=1974&auto=format&fit=crop",
+  }
+];
 
 export function HomePage() {
   const { data, isLoading } = useProducts({ page: 1, size: 4 });
@@ -83,6 +105,41 @@ export function HomePage() {
             ))}
           </div>
         )}
+
+        {/* Popular Stores Section */}
+        <div className="mt-24">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
+              Toko Populer
+            </h2>
+          </div>
+          
+          <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
+            {popularStores.map((store) => (
+              <Card key={store.id} className="flex flex-col h-full overflow-hidden hover:shadow-lg transition-shadow">
+                <div className="aspect-w-3 aspect-h-2 w-full overflow-hidden bg-gray-200">
+                  <img
+                    src={store.image_url}
+                    alt={store.name}
+                    className="h-48 w-full object-cover object-center"
+                  />
+                </div>
+                <CardContent className="flex-1 p-6">
+                  <div className="flex items-center mb-3">
+                    <div className="bg-blue-100 p-2 rounded-full mr-3">
+                      <StoreIcon className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <CardTitle className="text-xl">{store.name}</CardTitle>
+                  </div>
+                  <CardDescription className="text-base">{store.description}</CardDescription>
+                </CardContent>
+                <CardFooter className="p-6 pt-0">
+                  <Button variant="outline" className="w-full">Kunjungi Toko</Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

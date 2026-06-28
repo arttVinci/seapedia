@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useProducts } from "../hooks/queries/products/useProducts";
 import { Button, Input, Card, CardContent, CardFooter, CardTitle, CardDescription } from "../components/ui";
-import { Search } from "lucide-react";
+import { Search, Store } from "lucide-react";
 
 export function CatalogPage() {
   const [page, setPage] = useState(1);
@@ -56,6 +56,12 @@ export function CatalogPage() {
                 </div>
                 <CardContent className="flex-1 p-4">
                   <CardTitle className="text-lg">{product.name}</CardTitle>
+                  {product.store && (
+                    <div className="flex items-center text-sm text-gray-500 mt-1">
+                      <Store size={14} className="mr-1" />
+                      {product.store.name}
+                    </div>
+                  )}
                   <CardDescription className="line-clamp-2 mt-2">{product.description}</CardDescription>
                 </CardContent>
                 <CardFooter className="p-4 pt-0 flex items-center justify-between">
