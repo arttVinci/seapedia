@@ -21,11 +21,18 @@ func CartToResponse(cart *entity.Cart) *model.CartResponse {
 		response.StoreName = &storeName
 	}
 
+	var totalItems int
+	var totalPrice int64
 	if cart.CartItems != nil {
 		for _, item := range cart.CartItems {
-			response.Items = append(response.Items, *CartItemToResponse(&item))
+			itemResponse := CartItemToResponse(&item)
+			response.Items = append(response.Items, *itemResponse)
+			totalItems += item.Quantity
+			totalPrice += itemResponse.Subtotal
 		}
 	}
+	response.TotalItems = totalItems
+	response.TotalPrice = totalPrice
 
 	return response
 }

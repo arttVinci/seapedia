@@ -8,7 +8,7 @@ export function useDeleteCartItem(options?: { onSuccess?: () => void; onError?: 
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: number) => cartService.deleteCartItem(id),
+    mutationFn: (id: string) => cartService.deleteCartItem(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
       options?.onSuccess?.();

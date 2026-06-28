@@ -111,10 +111,10 @@ func (u *CheckoutUseCase) Preview(ctx context.Context, userID string, request *m
 	return converter.CheckoutPreviewToResponse(subtotal, discount, taxable, tax, deliveryFee, finalTotal, voucherApplied, promoApplied), nil
 }
 
-func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *model.CheckoutPreviewRequest) error {
+func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *model.CheckoutPreviewRequest) (string, int64, error) {
 	if err := u.Validate.Struct(request); err != nil {
 		u.Log.Warnf("Invalid request body : %+v", err)
-		return fiber.NewError(fiber.StatusBadRequest, "Invalid request body")
+		return "", 0, fiber.NewError(fiber.StatusBadRequest, "Invalid request body")
 	}
 
 	db := u.DB.WithContext(ctx)
@@ -123,11 +123,11 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 
 	cart, err := u.CartRepository.FindByUserID(tx, userID)
 	if err != nil {
-		return fiber.NewError(fiber.StatusNotFound, "Keranjang tidak ditemukan")
+		return "", 0, fiber.NewError(fiber.StatusNotFound, "Keranjang tidak ditemukan")
 	}
 
 	if len(cart.CartItems) == 0 {
-		return fiber.NewError(fiber.StatusBadRequest, "Keranjang kosong")
+		return "", 0, fiber.NewError(fiber.StatusBadRequest, "Keranjang kosong")
 	}
 
 	// Extract product IDs
@@ -139,7 +139,7 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 	// Lock products for update
 	products, err := u.ProductRepository.FindByIDsForUpdate(tx, productIDs)
 	if err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "Gagal mengunci produk")
+		return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal mengunci produk")
 	}
 
 	productMap := make(map[string]*entity.Product)
@@ -151,10 +151,10 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 	for _, item := range cart.CartItems {
 		product, exists := productMap[item.ProductID]
 		if !exists {
-			return fiber.NewError(fiber.StatusBadRequest, "Produk tidak ditemukan")
+			return "", 0, fiber.NewError(fiber.StatusBadRequest, "Produk tidak ditemukan")
 		}
 		if product.Stock < item.Quantity {
-			return fiber.NewError(fiber.StatusBadRequest, "Stok produk tidak mencukupi")
+			return "", 0, fiber.NewError(fiber.StatusBadRequest, "Stok produk tidak mencukupi")
 		}
 		subtotal += product.Price * int64(item.Quantity)
 	}
@@ -172,11 +172,11 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 	// Lock wallet for update
 	wallet := new(entity.Wallet)
 	if err := u.WalletRepository.FindByUserIDForUpdate(tx, wallet, userID); err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "Gagal mendapatkan dompet")
+		return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal mendapatkan dompet")
 	}
 
 	if int64(wallet.Balance) < finalTotal {
-		return fiber.NewError(fiber.StatusBadRequest, "Saldo tidak mencukupi")
+		return "", 0, fiber.NewError(fiber.StatusBadRequest, "Saldo tidak mencukupi")
 	}
 
 	// Update stock
@@ -184,14 +184,14 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 		product := productMap[item.ProductID]
 		product.Stock -= item.Quantity
 		if err := u.ProductRepository.Update(tx, product); err != nil {
-			return fiber.NewError(fiber.StatusInternalServerError, "Gagal memperbarui stok produk")
+			return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal memperbarui stok produk")
 		}
 	}
 
 	// Update wallet
 	wallet.Balance -= int(finalTotal)
 	if err := u.WalletRepository.Update(tx, wallet); err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "Gagal memotong saldo dompet")
+		return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal memotong saldo dompet")
 	}
 
 	// Record wallet transaction
@@ -203,7 +203,7 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 		Description: "Pembayaran pesanan",
 	}
 	if err := u.WalletTransactionRepo.Create(tx, walletTx); err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "Gagal mencatat transaksi dompet")
+		return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal mencatat transaksi dompet")
 	}
 
 	dueSimulatedDay := 0
@@ -238,7 +238,7 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 	}
 
 	if err := u.OrderRepository.Create(tx, order); err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "Gagal membuat pesanan")
+		return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal membuat pesanan")
 	}
 
 	// Create order items snapshot
@@ -253,7 +253,7 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 			Quantity:    item.Quantity,
 		}
 		if err := u.OrderItemRepository.Create(tx, orderItem); err != nil {
-			return fiber.NewError(fiber.StatusInternalServerError, "Gagal membuat item pesanan")
+			return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal membuat item pesanan")
 		}
 	}
 
@@ -265,7 +265,7 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 		Note:    "Pesanan berhasil dibuat",
 	}
 	if err := u.OrderStatusHistoryRepo.Create(tx, statusHistory); err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "Gagal mencatat riwayat status")
+		return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal mencatat riwayat status")
 	}
 
 	// Create delivery
@@ -276,24 +276,24 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 		Earning: 0,
 	}
 	if err := u.DeliveryRepository.Create(tx, delivery); err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "Gagal membuat data pengiriman")
+		return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal membuat data pengiriman")
 	}
 
 	// Clear cart
 	for _, item := range cart.CartItems {
 		if err := tx.Delete(&item).Error; err != nil {
-			return fiber.NewError(fiber.StatusInternalServerError, "Gagal mengosongkan keranjang")
+			return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal mengosongkan keranjang")
 		}
 	}
 	cart.StoreID = nil
 	if err := u.CartRepository.Update(tx, cart); err != nil {
-		return fiber.NewError(fiber.StatusInternalServerError, "Gagal mereset keranjang")
+		return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal mereset keranjang")
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		u.Log.Warnf("Failed commit transaction : %+v", err)
-		return fiber.NewError(fiber.StatusInternalServerError, "Gagal memproses checkout")
+		return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal memproses checkout")
 	}
 
-	return nil
+	return orderID, finalTotal, nil
 }

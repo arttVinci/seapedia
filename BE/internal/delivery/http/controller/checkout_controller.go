@@ -50,13 +50,16 @@ func (c *CheckoutController) Checkout(ctx *fiber.Ctx) error {
 		return fiber.ErrBadRequest
 	}
 
-	err := c.UseCase.Checkout(ctx.UserContext(), user.ID, &request)
+	orderID, finalTotal, err := c.UseCase.Checkout(ctx.UserContext(), user.ID, &request)
 	if err != nil {
 		return err
 	}
 
 	return ctx.Status(fiber.StatusOK).JSON(model.WebResponse[any]{
-		Data:    nil,
+		Data: map[string]interface{}{
+			"order_id":    orderID,
+			"final_total": finalTotal,
+		},
 		Message: "Pesanan berhasil dibuat",
 		Success: true,
 	})

@@ -18,31 +18,28 @@ const AddressPage: React.FC = () => {
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
 
   const [formData, setFormData] = useState({
-    title: "",
-    recipient_name: "",
-    phone_number: "",
+    label: "",
+    recipient: "",
+    phone: "",
     full_address: "",
-    is_primary: false,
   });
 
   const handleOpenModal = (address?: Address) => {
     if (address) {
       setEditingAddress(address);
       setFormData({
-        title: address.title,
-        recipient_name: address.recipient_name,
-        phone_number: address.phone_number,
+        label: address.label,
+        recipient: address.recipient,
+        phone: address.phone,
         full_address: address.full_address,
-        is_primary: address.is_primary,
       });
     } else {
       setEditingAddress(null);
       setFormData({
-        title: "",
-        recipient_name: "",
-        phone_number: "",
+        label: "",
+        recipient: "",
+        phone: "",
         full_address: "",
-        is_primary: false,
       });
     }
     setIsModalOpen(true);
@@ -54,11 +51,10 @@ const AddressPage: React.FC = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target as HTMLInputElement;
-    const checked = (e.target as HTMLInputElement).checked;
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   };
 
@@ -107,16 +103,9 @@ const AddressPage: React.FC = () => {
           {addresses.map((address) => (
             <Card key={address.id} className="p-4 flex flex-col justify-between">
               <div>
-                <div className="flex items-center space-x-2 mb-2">
-                  <h3 className="font-bold text-lg">{address.title}</h3>
-                  {address.is_primary && (
-                    <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
-                      Utama
-                    </span>
-                  )}
-                </div>
-                <p className="font-semibold">{address.recipient_name}</p>
-                <p className="text-sm text-gray-600">{address.phone_number}</p>
+                <h3 className="font-bold text-lg mb-1">{address.label}</h3>
+                <p className="font-semibold">{address.recipient}</p>
+                <p className="text-sm text-gray-600">{address.phone}</p>
                 <p className="text-sm text-gray-700 mt-2 line-clamp-3">
                   {address.full_address}
                 </p>
@@ -152,25 +141,25 @@ const AddressPage: React.FC = () => {
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <Input
-                name="title"
+                name="label"
                 label="Label Alamat (Contoh: Rumah, Kantor)"
-                value={formData.title}
+                value={formData.label}
                 onChange={handleChange}
                 required
                 placeholder="Rumah"
               />
               <Input
-                name="recipient_name"
+                name="recipient"
                 label="Nama Penerima"
-                value={formData.recipient_name}
+                value={formData.recipient}
                 onChange={handleChange}
                 required
                 placeholder="Nama Lengkap"
               />
               <Input
-                name="phone_number"
+                name="phone"
                 label="Nomor Telepon"
-                value={formData.phone_number}
+                value={formData.phone}
                 onChange={handleChange}
                 required
                 type="tel"
@@ -189,19 +178,6 @@ const AddressPage: React.FC = () => {
                   className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Jalan, RT/RW, Kecamatan, Kota, Kode Pos"
                 />
-              </div>
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="is_primary"
-                  name="is_primary"
-                  checked={formData.is_primary}
-                  onChange={handleChange}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="is_primary" className="ml-2 block text-sm text-gray-900">
-                  Jadikan Alamat Utama
-                </label>
               </div>
               <div className="flex justify-end space-x-3 pt-4 border-t">
                 <Button

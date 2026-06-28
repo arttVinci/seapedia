@@ -1,28 +1,24 @@
-export interface ProductCart {
-  id: number;
-  seller_id: number;
-  name: string;
-  price: number;
-  stock: number;
-  image_url: string | null;
-}
-
 export interface CartItem {
-  id: number;
-  product: ProductCart;
+  id: string;
+  product_id: string;
+  product_name: string;
+  price: number;
   quantity: number;
   subtotal: number;
+  image_url?: string;
 }
 
 export interface Cart {
-  seller_id: number;
+  id: string;
+  store_id: string | null;
+  store_name: string | null;
   items: CartItem[];
   total_items: number;
   total_price: number;
 }
 
 export interface AddCartItemPayload {
-  product_id: number;
+  product_id: string;
   quantity: number;
 }
 
