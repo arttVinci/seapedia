@@ -19,6 +19,12 @@ func (r *StoreRepository) FindByUserID(db *gorm.DB, store *entity.Store, userID 
 	return db.Where("user_id = ?", userID).Take(store).Error
 }
 
+func (r *StoreRepository) FindAll(db *gorm.DB) ([]entity.Store, error) {
+	var stores []entity.Store
+	err := db.Order("created_at desc").Limit(10).Find(&stores).Error
+	return stores, err
+}
+
 func (r *StoreRepository) CountByName(db *gorm.DB, name string) (int64, error) {
 	var count int64
 	err := db.Model(&entity.Store{}).Where("name = ?", name).Count(&count).Error

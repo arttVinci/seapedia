@@ -35,6 +35,16 @@ func (u *StoreUseCase) FindById(ctx context.Context, id string) (*model.StoreRes
 	return converter.StoreToResponse(store), nil
 }
 
+func (u *StoreUseCase) FindAll(ctx context.Context) ([]model.StoreResponse, error) {
+	db := u.DB.WithContext(ctx)
+	stores, err := u.StoreRepository.FindAll(db)
+	if err != nil {
+		u.Log.Warnf("Failed to list stores : %+v", err)
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal memuat daftar toko")
+	}
+	return converter.StoresToResponses(stores), nil
+}
+
 func (u *StoreUseCase) FindByUserID(ctx context.Context, userID string) (*model.StoreResponse, error) {
 	db := u.DB.WithContext(ctx)
 	store := new(entity.Store)

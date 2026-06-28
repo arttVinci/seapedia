@@ -53,6 +53,7 @@ func (c *RouteConfig) SetupGuestRoute() {
 func (c *RouteConfig) SetupPublicRoute() {
 	c.App.Get("/api/products", c.ProductController.List)
 	c.App.Get("/api/products/:id", c.ProductController.Detail)
+	c.App.Get("/api/stores", c.StoreController.List)
 	c.App.Get("/api/stores/:id", c.StoreController.Detail)
 
 	// Reviews

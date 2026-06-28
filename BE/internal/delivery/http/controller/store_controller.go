@@ -18,6 +18,14 @@ func NewStoreController(useCase *usecase.StoreUseCase, log *logrus.Logger) *Stor
 	return &StoreController{UseCase: useCase, Log: log}
 }
 
+func (c *StoreController) List(ctx *fiber.Ctx) error {
+	response, err := c.UseCase.FindAll(ctx.UserContext())
+	if err != nil {
+		return err
+	}
+	return ctx.JSON(model.WebResponse[[]model.StoreResponse]{Data: response, Message: "Daftar toko", Success: true})
+}
+
 func (c *StoreController) Detail(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 	response, err := c.UseCase.FindById(ctx.UserContext(), id)

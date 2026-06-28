@@ -18,3 +18,14 @@ func StoreToResponse(store *entity.Store) *model.StoreResponse {
 		UpdatedAt:   store.UpdatedAt,
 	}
 }
+
+func StoresToResponses(stores []entity.Store) []model.StoreResponse {
+	var responses []model.StoreResponse
+	for _, store := range stores {
+		responses = append(responses, *StoreToResponse(&store))
+	}
+	if responses == nil {
+		return []model.StoreResponse{}
+	}
+	return responses
+}
