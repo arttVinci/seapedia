@@ -6,9 +6,14 @@ import (
 )
 
 func OrderToJobResponse(order *entity.Order) model.JobResponse {
+	storeName := ""
+	if order.Store != nil {
+		storeName = order.Store.Name
+	}
 	return model.JobResponse{
 		OrderID:        order.ID,
 		StoreID:        order.StoreID,
+		StoreName:      storeName,
 		Status:         order.Status,
 		DeliveryMethod: order.DeliveryMethod,
 		DeliveryFee:    order.DeliveryFee,
