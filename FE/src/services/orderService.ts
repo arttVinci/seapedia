@@ -16,6 +16,15 @@ class OrderService {
     );
     return response.data.data;
   }
+
+  async getSellerOrders(): Promise<Order[]> {
+    const response = await apiClient.get<ApiResponse<Order[]>>("/seller/orders");
+    return response.data.data;
+  }
+
+  async processOrder(id: string): Promise<void> {
+    await apiClient.post<ApiResponse<void>>(`/seller/orders/${id}/_process`);
+  }
 }
 
 export default new OrderService();
