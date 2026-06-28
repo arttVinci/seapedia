@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useOrderDetail } from "../../hooks/queries/buyer/useOrderDetail";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
+import OrderTimeline from "../../components/ui/OrderTimeline";
 
 const OrderDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -42,16 +43,7 @@ const OrderDetailPage = () => {
 
           <Card className="p-4">
             <h2 className="text-xl font-semibold mb-4">Timeline Status</h2>
-            <div className="space-y-4 relative border-l border-gray-200 ml-3">
-              {order.status_histories.map((history, idx) => (
-                <div key={history.id} className="mb-4 ml-6 relative">
-                  <div className="absolute w-3 h-3 bg-blue-500 rounded-full -left-[29px] top-1.5 border border-white"></div>
-                  <p className="font-semibold">{history.status}</p>
-                  <p className="text-xs text-gray-500">{new Date(history.created_at * 1000).toLocaleString("id-ID")}</p>
-                  {history.note && <p className="text-sm text-gray-700 mt-1">{history.note}</p>}
-                </div>
-              ))}
-            </div>
+            <OrderTimeline histories={order.status_histories} />
           </Card>
         </div>
 

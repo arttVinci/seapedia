@@ -18,7 +18,7 @@
 | 2 Toko & Produk                   | belum mulai   | -                           |
 | 3 Dompet, Keranjang, Checkout     | dalam progres | T3-01, T3-02, T3-03 selesai |
 | 4 Diskon, Proses Pesanan, Laporan | belum mulai   | -                           |
-| 5 Pengiriman & Pengemudi          | belum mulai   | -                           |
+| 5 Pengiriman & Pengemudi          | dalam progres | T5-01..T5-05 selesai      |
 | 6 Admin, Keterlambatan, Simulasi  | belum mulai   | -                           |
 | 7 Keamanan & Dokumentasi          | belum mulai   | -                           |
 
@@ -81,12 +81,12 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 
 ## Tingkat 5: Pengiriman & Pengemudi
 
-- [ ] T5-01 Daftar & detail job pengemudi (Backend)
+- [x] T5-01 Daftar & detail job pengemudi (Backend) -- branch: feature/driver-jobs, MR: https://github.com/arttVinci/seapedia/pull/new/feature/driver-jobs
 - [x] T5-02 Ambil pekerjaan (modul kritis: update atomik) (Backend) -- branch: feature/driver-take-job, MR: pending
-- [ ] T5-03 Selesaikan pekerjaan + earning (Backend)
-- [ ] T5-04 Dashboard pengemudi (Backend)
+- [x] T5-03 Selesaikan pekerjaan + earning (Backend) -- branch: feature/driver-complete-dashboard
+- [x] T5-04 Dashboard pengemudi (Backend) -- branch: feature/driver-complete-dashboard
 - [x] T5-05 UI pengemudi: job, ambil, selesai, dashboard (Frontend) -- branch: feature/driver-ui
-- [ ] T5-06 UI pelacakan pengiriman (buyer & seller) (Frontend)
+- [x] T5-06 UI pelacakan pengiriman (buyer & seller) (Frontend) -- branch: feature/delivery-tracking-ui
 - [ ] T5-07 Review tingkat 5 (QA)
 
 ## Tingkat 6: Pemantauan Admin, Keterlambatan, Simulasi Waktu
