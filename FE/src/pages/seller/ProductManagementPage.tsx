@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { useSellerProducts } from '../../hooks/useSellerProducts';
-import { useCreateProduct } from '../../hooks/useCreateProduct';
-import { useUpdateProduct } from '../../hooks/useUpdateProduct';
-import { useDeleteProduct } from '../../hooks/useDeleteProduct';
+import { useSellerProducts } from '../../hooks/queries/products/useSellerProducts';
+import { useCreateProduct } from '../../hooks/mutations/products/useCreateProduct';
+import { useUpdateProduct } from '../../hooks/mutations/products/useUpdateProduct';
+import { useDeleteProduct } from '../../hooks/mutations/products/useDeleteProduct';
 import { Card, CardContent } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
@@ -14,7 +13,6 @@ interface ProductFormData {
   description: string;
   price: string;
   stock: string;
-  category: string;
   image_url: string;
 }
 
@@ -24,27 +22,24 @@ function emptyForm(): ProductFormData {
     description: '',
     price: '',
     stock: '',
-    category: '',
     image_url: '',
   };
 }
 
 export function ProductManagementPage() {
-  const { user } = useAuth();
-  const sellerId = Number(user?.id || 0);
-
+  
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const limit = 8;
 
-  const { data, isLoading, isError, error } = useSellerProducts(sellerId, page, limit, search || undefined);
-  const createMutation = useCreateProduct(sellerId);
-  const updateMutation = useUpdateProduct(sellerId);
-  const deleteMutation = useDeleteProduct(sellerId);
+  const { data, isLoading, isError, error } = useSellerProducts({ page, size: limit, title: search || undefined });
+  const createMutation = useCreateProduct();
+  const updateMutation = useUpdateProduct();
+  const deleteMutation = useDeleteProduct();
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingProductId, setEditingProductId] = useState<number | null>(null);
+  const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [form, setForm] = useState<ProductFormData>(emptyForm());
   const [formError, setFormError] = useState('');
 
@@ -64,7 +59,6 @@ export function ProductManagementPage() {
       description: product.description || '',
       price: String(product.price),
       stock: String(product.stock),
-      category: product.category || '',
       image_url: product.image_url || '',
     });
     setFormError('');
@@ -109,7 +103,6 @@ export function ProductManagementPage() {
           description: form.description,
           price,
           stock,
-          category: form.category,
           image_url: form.image_url,
         };
         await updateMutation.mutateAsync({ id: editingProductId, payload });
@@ -119,7 +112,6 @@ export function ProductManagementPage() {
           description: form.description,
           price,
           stock,
-          category: form.category,
           image_url: form.image_url,
         };
         await createMutation.mutateAsync(payload);
@@ -130,7 +122,7 @@ export function ProductManagementPage() {
     }
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!window.confirm('Apakah Anda yakin ingin menghapus produk ini?')) return;
     try {
       await deleteMutation.mutateAsync(id);
@@ -202,9 +194,6 @@ export function ProductManagementPage() {
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Stok
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-                    Kategori
-                  </th>
                   <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
                     Aksi
                   </th>
@@ -232,7 +221,6 @@ export function ProductManagementPage() {
                       Rp{product.price.toLocaleString('id-ID')}
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-900">{product.stock}</td>
-                    <td className="px-4 py-3 text-sm text-gray-500">{product.category}</td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex justify-end gap-2">
                         <Button size="sm" variant="outline" onClick={() => openEdit(product)}>
@@ -341,15 +329,6 @@ export function ProductManagementPage() {
                     required
                   />
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Kategori</label>
-                <Input
-                  name="category"
-                  value={form.category}
-                  onChange={handleFormChange}
-                  placeholder="Contoh: Ikan Laut"
-                />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">URL Gambar</label>

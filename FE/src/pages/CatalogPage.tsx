@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useProducts } from "../hooks/useProducts";
+import { useProducts } from "../hooks/queries/products/useProducts";
 import { Button, Input, Card, CardContent, CardFooter, CardTitle, CardDescription } from "../components/ui";
 import { Search } from "lucide-react";
 
@@ -8,13 +8,11 @@ export function CatalogPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const perPage = 8;
-  const { data, isLoading } = useProducts(page, perPage);
+  const { data, isLoading } = useProducts({ page, size: perPage, title: search });
 
   const totalPages = data ? Math.ceil(data.total / perPage) : 1;
 
-  const filteredProducts = data?.data.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase())
-  ) ?? [];
+  const filteredProducts = data?.data ?? [];
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -57,7 +55,6 @@ export function CatalogPage() {
                   />
                 </div>
                 <CardContent className="flex-1 p-4">
-                  <p className="text-xs text-gray-500 mb-1">{product.category}</p>
                   <CardTitle className="text-lg">{product.name}</CardTitle>
                   <CardDescription className="line-clamp-2 mt-2">{product.description}</CardDescription>
                 </CardContent>

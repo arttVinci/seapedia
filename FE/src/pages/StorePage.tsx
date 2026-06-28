@@ -1,9 +1,9 @@
 import { useParams } from "react-router-dom";
-import { usePublicStore } from "../hooks/usePublicStore";
-import { useStoreProducts } from "../hooks/useStoreProducts";
+import { usePublicStore } from "../hooks/queries/stores/usePublicStore";
+import { useStoreProducts } from "../hooks/queries/products/useStoreProducts";
 import { Card, CardContent } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
-import { Store, MapPin, Package } from "lucide-react";
+import { Store as StoreIcon, MapPin, Package } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export function StorePage() {
@@ -43,7 +43,7 @@ export function StorePage() {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 md:p-8 mb-8">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
           <div className="h-24 w-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
-            <Store size={40} />
+            <StoreIcon size={40} />
           </div>
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-3xl font-bold text-gray-900">{store.name}</h1>
@@ -95,7 +95,6 @@ export function StorePage() {
                       {product.name}
                     </Link>
                   </h3>
-                  <p className="text-xs text-gray-500">{product.category}</p>
                   <div className="flex-1" />
                   <p className="text-base font-semibold text-gray-900">
                     Rp {product.price.toLocaleString("id-ID")}

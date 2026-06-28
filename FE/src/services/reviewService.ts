@@ -2,7 +2,7 @@ import type { Review, CreateReviewPayload } from "../@types/models";
 
 const MOCK_REVIEWS: Review[] = Array.from({ length: 15 }).map((_, i) => ({
   id: i + 1,
-  product_id: (i % 6) + 1,
+  product_id: String((i % 6) + 1),
   user_id: (i % 5) + 1,
   rating: (i % 3) + 3, // 3, 4, 5
   comment: `Ulasan bagus ${i + 1}! Produknya segar dan pengiriman cepat.`,
@@ -14,7 +14,7 @@ let nextReviewId = 16;
 
 export const reviewService = {
   getReviews: async (
-    productId: number,
+    productId: string,
     page = 1,
     limit = 5
   ): Promise<{ data: Review[]; total: number }> => {
@@ -34,7 +34,7 @@ export const reviewService = {
     await new Promise((resolve) => setTimeout(resolve, 500));
     const newReview: Review = {
       id: nextReviewId++,
-      product_id: payload.product_id,
+      product_id: String(payload.product_id),
       user_id: 1, // mock user
       rating: payload.rating,
       comment: payload.comment,
