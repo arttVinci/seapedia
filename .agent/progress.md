@@ -63,7 +63,7 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 - [x] T3-09 Order history & detail pembeli (Backend) -- branch: feature/buyer-checkout
 - [ ] T3-10 UI dompet & alamat (Frontend)
 - [ ] T3-11 UI keranjang (Frontend)
-- [ ] T3-12 UI checkout + order history (Frontend)
+- [x] T3-12 UI checkout + order history (Frontend) -- branch: feature/buyer-checkout-ui, MR: https://github.com/arttVinci/seapedia/pull/new/feature/buyer-checkout-ui
 - [ ] T3-13 Review tingkat 3 (QA)
 
 ## Tingkat 4: Diskon, Pemrosesan Pesanan Penjual, Laporan
