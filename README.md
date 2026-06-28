@@ -67,7 +67,7 @@ npm run dev
 - **Autentikasi Multi-Role**: Buyer, Seller, Driver, Admin
 - **Manajemen Toko & Produk**: Seller CRUD produk
 - **Dompet & Alamat**: Top-up wallet, multi-address
-- **Keranjang Single-Store**: Cart enforcement satu toko
+- **Keranjang Single-Store**: Satu keranjang hanya dapat berisi produk dari satu toko. Jika Buyer mencoba menambahkan produk dari toko berbeda, sistem menolak dengan error 409 dan menampilkan pesan konflik di UI. Buyer harus mengosongkan keranjang terlebih dahulu sebelum berpindah toko. Aturan ini ditegakkan di backend (`cart_usecase.go`) dan ditampilkan di halaman keranjang serta halaman detail produk.
 - **Checkout**: PPN 12%, SELECT FOR UPDATE, transaksi atomik
 - **Riwayat Pesanan**: Order tracking + status history
 - **Pengiriman**: Driver delivery workflow
