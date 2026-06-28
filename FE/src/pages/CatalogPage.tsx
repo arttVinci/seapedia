@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useProducts } from "../hooks/queries/products/useProducts";
-import { useAuth } from "../contexts/AuthContext";
 import { Store } from "lucide-react";
 
 export function CatalogPage() {
@@ -10,7 +9,6 @@ export function CatalogPage() {
   const [sort, setSort] = useState("newest");
   const perPage = 8;
   const { data, isLoading } = useProducts({ page, size: perPage, title: search });
-  const { token } = useAuth();
 
   const totalPages = data ? Math.ceil(data.total / perPage) : 1;
   const filteredProducts = data?.data ?? [];
