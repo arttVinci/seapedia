@@ -13,6 +13,8 @@ import { RoleSelectionPage } from './pages/RoleSelectionPage';
 import { StorePage } from './pages/StorePage';
 import { DashboardPage } from './pages/DashboardPage';
 import { BuyerDashboardPage } from './pages/BuyerDashboardPage';
+import WalletPage from './pages/buyer/WalletPage';
+import AddressPage from './pages/buyer/AddressPage';
 import { SellerDashboardPage } from './pages/SellerDashboardPage';
 import { ProductManagementPage } from './pages/seller/ProductManagementPage';
 import { StoreManagementPage } from './pages/seller/StoreManagementPage';
@@ -41,6 +43,8 @@ function App() {
           <Route element={<DashboardShell />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/buyer" element={<BuyerDashboardPage />} />
+            <Route path="/buyer/wallet" element={<WalletPage />} />
+            <Route path="/buyer/addresses" element={<AddressPage />} />
             <Route path="/seller" element={<SellerDashboardPage />} />
             <Route path="/seller/products" element={<ProductManagementPage />} />
             <Route path="/seller/store" element={<StoreManagementPage />} />
