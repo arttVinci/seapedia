@@ -19,6 +19,7 @@ type RouteConfig struct {
 	CartController              *controller.CartController
 	CheckoutController          *controller.CheckoutController
 	OrderController             *controller.OrderController
+	SellerOrderController       *controller.SellerOrderController
 	RoleMiddleware              func(allowedRoles ...string) fiber.Handler
 }
 
@@ -76,6 +77,11 @@ func (c *RouteConfig) SetupSellerRoute() {
 	sellerGroup.Post("/products", c.ProductController.CreateProduct)
 	sellerGroup.Put("/products/:id", c.ProductController.UpdateProduct)
 	sellerGroup.Delete("/products/:id", c.ProductController.DeleteProduct)
+
+	// Orders
+	if c.SellerOrderController != nil {
+		sellerGroup.Get("/orders", c.SellerOrderController.ListSellerOrders)
+	}
 }
 func (c *RouteConfig) SetupBuyerRoute() {
 	buyerGroup := c.App.Group("/api/buyer", c.AuthMiddleware, c.RoleMiddleware("buyer"))

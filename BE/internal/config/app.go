@@ -47,6 +47,8 @@ func Bootstrap(config *BootstrapConfig) {
 	storeUseCase := usecase.NewStoreUseCase(config.DB, config.Log, config.Validate, storeRepository)
 	applicationReviewUseCase := usecase.NewApplicationReviewUseCase(config.DB, config.Log, config.Validate, applicationReviewRepository)
 	cartUseCase := usecase.NewCartUsecase(config.DB, config.Log, config.Validate, cartRepository, cartItemRepository, productRepository)
+	orderRepository := repository.NewOrderRepository(config.Log)
+	sellerOrderUseCase := usecase.NewSellerOrderUseCase(config.DB, config.Log, orderRepository, storeRepository)
 
 	// Setup Controller
 	userController := controller.NewUserController(userUseCase, config.Log)
@@ -54,6 +56,7 @@ func Bootstrap(config *BootstrapConfig) {
 	storeController := controller.NewStoreController(storeUseCase, config.Log)
 	applicationReviewController := controller.NewApplicationReviewController(applicationReviewUseCase, config.Log)
 	cartController := controller.NewCartController(config.Log, cartUseCase)
+	sellerOrderController := controller.NewSellerOrderController(config.Log, sellerOrderUseCase)
 
 	// Setup Middleware
 	authMiddleware := middleware.AuthMiddleware(config.Config, config.DB, revokedTokenRepository, config.Log)
@@ -67,6 +70,7 @@ func Bootstrap(config *BootstrapConfig) {
 		StoreController:             storeController,
 		ApplicationReviewController: applicationReviewController,
 		CartController:              cartController,
+		SellerOrderController:       sellerOrderController,
 		RoleMiddleware:              roleMiddleware,
 	}
 	routeConfig.Setup()
