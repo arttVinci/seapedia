@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCheckoutPreview } from "../../hooks/mutations/buyer/useCheckoutPreview";
 import { useCheckout } from "../../hooks/mutations/buyer/useCheckout";
@@ -97,7 +97,7 @@ const CheckoutPage = () => {
               <div className="flex gap-2">
                 <Input
                   value={voucherCode}
-                  onChange={(e) => setVoucherCode(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVoucherCode(e.target.value)}
                   placeholder="Kode Voucher"
                 />
                 <Button onClick={handleApplyDiscount} variant="secondary">
@@ -107,7 +107,7 @@ const CheckoutPage = () => {
               <div className="flex gap-2">
                 <Input
                   value={promoCode}
-                  onChange={(e) => setPromoCode(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPromoCode(e.target.value)}
                   placeholder="Kode Promo"
                 />
                 <Button onClick={handleApplyDiscount} variant="secondary">
