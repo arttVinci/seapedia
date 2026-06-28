@@ -59,6 +59,7 @@ func Bootstrap(config *BootstrapConfig) {
 	applicationReviewController := controller.NewApplicationReviewController(applicationReviewUseCase, config.Log)
 	cartController := controller.NewCartController(config.Log, cartUseCase)
 	voucherController := controller.NewVoucherController(voucherUseCase, config.Log)
+	promoController := controller.NewPromoController(promoUseCase, config.Log)
 
 	// Setup Middleware
 	authMiddleware := middleware.AuthMiddleware(config.Config, config.DB, revokedTokenRepository, config.Log)
@@ -73,6 +74,7 @@ func Bootstrap(config *BootstrapConfig) {
 		ApplicationReviewController: applicationReviewController,
 		CartController:              cartController,
 		VoucherController:           voucherController,
+		PromoController:             promoController,
 		RoleMiddleware:              roleMiddleware,
 	}
 	routeConfig.Setup()

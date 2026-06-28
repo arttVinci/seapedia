@@ -20,6 +20,7 @@ type RouteConfig struct {
 	CheckoutController          *controller.CheckoutController
 	OrderController             *controller.OrderController
 	VoucherController           *controller.VoucherController
+	PromoController             *controller.PromoController
 	RoleMiddleware              func(allowedRoles ...string) fiber.Handler
 }
 
@@ -115,4 +116,9 @@ func (c *RouteConfig) SetupAdminRoute() {
 	adminGroup.Get("/vouchers", c.VoucherController.List)
 	adminGroup.Post("/vouchers", c.VoucherController.Create)
 	adminGroup.Get("/vouchers/:id", c.VoucherController.Detail)
+
+	// Promos
+	adminGroup.Get("/promos", c.PromoController.List)
+	adminGroup.Post("/promos", c.PromoController.Create)
+	adminGroup.Get("/promos/:id", c.PromoController.Detail)
 }
