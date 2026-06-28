@@ -33,9 +33,34 @@ func (r *OrderRepository) FindByBuyerAndID(db *gorm.DB, buyerID string, orderID 
 	return &order, nil
 }
 
+func (r *OrderRepository) ListAvailableJobs(db *gorm.DB) ([]entity.Order, error) {
+	var orders []entity.Order
+	// Menunggu Pengiriman in SDD state machine
+	err := db.Joins("JOIN deliveries ON deliveries.order_id = orders.id").
+		Where("orders.status = ? AND deliveries.driver_id IS NULL", "Menunggu Pengiriman").
+		Order("orders.created_at asc").
+		Find(&orders).Error
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
+}
+
 func (r *OrderRepository) FindByStoreAndID(db *gorm.DB, storeID string, orderID string) (*entity.Order, error) {
 	var order entity.Order
 	err := db.Preload("Items").Preload("StatusHistories").Where("store_id = ? AND id = ?", storeID, orderID).Take(&order).Error
+	if err != nil {
+		return nil, err
+	}
+	return &order, nil
+}
+
+func (r *OrderRepository) FindJobByID(db *gorm.DB, orderID string) (*entity.Order, error) {
+	var order entity.Order
+	err := db.Preload("Items").Preload("StatusHistories").
+		Joins("JOIN deliveries ON deliveries.order_id = orders.id").
+		Where("orders.id = ? AND deliveries.driver_id IS NULL", orderID).
+		Take(&order).Error
 	if err != nil {
 		return nil, err
 	}
