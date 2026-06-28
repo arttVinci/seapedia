@@ -127,7 +127,26 @@ func (c *RouteConfig) SetupBuyerRoute() {
 	}
 }
 func (c *RouteConfig) SetupDriverRoute() {
-	c.App.Group("/api/driver", c.AuthMiddleware, c.RoleMiddleware("driver"))
+	driverGroup := c.App.Group("/api/driver", c.AuthMiddleware, c.RoleMiddleware("driver"))
+
+	// Jobs
+	driverGroup.Get("/jobs", func(ctx *fiber.Ctx) error {
+		return ctx.JSON(fiber.Map{"message": "Driver jobs endpoint (T5-01)"})
+	})
+	driverGroup.Get("/jobs/:id", func(ctx *fiber.Ctx) error {
+		return ctx.JSON(fiber.Map{"message": "Driver job detail endpoint (T5-01)"})
+	})
+	driverGroup.Post("/jobs/:id/_take", func(ctx *fiber.Ctx) error {
+		return ctx.JSON(fiber.Map{"message": "Take job endpoint (T5-02)"})
+	})
+	driverGroup.Post("/jobs/:id/_complete", func(ctx *fiber.Ctx) error {
+		return ctx.JSON(fiber.Map{"message": "Complete job endpoint (T5-03)"})
+	})
+
+	// Dashboard
+	driverGroup.Get("/dashboard", func(ctx *fiber.Ctx) error {
+		return ctx.JSON(fiber.Map{"message": "Driver dashboard endpoint (T5-04)"})
+	})
 }
 func (c *RouteConfig) SetupAdminRoute() {
 	adminGroup := c.App.Group("/api/admin", c.AuthMiddleware, c.RoleMiddleware("admin"))

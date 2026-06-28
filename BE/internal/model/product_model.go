@@ -40,10 +40,10 @@ type CreateProductRequest struct {
 }
 
 type UpdateProductRequest struct {
-	Name        string `json:"name" validate:"required,max=100"`
-	Description string `json:"description" validate:"max=2000"`
-	Price       int64  `json:"price" validate:"required,min=1"`
-	Stock       int    `json:"stock" validate:"required,min=0"`
+	Name        string `json:"name" validate:"omitempty,max=100"`
+	Description string `json:"description" validate:"omitempty,max=2000"`
+	Price       int64  `json:"price" validate:"omitempty,min=1"`
+	Stock       int    `json:"stock" validate:"omitempty,min=0"`
 	ImageURL    string `json:"image_url" validate:"omitempty,url"`
 }
 

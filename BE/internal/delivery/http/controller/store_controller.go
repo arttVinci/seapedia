@@ -38,7 +38,7 @@ func (c *StoreController) GetMyStore(ctx *fiber.Ctx) error {
 }
 
 func (c *StoreController) CreateStore(ctx *fiber.Ctx) error {
-	userID := ctx.Locals("user").(string)
+	userID := middleware.GetUser(ctx).ID
 	request := new(model.CreateStoreRequest)
 	if err := ctx.BodyParser(request); err != nil {
 		c.Log.Warnf("Failed to parse request body : %+v", err)
@@ -53,7 +53,7 @@ func (c *StoreController) CreateStore(ctx *fiber.Ctx) error {
 }
 
 func (c *StoreController) UpdateStore(ctx *fiber.Ctx) error {
-	userID := ctx.Locals("user").(string)
+	userID := middleware.GetUser(ctx).ID
 	request := new(model.UpdateStoreRequest)
 	if err := ctx.BodyParser(request); err != nil {
 		c.Log.Warnf("Failed to parse request body : %+v", err)
