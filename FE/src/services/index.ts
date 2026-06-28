@@ -1,5 +1,7 @@
 export { default as authService } from './authService';
 export { default as reviewService } from './reviewService';
+export { default as checkoutService } from './checkoutService';
+export { default as orderService } from './orderService';
 export { default as cartService } from './cartService';
 export { default as walletService } from './walletService';
 export { default as addressService } from './addressService';

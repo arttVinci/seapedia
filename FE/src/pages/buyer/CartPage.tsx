@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useCart } from '../../hooks/queries/buyer/useCart';
 import { useUpdateCartItem } from '../../hooks/mutations/buyer/useUpdateCartItem';
 import { useDeleteCartItem } from '../../hooks/mutations/buyer/useDeleteCartItem';
@@ -42,7 +43,6 @@ export const CartPage: React.FC = () => {
   };
 
   const handleClearCart = () => {
-    // Kosongkan keranjang dengan menghapus semua item satu per satu
     if (cart?.items) {
       Promise.all(cart.items.map(item => deleteCartItemMutation.mutateAsync(item.id)))
         .then(() => setConflictError(null))
@@ -94,9 +94,9 @@ export const CartPage: React.FC = () => {
                 {/* Image Placeholder */}
                 <div className="w-24 h-24 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
                   {item.product.image_url ? (
-                    <img 
-                      src={item.product.image_url} 
-                      alt={item.product.name} 
+                    <img
+                      src={item.product.image_url}
+                      alt={item.product.name}
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -160,9 +160,11 @@ export const CartPage: React.FC = () => {
               <p className="text-gray-600">Total Harga ({cart.total_items} barang)</p>
               <p className="text-2xl font-bold text-gray-900">{formatCurrency(cart.total_price)}</p>
             </div>
-            <Button size="lg" className="w-full sm:w-auto">
-              Lanjutkan ke Pembayaran
-            </Button>
+            <Link to="/buyer/checkout">
+              <Button size="lg" className="w-full sm:w-auto">
+                Lanjutkan ke Pembayaran
+              </Button>
+            </Link>
           </div>
         </div>
       )}

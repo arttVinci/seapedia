@@ -54,6 +54,26 @@ export function BuyerDashboardPage() {
             </CardContent>
           </Card>
         </Link>
+        <Link to="/buyer/checkout" className="block">
+          <Card className="hover:bg-gray-50 transition-colors">
+            <CardHeader>
+              <CardTitle className="text-lg">Checkout</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">Selesaikan pesanan Anda.</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link to="/buyer/orders" className="block">
+          <Card className="hover:bg-gray-50 transition-colors">
+            <CardHeader>
+              <CardTitle className="text-lg">Riwayat Pesanan</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">Lihat status pesanan Anda.</p>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
     </div>
   );

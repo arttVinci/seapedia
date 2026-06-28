@@ -13,6 +13,10 @@ import { RoleSelectionPage } from './pages/RoleSelectionPage';
 import { StorePage } from './pages/StorePage';
 import { DashboardPage } from './pages/DashboardPage';
 import { BuyerDashboardPage } from './pages/BuyerDashboardPage';
+import CheckoutPage from './pages/buyer/CheckoutPage';
+import OrderHistoryPage from './pages/buyer/OrderHistoryPage';
+import OrderDetailPage from './pages/buyer/OrderDetailPage';
+import CartPage from './pages/buyer/CartPage';
 import WalletPage from './pages/buyer/WalletPage';
 import AddressPage from './pages/buyer/AddressPage';
 import { SellerDashboardPage } from './pages/SellerDashboardPage';
@@ -21,7 +25,6 @@ import { StoreManagementPage } from './pages/seller/StoreManagementPage';
 import { DriverDashboardPage } from './pages/DriverDashboardPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { NotFoundPage } from './pages/NotFoundPage';
-import { CartPage } from './pages/buyer/CartPage';
 
 function App() {
   return (
@@ -44,7 +47,10 @@ function App() {
           <Route element={<DashboardShell />}>
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/buyer" element={<BuyerDashboardPage />} />
-<Route path="/buyer/cart" element={<CartPage />} />
+            <Route path="/buyer/cart" element={<CartPage />} />
+            <Route path="/buyer/checkout" element={<CheckoutPage />} />
+            <Route path="/buyer/orders" element={<OrderHistoryPage />} />
+            <Route path="/buyer/orders/:id" element={<OrderDetailPage />} />
             <Route path="/buyer/wallet" element={<WalletPage />} />
             <Route path="/buyer/addresses" element={<AddressPage />} />
             <Route path="/seller" element={<SellerDashboardPage />} />
