@@ -4,25 +4,25 @@ import { cn } from "../../lib/utils";
 import { Loader2 } from "lucide-react";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-x-2 text-sm font-medium rounded-lg focus:outline-none disabled:opacity-50 disabled:pointer-events-none cursor-pointer",
   {
     variants: {
       variant: {
-        primary: "bg-blue-600 text-white hover:bg-blue-700 shadow-sm",
-        secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200",
-        outline: "border border-gray-300 bg-transparent hover:bg-gray-100",
-        ghost: "hover:bg-gray-100 hover:text-gray-900",
+        primary: "bg-blue-600 text-white border border-transparent hover:bg-blue-700",
+        secondary: "text-blue-600 hover:text-blue-800 font-semibold",
+        outline: "border border-gray-200 text-gray-800 hover:bg-gray-100",
+        ghost: "text-gray-800 hover:bg-gray-100",
         danger: "bg-red-600 text-white hover:bg-red-700 shadow-sm",
       },
       size: {
-        sm: "h-8 px-3 text-xs",
-        md: "h-10 px-4 py-2",
-        lg: "h-12 px-8 text-base",
+        default: "py-2.5 px-4",
+        sm: "py-2 px-3 text-xs",
+        lg: "py-3 px-5",
       },
     },
     defaultVariants: {
       variant: "primary",
-      size: "md",
+      size: "default",
     },
   }
 );
