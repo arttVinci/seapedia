@@ -32,7 +32,7 @@ export const CartPage: React.FC = () => {
     );
   };
 
-  const handleDeleteItem = (itemId: number) => {
+  const handleDeleteItem = (itemId: string) => {
     if (window.confirm('Hapus produk ini dari keranjang?')) {
       deleteCartItemMutation.mutate(itemId, {
         onError: (err: AxiosError<ApiErrorResponse>) => {

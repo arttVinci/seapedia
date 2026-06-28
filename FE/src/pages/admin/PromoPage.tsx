@@ -10,7 +10,7 @@ export default function PromoPage() {
   const [form, setForm] = useState<CreatePromoPayload>({
     code: '',
     discount_amount: 0,
-    expired_at: new Date().toISOString().slice(0, 16),
+    expired_at: Math.floor(Date.now() / 1000),
   });
 
   const handleSubmit = (e: React.FormEvent) => {
