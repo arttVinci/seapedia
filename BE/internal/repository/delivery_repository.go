@@ -37,7 +37,7 @@ func (r *DeliveryRepository) TakeAtomic(tx *gorm.DB, orderID, driverID string) e
 	now := time.Now().UnixMilli()
 	result := tx.Exec(
 		`UPDATE deliveries d
-		 SET d.driver_id = ?, d.status = 'in_progress', d.taken_at = ?
+		 SET d.driver_id = ?, d.status = 'Sedang Dikirim', d.taken_at = ?
 		 WHERE d.order_id = ? AND d.driver_id IS NULL
 		 AND EXISTS (SELECT 1 FROM orders o WHERE o.id = d.order_id AND o.status = 'Menunggu Pengiriman')`,
 		driverID, now, orderID,
