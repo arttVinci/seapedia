@@ -38,7 +38,8 @@ export function Sidebar({ role }: SidebarProps) {
       case "driver":
         return [
           ...baseLinks,
-          { name: "Deliveries", href: "/dashboard/deliveries", icon: Truck },
+          { name: "Cari Pekerjaan", href: "/driver/jobs", icon: Truck },
+          { name: "Pekerjaan Aktif", href: "/driver/active-job", icon: Package },
         ];
       case "admin":
         return [

@@ -70,6 +70,7 @@ func Bootstrap(config *BootstrapConfig) {
 	sellerOrderUseCase := usecase.NewSellerOrderUseCase(config.DB, config.Log, orderRepository, storeRepository, orderStatusHistoryRepository)
 	buyerReportUseCase := usecase.NewBuyerReportUseCase(config.DB, config.Log, orderRepository)
 	sellerReportUseCase := usecase.NewSellerReportUseCase(config.DB, config.Log, orderRepository, storeRepository)
+	driverUseCase := usecase.NewDriverUseCase(config.DB, config.Log, orderRepository, deliveryRepository, orderStatusHistoryRepository, walletRepository, walletTransactionRepository, storeRepository)
 
 	// Setup Controller
 	userController := controller.NewUserController(userUseCase, config.Log)
@@ -86,6 +87,7 @@ func Bootstrap(config *BootstrapConfig) {
 	sellerOrderController := controller.NewSellerOrderController(config.Log, sellerOrderUseCase)
 	buyerReportController := controller.NewBuyerReportController(config.Log, buyerReportUseCase)
 	sellerReportController := controller.NewSellerReportController(config.Log, sellerReportUseCase)
+	driverController := controller.NewDriverController(config.Log, driverUseCase)
 
 	// Setup Middleware
 	authMiddleware := middleware.AuthMiddleware(config.Config, config.DB, revokedTokenRepository, config.Log)
@@ -108,6 +110,7 @@ func Bootstrap(config *BootstrapConfig) {
 		SellerOrderController:       sellerOrderController,
 		BuyerReportController:       buyerReportController,
 		SellerReportController:      sellerReportController,
+		DriverController:            driverController,
 		RoleMiddleware:              roleMiddleware,
 	}
 	routeConfig.Setup()
