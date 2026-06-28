@@ -21,6 +21,9 @@ type RouteConfig struct {
 	OrderController             *controller.OrderController
 	VoucherController           *controller.VoucherController
 	PromoController             *controller.PromoController
+	SellerOrderController       *controller.SellerOrderController
+	BuyerReportController       *controller.BuyerReportController
+	SellerReportController      *controller.SellerReportController
 	RoleMiddleware              func(allowedRoles ...string) fiber.Handler
 }
 
@@ -78,6 +81,17 @@ func (c *RouteConfig) SetupSellerRoute() {
 	sellerGroup.Post("/products", c.ProductController.CreateProduct)
 	sellerGroup.Put("/products/:id", c.ProductController.UpdateProduct)
 	sellerGroup.Delete("/products/:id", c.ProductController.DeleteProduct)
+
+	// Orders
+	if c.SellerOrderController != nil {
+		sellerGroup.Get("/orders", c.SellerOrderController.ListSellerOrders)
+		sellerGroup.Post("/orders/:id/_process", c.SellerOrderController.ProcessOrder)
+	}
+
+	// Reports
+	if c.SellerReportController != nil {
+		sellerGroup.Get("/reports/_income", c.SellerReportController.GetIncome)
+	}
 }
 func (c *RouteConfig) SetupBuyerRoute() {
 	buyerGroup := c.App.Group("/api/buyer", c.AuthMiddleware, c.RoleMiddleware("buyer"))
@@ -105,6 +119,11 @@ func (c *RouteConfig) SetupBuyerRoute() {
 	// Orders
 	buyerGroup.Get("/orders", c.OrderController.ListBuyerOrders)
 	buyerGroup.Get("/orders/:id", c.OrderController.GetBuyerOrderDetail)
+
+	// Reports
+	if c.BuyerReportController != nil {
+		buyerGroup.Get("/reports/_expense", c.BuyerReportController.GetExpense)
+	}
 }
 func (c *RouteConfig) SetupDriverRoute() {
 	c.App.Group("/api/driver", c.AuthMiddleware, c.RoleMiddleware("driver"))

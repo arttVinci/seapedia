@@ -67,6 +67,9 @@ func Bootstrap(config *BootstrapConfig) {
 	orderUseCase := usecase.NewOrderUseCase(config.DB, config.Log, orderRepository)
 	voucherUseCase := usecase.NewVoucherUseCase(config.DB, config.Log, config.Validate, voucherRepository)
 	promoUseCase := usecase.NewPromoUseCase(config.DB, config.Log, config.Validate, promoRepository)
+	sellerOrderUseCase := usecase.NewSellerOrderUseCase(config.DB, config.Log, orderRepository, storeRepository, orderStatusHistoryRepository)
+	buyerReportUseCase := usecase.NewBuyerReportUseCase(config.DB, config.Log, orderRepository)
+	sellerReportUseCase := usecase.NewSellerReportUseCase(config.DB, config.Log, orderRepository, storeRepository)
 
 	// Setup Controller
 	userController := controller.NewUserController(userUseCase, config.Log)
@@ -80,6 +83,9 @@ func Bootstrap(config *BootstrapConfig) {
 	orderController := controller.NewOrderController(config.Log, orderUseCase)
 	voucherController := controller.NewVoucherController(voucherUseCase, config.Log)
 	promoController := controller.NewPromoController(promoUseCase, config.Log)
+	sellerOrderController := controller.NewSellerOrderController(config.Log, sellerOrderUseCase)
+	buyerReportController := controller.NewBuyerReportController(config.Log, buyerReportUseCase)
+	sellerReportController := controller.NewSellerReportController(config.Log, sellerReportUseCase)
 
 	// Setup Middleware
 	authMiddleware := middleware.AuthMiddleware(config.Config, config.DB, revokedTokenRepository, config.Log)
@@ -99,6 +105,9 @@ func Bootstrap(config *BootstrapConfig) {
 		OrderController:             orderController,
 		VoucherController:           voucherController,
 		PromoController:             promoController,
+		SellerOrderController:       sellerOrderController,
+		BuyerReportController:       buyerReportController,
+		SellerReportController:      sellerReportController,
 		RoleMiddleware:              roleMiddleware,
 	}
 	routeConfig.Setup()
