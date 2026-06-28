@@ -99,10 +99,10 @@ class StoreService {
     return updated;
   }
 
-  // For T2-05: public store access
+  // For public store access (param id is actually user_id mapped from product.seller.id)
   async getPublicStore(id: string): Promise<Store> {
     await new Promise((resolve) => setTimeout(resolve, 300));
-    const store = this.stores.find((s) => s.id === id);
+    const store = this.stores.find((s) => s.user_id === id);
     if (!store) {
       throw new Error("Toko tidak ditemukan.");
     }

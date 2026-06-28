@@ -10,6 +10,7 @@ import { ReviewsPage } from './pages/ReviewsPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { RoleSelectionPage } from './pages/RoleSelectionPage';
+import { StorePage } from './pages/StorePage';
 import { DashboardPage } from './pages/DashboardPage';
 import { BuyerDashboardPage } from './pages/BuyerDashboardPage';
 import { SellerDashboardPage } from './pages/SellerDashboardPage';
@@ -29,6 +30,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/catalog" element={<CatalogPage />} />
+          <Route path="/stores/:id" element={<StorePage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
           <Route path="/products/:id/reviews" element={<ReviewsPage />} />
           <Route path="/select-role" element={<RoleSelectionPage />} />
