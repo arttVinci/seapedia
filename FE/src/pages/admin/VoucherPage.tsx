@@ -10,7 +10,7 @@ export default function VoucherPage() {
   const [form, setForm] = useState<CreateVoucherPayload>({
     code: '',
     discount_amount: 0,
-    expired_at: new Date().toISOString().slice(0, 16),
+    expired_at: Math.floor(Date.now() / 1000),
     remaining_usage: 100,
   });
 
@@ -40,7 +40,7 @@ export default function VoucherPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Expired At (UTC)</label>
-            <input type="datetime-local" required value={form.expired_at} onChange={e => setForm({...form, expired_at: e.target.value})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border" />
+            <input type="datetime-local" required value={new Date(form.expired_at * 1000).toISOString().slice(0, 16)} onChange={e => setForm({...form, expired_at: Math.floor(new Date(e.target.value).getTime() / 1000)})} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border" />
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">Kuota</label>
