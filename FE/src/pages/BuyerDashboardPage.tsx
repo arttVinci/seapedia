@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui';
 
 export function BuyerDashboardPage() {
@@ -21,6 +22,18 @@ export function BuyerDashboardPage() {
             <div className="text-2xl font-bold">5</div>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="flex gap-4 mt-8">
+        <Link to="/buyer/cart" className="text-blue-600 hover:underline">
+          Lihat Keranjang
+        </Link>
+        <Link to="/buyer/checkout" className="text-blue-600 hover:underline">
+          Checkout
+        </Link>
+        <Link to="/buyer/orders" className="text-blue-600 hover:underline">
+          Riwayat Pesanan
+        </Link>
       </div>
     </div>
   );
