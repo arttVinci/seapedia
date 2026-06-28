@@ -13,6 +13,7 @@ import (
 	"github.com/traa/seapedia/server/internal/model/converter"
 	"github.com/traa/seapedia/server/internal/repository"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type CheckoutUseCase struct {
@@ -27,6 +28,8 @@ type CheckoutUseCase struct {
 	OrderItemRepository      *repository.OrderItemRepository
 	OrderStatusHistoryRepo   *repository.OrderStatusHistoryRepository
 	DeliveryRepository       *repository.DeliveryRepository
+	VoucherRepository        *repository.VoucherRepository
+	PromoRepository          *repository.PromoRepository
 }
 
 func NewCheckoutUseCase(
@@ -41,6 +44,8 @@ func NewCheckoutUseCase(
 	orderItemRepo *repository.OrderItemRepository,
 	orderStatusHistRepo *repository.OrderStatusHistoryRepository,
 	deliveryRepo *repository.DeliveryRepository,
+	voucherRepo *repository.VoucherRepository,
+	promoRepo *repository.PromoRepository,
 ) *CheckoutUseCase {
 	return &CheckoutUseCase{
 		DB:                       db,
@@ -54,6 +59,8 @@ func NewCheckoutUseCase(
 		OrderItemRepository:      orderItemRepo,
 		OrderStatusHistoryRepo:   orderStatusHistRepo,
 		DeliveryRepository:       deliveryRepo,
+		VoucherRepository:        voucherRepo,
+		PromoRepository:          promoRepo,
 	}
 }
 
@@ -177,6 +184,14 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 
 	if int64(wallet.Balance) < finalTotal {
 		return "", 0, fiber.NewError(fiber.StatusBadRequest, "Saldo tidak mencukupi")
+	}
+
+	// Update voucher
+	if voucher != nil {
+		voucher.RemainingUsage -= 1
+		if err := u.VoucherRepository.Update(tx, voucher); err != nil {
+			return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal memperbarui voucher")
+		}
 	}
 
 	// Update stock

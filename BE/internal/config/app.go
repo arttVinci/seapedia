@@ -32,6 +32,13 @@ func Bootstrap(config *BootstrapConfig) {
 	applicationReviewRepository := repository.NewApplicationReviewRepository(config.Log)
 	cartRepository := repository.NewCartRepository(config.Log)
 	cartItemRepository := repository.NewCartItemRepository(config.Log)
+	walletRepository := repository.NewWalletRepository(config.Log)
+	walletTransactionRepository := repository.NewWalletTransactionRepository(config.Log)
+	addressRepository := repository.NewAddressRepository(config.Log)
+	orderRepository := repository.NewOrderRepository(config.Log)
+	orderItemRepository := repository.NewOrderItemRepository(config.Log)
+	orderStatusHistoryRepository := repository.NewOrderStatusHistoryRepository(config.Log)
+	deliveryRepository := repository.NewDeliveryRepository(config.Log)
 	voucherRepository := repository.NewVoucherRepository(config.Log)
 	promoRepository := repository.NewPromoRepository(config.Log)
 
@@ -49,6 +56,15 @@ func Bootstrap(config *BootstrapConfig) {
 	storeUseCase := usecase.NewStoreUseCase(config.DB, config.Log, config.Validate, storeRepository)
 	applicationReviewUseCase := usecase.NewApplicationReviewUseCase(config.DB, config.Log, config.Validate, applicationReviewRepository)
 	cartUseCase := usecase.NewCartUsecase(config.DB, config.Log, config.Validate, cartRepository, cartItemRepository, productRepository)
+	walletUseCase := usecase.NewWalletUseCase(config.DB, config.Log, config.Validate, walletRepository, walletTransactionRepository)
+	addressUseCase := usecase.NewAddressUseCase(config.DB, config.Log, config.Validate, addressRepository)
+	checkoutUseCase := usecase.NewCheckoutUseCase(
+		config.DB, config.Log, config.Validate,
+		cartRepository, productRepository, walletRepository, walletTransactionRepository,
+		orderRepository, orderItemRepository, orderStatusHistoryRepository, deliveryRepository,
+		voucherRepository, promoRepository,
+	)
+	orderUseCase := usecase.NewOrderUseCase(config.DB, config.Log, orderRepository)
 	voucherUseCase := usecase.NewVoucherUseCase(config.DB, config.Log, config.Validate, voucherRepository)
 	promoUseCase := usecase.NewPromoUseCase(config.DB, config.Log, config.Validate, promoRepository)
 
@@ -58,6 +74,10 @@ func Bootstrap(config *BootstrapConfig) {
 	storeController := controller.NewStoreController(storeUseCase, config.Log)
 	applicationReviewController := controller.NewApplicationReviewController(applicationReviewUseCase, config.Log)
 	cartController := controller.NewCartController(config.Log, cartUseCase)
+	walletController := controller.NewWalletController(walletUseCase, config.Log)
+	addressController := controller.NewAddressController(addressUseCase, config.Log)
+	checkoutController := controller.NewCheckoutController(config.Log, checkoutUseCase)
+	orderController := controller.NewOrderController(config.Log, orderUseCase)
 	voucherController := controller.NewVoucherController(voucherUseCase, config.Log)
 	promoController := controller.NewPromoController(promoUseCase, config.Log)
 
@@ -73,6 +93,10 @@ func Bootstrap(config *BootstrapConfig) {
 		StoreController:             storeController,
 		ApplicationReviewController: applicationReviewController,
 		CartController:              cartController,
+		WalletController:            walletController,
+		AddressController:           addressController,
+		CheckoutController:          checkoutController,
+		OrderController:             orderController,
 		VoucherController:           voucherController,
 		PromoController:             promoController,
 		RoleMiddleware:              roleMiddleware,
