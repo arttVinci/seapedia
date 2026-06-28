@@ -53,9 +53,12 @@ function App() {
             <Route path="/buyer/orders/:id" element={<OrderDetailPage />} />
             <Route path="/buyer/wallet" element={<WalletPage />} />
             <Route path="/buyer/addresses" element={<AddressPage />} />
+            <Route path="/buyer/reports/expense" element={<BuyerExpensePage />} />
             <Route path="/seller" element={<SellerDashboardPage />} />
             <Route path="/seller/products" element={<ProductManagementPage />} />
             <Route path="/seller/store" element={<StoreManagementPage />} />
+            <Route path="/seller/orders" element={<SellerOrdersPage />} />
+            <Route path="/seller/reports/income" element={<SellerIncomePage />} />
             <Route path="/driver" element={<DriverDashboardPage />} />
             <Route path="/admin" element={<AdminDashboardPage />} />
           </Route>
