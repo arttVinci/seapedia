@@ -32,6 +32,29 @@ export function BuyerDashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-6">
+        <Link to="/buyer/wallet" className="block">
+          <Card className="hover:bg-gray-50 transition-colors">
+            <CardHeader>
+              <CardTitle className="text-lg">Dompet Saya</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">Cek saldo dan riwayat top up Anda.</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link to="/buyer/addresses" className="block">
+          <Card className="hover:bg-gray-50 transition-colors">
+            <CardHeader>
+              <CardTitle className="text-lg">Buku Alamat</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-gray-600">Kelola alamat pengiriman Anda.</p>
+            </CardContent>
+          </Card>
+        </Link>
+      </div>
     </div>
   );
 }
