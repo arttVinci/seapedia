@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useRegister } from "../hooks/mutations/auth/useRegister";
+import { useAuth } from "../contexts/AuthContext";
+import { authService } from "../services";
 import { Button, Input, Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui";
 
 export function RegisterPage() {
@@ -12,6 +14,7 @@ export function RegisterPage() {
   
   const registerMutation = useRegister();
   const navigate = useNavigate();
+  const { handleLoginSuccess, handleSelectRoleSuccess } = useAuth();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,8 +23,26 @@ export function RegisterPage() {
     registerMutation.mutate(
       { username, email, password, role },
       {
-        onSuccess: () => {
-          navigate("/select-role");
+        onSuccess: async () => {
+          try {
+            const authResp = await authService.login({ email, password });
+            handleLoginSuccess(authResp.token);
+
+            const rolesResp = await authService.getRoles();
+            const nonAdminRoles = rolesResp.roles.filter((r) => r !== "admin");
+
+            if (nonAdminRoles.length > 1) {
+              navigate("/select-role");
+            } else if (nonAdminRoles.length === 1) {
+              const selectResp = await authService.selectRole({ role: nonAdminRoles[0] as "buyer" | "seller" | "driver" });
+              handleSelectRoleSuccess(selectResp.token, selectResp.active_role);
+              navigate("/dashboard");
+            } else {
+              navigate("/select-role");
+            }
+          } catch {
+            setError("Login otomatis gagal. Silakan login manual.");
+          }
         },
         onError: () => {
           setError("Registrasi gagal. Silakan coba lagi.");
