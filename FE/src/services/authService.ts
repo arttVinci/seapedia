@@ -1,40 +1,60 @@
-import type { User, AuthResponse, LoginPayload, RegisterPayload } from "../@types/models";
+import type {
+  RegisterPayload,
+  LoginPayload,
+  SelectRolePayload,
+  User,
+  RoleResponse,
+  AuthResponse,
+  SelectRoleResponse,
+} from "@/@types/models";
+import type { ApiResponse } from "@/@types/base/api.types";
 
-const MOCK_USERS: User[] = [
-  { id: 1, email: "buyer@seapedia.com", name: "Buyer User", roles: ["buyer"] },
-  { id: 2, email: "seller@seapedia.com", name: "Seller User", roles: ["buyer", "seller"] },
-  { id: 3, email: "driver@seapedia.com", name: "Driver User", roles: ["buyer", "driver"] },
-  { id: 4, email: "admin@seapedia.com", name: "Admin User", roles: ["admin"] },
-  { id: 5, email: "multi@seapedia.com", name: "Multi User", roles: ["buyer", "seller", "driver"] },
-];
+import apiClient from "@/api/apiClient";
 
-export const authService = {
-  login: async (payload: LoginPayload): Promise<AuthResponse> => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const user = MOCK_USERS.find(u => u.email === payload.email);
-    
-    if (!user) {
-      throw new Error("Invalid credentials");
-    }
+class AuthService {
+  private readonly BASE_PATH = "/users";
 
-    return {
-      user,
-      token: "mock-jwt-token-123456",
-    };
-  },
-
-  register: async (payload: RegisterPayload): Promise<AuthResponse> => {
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const newUser: User = {
-      id: Math.floor(Math.random() * 1000) + 10,
-      email: payload.email,
-      name: payload.name,
-      roles: ["buyer"], 
-    };
-
-    return {
-      user: newUser,
-      token: "mock-jwt-token-789012",
-    };
+  async register(payload: RegisterPayload): Promise<AuthResponse> {
+    const response = await apiClient.post<ApiResponse<AuthResponse>>(
+      this.BASE_PATH,
+      payload
+    );
+    return response.data.data;
   }
-};
+
+  async login(payload: LoginPayload): Promise<AuthResponse> {
+    const response = await apiClient.post<ApiResponse<AuthResponse>>(
+      `${this.BASE_PATH}/_login`,
+      payload
+    );
+    return response.data.data;
+  }
+
+  async logout(): Promise<void> {
+    await apiClient.post(`${this.BASE_PATH}/_logout`);
+  }
+
+  async getCurrentUser(): Promise<User> {
+    const response = await apiClient.get<ApiResponse<User>>(
+      `${this.BASE_PATH}/_current`
+    );
+    return response.data.data;
+  }
+
+  async getRoles(): Promise<RoleResponse> {
+    const response = await apiClient.get<ApiResponse<RoleResponse>>(
+      `${this.BASE_PATH}/_roles`
+    );
+    return response.data.data;
+  }
+
+  async selectRole(payload: SelectRolePayload): Promise<SelectRoleResponse> {
+    const response = await apiClient.post<ApiResponse<SelectRoleResponse>>(
+      `${this.BASE_PATH}/_select-role`,
+      payload
+    );
+    return response.data.data;
+  }
+}
+
+export default new AuthService();

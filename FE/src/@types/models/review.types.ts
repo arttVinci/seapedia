@@ -1,15 +1,13 @@
 export interface Review {
-  id: number;
-  product_id: string;
-  user_id: number;
-  rating: number;
+  id: string;
+  reviewer_name: string;
+  rating: number; // 1-5
   comment: string;
-  user_name?: string;
-  created_at?: string;
+  created_at: string;
 }
 
 export interface CreateReviewPayload {
-  product_id: string;
-  rating: number;
+  reviewer_name: string;
+  rating: number; // 1-5
   comment: string;
 }

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useLogin } from "../hooks/useLogin";
+import { useLogin } from "../hooks/mutations/auth/useLogin";
 import { Button, Input, Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui";
 
 export function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   
@@ -16,17 +16,14 @@ export function LoginPage() {
     setError("");
 
     loginMutation.mutate(
-      { email, password },
+      { username, password },
       {
-        onSuccess: (data) => {
-          if (data.user.roles.length > 1) {
-            navigate("/select-role");
-          } else {
-            navigate(`/${data.user.roles[0]}`);
-          }
+        onSuccess: () => {
+          // Arahkan ke halaman select role setelah berhasil login
+          navigate("/select-role");
         },
         onError: () => {
-          setError("Login gagal. Periksa kembali email dan password Anda.");
+          setError("Login gagal. Periksa kembali username dan password Anda.");
         },
       }
     );
@@ -38,7 +35,7 @@ export function LoginPage() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center font-bold">Log in ke akun Anda</CardTitle>
           <CardDescription className="text-center">
-            Masukkan email Anda di bawah ini untuk masuk ke akun Anda
+            Masukkan username Anda di bawah ini untuk masuk ke akun Anda
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -50,12 +47,12 @@ export function LoginPage() {
             )}
             <div className="space-y-2">
               <Input
-                label="Email"
-                type="email"
-                placeholder="m@example.com"
+                label="Username"
+                type="text"
+                placeholder="johndoe"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -81,17 +78,6 @@ export function LoginPage() {
             <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
               Daftar sekarang
             </Link>
-          </div>
-          
-          {/* Demo Accounts Helper */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <p className="text-xs text-gray-500 mb-2 font-medium">Akun Demo:</p>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <button onClick={() => setEmail("buyer@seapedia.com")} className="text-left px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">buyer@seapedia.com</button>
-              <button onClick={() => setEmail("seller@seapedia.com")} className="text-left px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">seller@seapedia.com</button>
-              <button onClick={() => setEmail("driver@seapedia.com")} className="text-left px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">driver@seapedia.com</button>
-              <button onClick={() => setEmail("multi@seapedia.com")} className="text-left px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">multi@seapedia.com</button>
-            </div>
           </div>
         </CardContent>
       </Card>

@@ -1,19 +1,25 @@
 import { Outlet } from "react-router-dom";
 import { Sidebar } from "../ui";
 import { useAuth } from "../../contexts/AuthContext";
-import { useLogout } from "../../hooks/useAuthHooks";
+import { useLogout } from "../../hooks/mutations/auth/useLogout";
 import { useNavigate } from "react-router-dom";
 import { User, LogOut } from "lucide-react";
 import { Button } from "../ui";
 
 export function DashboardShell() {
   const { user, activeRole } = useAuth();
-  const logout = useLogout();
+  const logoutMutation = useLogout();
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();
-    navigate("/");
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        navigate("/");
+      },
+      onError: () => {
+        navigate("/"); // Force navigate even on error since client token is cleared
+      }
+    });
   };
 
   return (
@@ -36,13 +42,13 @@ export function DashboardShell() {
             )}
             <div className="flex items-center space-x-2">
               <span className="text-sm font-medium text-gray-700">
-                {user?.name || "User"}
+                {user?.username || "User"}
               </span>
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-gray-500">
                 <User size={18} />
               </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={handleLogout} className="text-gray-500">
+            <Button variant="ghost" size="sm" onClick={handleLogout} isLoading={logoutMutation.isPending} className="text-gray-500">
               <LogOut size={16} className="mr-1" />
               Logout
             </Button>
