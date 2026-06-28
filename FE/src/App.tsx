@@ -13,6 +13,7 @@ import { RoleSelectionPage } from './pages/RoleSelectionPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { BuyerDashboardPage } from './pages/BuyerDashboardPage';
 import { SellerDashboardPage } from './pages/SellerDashboardPage';
+import { ProductManagementPage } from './pages/seller/ProductManagementPage';
 import { StoreManagementPage } from './pages/seller/StoreManagementPage';
 import { DriverDashboardPage } from './pages/DriverDashboardPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
@@ -39,6 +40,7 @@ function App() {
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/buyer" element={<BuyerDashboardPage />} />
             <Route path="/seller" element={<SellerDashboardPage />} />
+            <Route path="/seller/products" element={<ProductManagementPage />} />
             <Route path="/seller/store" element={<StoreManagementPage />} />
             <Route path="/driver" element={<DriverDashboardPage />} />
             <Route path="/admin" element={<AdminDashboardPage />} />
