@@ -1,0 +1,22 @@
+CREATE TABLE orders (
+    id VARCHAR(36) NOT NULL,
+    buyer_id VARCHAR(36) NOT NULL,
+    store_id VARCHAR(36) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    delivery_method VARCHAR(20) NOT NULL,
+    subtotal BIGINT NOT NULL,
+    discount BIGINT NOT NULL,
+    delivery_fee BIGINT NOT NULL,
+    tax BIGINT NOT NULL,
+    final_total BIGINT NOT NULL,
+    voucher_id VARCHAR(36) NULL,
+    promo_id VARCHAR(36) NULL,
+    address_id VARCHAR(36) NOT NULL,
+    created_simulated_day INT NOT NULL,
+    due_simulated_day INT NOT NULL,
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL,
+    PRIMARY KEY (id),
+    INDEX idx_orders_buyer_id (buyer_id),
+    INDEX idx_orders_store_id (store_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
