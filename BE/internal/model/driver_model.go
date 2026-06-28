@@ -14,3 +14,7 @@ type JobResponse struct {
 	AddressID       string  `json:"address_id"`
 	CreatedAt       int64   `json:"created_at"`
 }
+
+type TakeJobResponse struct {
+	Success bool `json:"success"`
+}

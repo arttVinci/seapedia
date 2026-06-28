@@ -44,3 +44,21 @@ func (c *DriverController) JobDetail(ctx *fiber.Ctx) error {
 		Success: true,
 	})
 }
+
+func (c *DriverController) TakeJob(ctx *fiber.Ctx) error {
+	orderID := ctx.Params("id")
+	userID := ctx.Locals("user_id").(string)
+
+	err := c.UseCase.TakeJob(ctx.UserContext(), userID, orderID)
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(model.WebResponse[model.TakeJobResponse]{
+		Data: model.TakeJobResponse{
+			Success: true,
+		},
+		Message: "Pekerjaan berhasil diambil",
+		Success: true,
+	})
+}
