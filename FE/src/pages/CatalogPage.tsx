@@ -2,108 +2,178 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useProducts } from "../hooks/queries/products/useProducts";
 import { useAuth } from "../contexts/AuthContext";
-import { Button, Input, Card, CardContent, CardFooter, CardTitle, CardDescription } from "../components/ui";
-import { Search, Store } from "lucide-react";
+import { Store } from "lucide-react";
 
 export function CatalogPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState("newest");
   const perPage = 8;
   const { data, isLoading } = useProducts({ page, size: perPage, title: search });
   const { token } = useAuth();
 
   const totalPages = data ? Math.ceil(data.total / perPage) : 1;
-
   const filteredProducts = data?.data ?? [];
 
+  const handleApplyFilter = () => {
+    setPage(1);
+  };
+
+  const handleResetFilter = () => {
+    setSearch("");
+    setSort("newest");
+    setPage(1);
+  };
+
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-8">
+    <div className="container mx-auto max-w-[85rem] w-full px-4 sm:px-6 lg:px-8 py-10">
+      <h1 className="text-xl font-bold md:text-2xl md:leading-tight text-gray-900 mb-8">
         Katalog Produk
       </h1>
 
-      {/* Search */}
-      <div className="mb-8 max-w-md">
-        <Input
-          placeholder="Cari produk..."
-          icon={<Search size={18} />}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
-
-      {isLoading ? (
-        <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="bg-gray-200 h-48 rounded-t-lg w-full"></div>
-              <div className="space-y-4 py-4 px-2">
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-              </div>
+      <div className="grid grid-cols-1 gap-10 md:grid-cols-10">
+        {/* Sidebar Filter */}
+        <div className="grid grid-cols-1 gap-10 pr-6 border-r border-gray-200 md:col-span-3">
+          <div className="space-y-5">
+            {/* Search Input */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Cari Produk
+              </label>
+              <input
+                type="text"
+                placeholder="Cari produk..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500"
+              />
             </div>
-          ))}
+
+            {/* Sort */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Urutkan
+              </label>
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+                className="py-2.5 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500"
+              >
+                <option value="newest">Terbaru</option>
+                <option value="price_asc">Harga Terendah</option>
+                <option value="price_desc">Harga Tertinggi</option>
+              </select>
+            </div>
+
+            {/* Filter Buttons */}
+            <div className="flex gap-2 pt-2">
+              <button
+                onClick={handleApplyFilter}
+                className="flex-1 py-2.5 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700"
+              >
+                Terapkan
+              </button>
+              <button
+                onClick={handleResetFilter}
+                className="flex-1 py-2.5 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
         </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-            {filteredProducts.map((product) => (
-              <Card key={product.id} className="flex flex-col h-full overflow-hidden">
-                <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden bg-gray-200">
-                  <img
-                    src={product.image_url}
-                    alt={product.name}
-                    className="h-48 w-full object-cover object-center"
-                  />
-                </div>
-                <CardContent className="flex-1 p-4">
-                  <CardTitle className="text-lg">{product.name}</CardTitle>
-                  {product.store && (
-                    <div className="flex items-center text-sm text-gray-500 mt-1">
-                      <Store size={14} className="mr-1" />
-                      {product.store.name}
-                    </div>
-                  )}
-                  <CardDescription className="line-clamp-2 mt-2">{product.description}</CardDescription>
-                </CardContent>
-                <CardFooter className="p-4 pt-0 flex items-center justify-between">
-                  <p className="text-lg font-bold text-gray-900">
-                    Rp {product.price.toLocaleString("id-ID")}
-                  </p>
-                  {token && (
-                    <Link to={`/products/${product.id}`}>
-                      <Button size="sm">Beli</Button>
-                    </Link>
-                  )}
-                </CardFooter>
-              </Card>
-            ))}
+
+        {/* Main Content */}
+        <div className="col-span-1 md:col-span-7">
+          {/* Header */}
+          <div className="flex items-center justify-between gap-5 mb-5">
+            <div className="font-light text-gray-800">
+              Results: {filteredProducts.length} Items
+            </div>
           </div>
 
-          {/* Pagination */}
-          <div className="mt-8 flex items-center justify-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-            >
-              Previous
-            </Button>
-            <span className="text-sm text-gray-600">
-              Page {page} of {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled={page >= totalPages}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              Next
-            </Button>
-          </div>
-        </>
-      )}
+          {isLoading ? (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="animate-pulse rounded-lg border border-gray-200 bg-white shadow-sm">
+                  <div className="bg-gray-200 h-48 rounded-t-lg w-full"></div>
+                  <div className="space-y-3 p-4">
+                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {filteredProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="rounded-lg border border-gray-200 bg-white shadow-sm"
+                  >
+                    <div className="h-48 w-full">
+                      <img
+                        src={product.image_url}
+                        alt={product.name}
+                        className="mx-auto h-full w-full object-cover rounded-t-lg"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <Link
+                        to={`/products/${product.id}`}
+                        className="text-lg font-semibold leading-tight text-gray-900 hover:underline line-clamp-2"
+                      >
+                        {product.name}
+                      </Link>
+                      {product.store && (
+                        <div className="flex items-center text-sm text-gray-500 mt-1">
+                          <Store size={14} className="mr-1" />
+                          {product.store.name}
+                        </div>
+                      )}
+                      <div className="mt-3 flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-900">
+                          Rp{product.price?.toLocaleString("id-ID")}
+                        </span>
+                        <Link
+                          to={`/products/${product.id}`}
+                          className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-xs font-medium text-white hover:bg-blue-700"
+                        >
+                          Lihat
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-10 flex items-center justify-center gap-2">
+                  <button
+                    disabled={page <= 1}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    className="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
+                  >
+                    Previous
+                  </button>
+                  <span className="text-sm text-gray-600 mx-2">
+                    Page {page} of {totalPages}
+                  </span>
+                  <button
+                    disabled={page >= totalPages}
+                    onClick={() => setPage((p) => p + 1)}
+                    className="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
