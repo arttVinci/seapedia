@@ -134,18 +134,10 @@ func (c *RouteConfig) SetupDriverRoute() {
 	if c.DriverController != nil {
 		driverGroup.Get("/jobs", c.DriverController.ListJobs)
 		driverGroup.Get("/jobs/:id", c.DriverController.JobDetail)
+		driverGroup.Post("/jobs/:id/_take", c.DriverController.TakeJob)
+		driverGroup.Post("/jobs/:id/_complete", c.DriverController.CompleteJob)
+		driverGroup.Get("/dashboard", c.DriverController.Dashboard)
 	}
-	driverGroup.Post("/jobs/:id/_take", func(ctx *fiber.Ctx) error {
-		return ctx.JSON(fiber.Map{"message": "Take job endpoint (T5-02)"})
-	})
-	driverGroup.Post("/jobs/:id/_complete", func(ctx *fiber.Ctx) error {
-		return ctx.JSON(fiber.Map{"message": "Complete job endpoint (T5-03)"})
-	})
-
-	// Dashboard
-	driverGroup.Get("/dashboard", func(ctx *fiber.Ctx) error {
-		return ctx.JSON(fiber.Map{"message": "Driver dashboard endpoint (T5-04)"})
-	})
 }
 func (c *RouteConfig) SetupAdminRoute() {
 	adminGroup := c.App.Group("/api/admin", c.AuthMiddleware, c.RoleMiddleware("admin"))
