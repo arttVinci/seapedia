@@ -363,7 +363,7 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 	delivery := &entity.Delivery{
 		ID:      uuid.NewString(),
 		OrderID: orderID,
-		Status:  "Sedang Dikemas",
+		Status:  "Menunggu Pengirim",
 		Earning: 0,
 	}
 	if err := u.DeliveryRepository.Create(tx, delivery); err != nil {
