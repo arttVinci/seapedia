@@ -80,7 +80,7 @@ func (u *CartUsecase) AddItem(userID string, request *model.AddCartItemRequest) 
 	if err == gorm.ErrRecordNotFound {
 		// create new cart
 		cart = entity.Cart{
-			ID:      repository.GenerateID(),
+			ID:      uuid.NewString(),
 			UserID:  userID,
 			StoreID: &product.StoreID,
 		}
