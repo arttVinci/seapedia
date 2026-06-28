@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../../hooks/queries/buyer/useCart';
 import { useUpdateCartItem } from '../../hooks/mutations/buyer/useUpdateCartItem';
 import { useDeleteCartItem } from '../../hooks/mutations/buyer/useDeleteCartItem';
-import { Button } from '../../components/ui/Button';
-import { formatCurrency } from '../../utils/formatters';
 import { AxiosError } from 'axios';
 import type { ApiErrorResponse } from '../../@types/api/response.types';
 
@@ -17,7 +15,7 @@ export const CartPage: React.FC = () => {
 
   const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
-    
+
     updateCartItemMutation.mutate(
       { id: itemId, payload: { quantity: newQuantity } },
       {
@@ -52,122 +50,189 @@ export const CartPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-4 flex justify-center py-10">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="container mx-auto max-w-[85rem] px-4 sm:px-6 lg:px-8 py-10 flex justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto p-4 text-center text-red-500 py-10">
+      <div className="container mx-auto max-w-[85rem] px-4 sm:px-6 lg:px-8 py-10 text-center text-red-500">
         Terjadi kesalahan saat memuat keranjang.
       </div>
     );
   }
 
+  if (!cart || cart.items.length === 0) {
+    return (
+      <div className="container mx-auto max-w-[85rem] px-4 sm:px-6 lg:px-8 py-10">
+        <h1 className="text-xl font-bold md:text-2xl md:leading-tight text-gray-900 mb-6">
+          Keranjang Belanja
+        </h1>
+        <div className="text-center py-16 rounded-lg border border-gray-200 bg-white shadow-sm">
+          <p className="text-gray-500 text-lg">Keranjang belanja Anda masih kosong.</p>
+          <Link
+            to="/catalog"
+            className="mt-4 inline-flex items-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            Mulai Belanja
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const subtotal = cart.total_price ?? 0;
+  const shipping = 0; // Will be calculated at checkout
+  const total = subtotal + shipping;
+
   return (
-    <div className="container mx-auto p-4 max-w-4xl">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Keranjang Belanja</h1>
+    <div className="container mx-auto max-w-[85rem] px-4 sm:px-6 lg:px-8 py-10">
+      <h1 className="text-xl font-bold md:text-2xl md:leading-tight text-gray-900 mb-6">
+        Keranjang Belanja
+      </h1>
 
       {conflictError && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 flex justify-between items-center">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex justify-between items-center">
           <div>
             <p className="text-red-700 font-medium">Konflik Toko</p>
             <p className="text-red-600 text-sm">{conflictError}</p>
           </div>
-          <Button variant="danger" size="sm" onClick={handleClearCart}>
+          <button
+            onClick={handleClearCart}
+            className="py-1.5 px-3 inline-flex items-center rounded-lg bg-red-600 text-xs font-medium text-white hover:bg-red-700"
+          >
             Kosongkan Keranjang
-          </Button>
+          </button>
         </div>
       )}
 
-      {!cart || cart.items.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-100">
-          <p className="text-gray-500 text-lg">Keranjang belanja Anda masih kosong.</p>
-        </div>
-      ) : (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-          <div className="divide-y divide-gray-200">
-            {cart.items.map((item) => (
-              <div key={item.id} className="p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4">
-                {/* Image Placeholder */}
-                <div className="w-24 h-24 bg-gray-100 rounded-md flex-shrink-0 overflow-hidden">
-                  {item.image_url ? (
-                    <img
-                      src={item.image_url}
-                      alt={item.product_name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                      No Image
-                    </div>
-                  )}
-                </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Cart Items */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="rounded-lg border border-gray-200 bg-white shadow-sm p-6">
+            <div className="divide-y divide-gray-200">
+              {cart.items.map((item) => (
+                <div key={item.id} className="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
+                  {/* Image */}
+                  <div className="relative overflow-hidden rounded-md h-16 w-16 flex-shrink-0">
+                    {item.image_url ? (
+                      <img
+                        src={item.image_url}
+                        alt={item.product_name}
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 text-xs">
+                        No Img
+                      </div>
+                    )}
+                  </div>
 
-                {/* Product Info */}
-                <div className="flex-grow">
-                  <h3 className="text-lg font-semibold text-gray-800">{item.product_name}</h3>
-                  <p className="text-primary-600 font-medium mt-1">
-                    {formatCurrency(item.price)}
-                  </p>
-                </div>
+                  {/* Product Info */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-gray-800 text-md font-medium truncate">
+                      {item.product_name}
+                    </h3>
+                    <p className="text-sm text-gray-900 mt-1">
+                      Rp{Number(item.price).toLocaleString('id-ID')} x {item.quantity}
+                    </p>
+                  </div>
 
-                {/* Actions */}
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center border border-gray-300 rounded-md">
+                  {/* Quantity & Actions */}
+                  <div className="flex items-center gap-2">
                     <button
-                      className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
                       onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
                       disabled={item.quantity <= 1 || updateCartItemMutation.isPending}
+                      className="px-2.5 py-1 text-sm border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50"
                     >
                       -
                     </button>
-                    <input
-                      type="number"
-                      className="w-12 text-center py-1 border-x border-gray-300 focus:outline-none focus:ring-0"
-                      value={item.quantity}
-                      readOnly
-                    />
+                    <span className="text-sm font-medium w-6 text-center">
+                      {item.quantity}
+                    </span>
                     <button
-                      className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50"
                       onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
                       disabled={updateCartItemMutation.isPending}
+                      className="px-2.5 py-1 text-sm border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-50"
                     >
                       +
                     </button>
+                    <button
+                      onClick={() => handleDeleteItem(item.id)}
+                      disabled={deleteCartItemMutation.isPending}
+                      className="text-red-500 hover:text-red-700 ml-2 text-sm font-medium"
+                    >
+                      Hapus
+                    </button>
                   </div>
-
-                  <button
-                    className="text-red-500 hover:text-red-700 p-2"
-                    onClick={() => handleDeleteItem(item.id)}
-                    disabled={deleteCartItemMutation.isPending}
-                    title="Hapus"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                  </button>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Cart Summary */}
-          <div className="bg-gray-50 p-6 flex flex-col sm:flex-row justify-between items-center border-t border-gray-200">
-            <div className="mb-4 sm:mb-0">
-              <p className="text-gray-600">Total Harga ({cart.total_items} barang)</p>
-              <p className="text-2xl font-bold text-gray-900">{formatCurrency(cart.total_price)}</p>
+              ))}
             </div>
+
+            {/* Clear Cart */}
+            {cart.items.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <button
+                  onClick={handleClearCart}
+                  className="text-sm text-red-500 hover:text-red-700"
+                >
+                  Kosongkan Keranjang
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Order Summary */}
+        <div className="lg:col-span-1">
+          <div className="rounded-lg border border-gray-200 bg-white shadow-sm p-6 sticky top-24">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              Ringkasan Belanja
+            </h2>
+
+            <ul className="flex flex-col">
+              <li className="inline-flex items-center px-4 py-3 border border-gray-200 first:rounded-t-lg">
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-sm text-gray-600">Sub Total</span>
+                  <span className="text-sm font-medium text-gray-900">
+                    Rp{subtotal.toLocaleString('id-ID')}
+                  </span>
+                </div>
+              </li>
+              <li className="inline-flex items-center px-4 py-3 border border-gray-200 border-t-0">
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-sm text-gray-600">Pengiriman</span>
+                  <span className="text-sm text-gray-500">
+                    Dihitung saat checkout
+                  </span>
+                </div>
+              </li>
+              <li className="inline-flex items-center px-4 py-3 border border-gray-200 border-t-0 last:rounded-b-lg font-semibold">
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-sm text-gray-900">Total</span>
+                  <span className="text-sm font-bold text-gray-900">
+                    Rp{total.toLocaleString('id-ID')}
+                  </span>
+                </div>
+              </li>
+            </ul>
+
+            <div className="mt-5">
+              <p className="text-xs text-gray-500 text-center">
+                {cart.total_items} barang dalam keranjang
+              </p>
+            </div>
+
             <Link to="/buyer/checkout">
-              <Button size="lg" className="w-full sm:w-auto">
+              <button className="w-full mt-4 inline-flex items-center justify-center px-5 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
                 Lanjutkan ke Pembayaran
-              </Button>
+              </button>
             </Link>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
