@@ -46,3 +46,36 @@ func (r *ProductRepository) FilterProduct(request *model.SearchProductRequest) f
 func (r *ProductRepository) FindByIdWithStore(db *gorm.DB, product *entity.Product, id string) error {
 	return db.Preload("Store").Where("id = ?", id).Take(product).Error
 }
+
+func (r *ProductRepository) FilterSellerProduct(request *model.SellerProductSearchRequest) func(tx *gorm.DB) *gorm.DB {
+	return func(tx *gorm.DB) *gorm.DB {
+		if request.Name != "" {
+			tx = tx.Where("name LIKE ?", "%"+request.Name+"%")
+		}
+		return tx
+	}
+}
+
+func (r *ProductRepository) ListByStore(db *gorm.DB, storeID string, request *model.SellerProductSearchRequest) ([]entity.Product, int64, error) {
+	var products []entity.Product
+
+	err := db.Scopes(r.FilterSellerProduct(request)).
+		Where("store_id = ?", storeID).
+		Offset((request.Page - 1) * request.Size).
+		Limit(request.Size).
+		Find(&products).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var total int64
+	err = db.Model(&entity.Product{}).Scopes(r.FilterSellerProduct(request)).Where("store_id = ?", storeID).Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+	return products, total, nil
+}
+
+func (r *ProductRepository) FindByStoreIDAndID(db *gorm.DB, product *entity.Product, storeID string, id string) error {
+	return db.Where("store_id = ? AND id = ?", storeID, id).Take(product).Error
+}
