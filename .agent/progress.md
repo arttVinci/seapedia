@@ -88,6 +88,8 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 - [x] T5-05 UI pengemudi: job, ambil, selesai, dashboard (Frontend) -- branch: feature/driver-ui
 - [x] T5-06 UI pelacakan pengiriman (buyer & seller) (Frontend) -- branch: feature/delivery-tracking-ui
 - [ ] T5-07 Review tingkat 5 (QA)
+  - Bug fix (QA-H3): store_name missing -- branch: fix/qa-driver-store-name
+  - Bug fix (QA-H6): status delivery inkonsisten -- branch: fix/qa-delivery-status-lang
 
 ## Tingkat 6: Pemantauan Admin, Keterlambatan, Simulasi Waktu
 
