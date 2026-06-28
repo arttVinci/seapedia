@@ -4,6 +4,7 @@ export * from './auth.types';
 export * from './store.types';
 export * from './checkout.types';
 export * from './order.types';
+export * from './driver.types';
 export * from './discount.types';
 export * from './report.types';
 export * from './cart.types';
