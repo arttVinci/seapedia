@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useProducts } from "../hooks/queries/products/useProducts";
+import { useAuth } from "../contexts/AuthContext";
 import { Button, Input, Card, CardContent, CardFooter, CardTitle, CardDescription } from "../components/ui";
 import { Search, Store } from "lucide-react";
 
@@ -9,6 +10,7 @@ export function CatalogPage() {
   const [search, setSearch] = useState("");
   const perPage = 8;
   const { data, isLoading } = useProducts({ page, size: perPage, title: search });
+  const { token } = useAuth();
 
   const totalPages = data ? Math.ceil(data.total / perPage) : 1;
 
