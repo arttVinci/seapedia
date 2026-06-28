@@ -26,6 +26,9 @@ import SellerOrdersPage from './pages/seller/SellerOrdersPage';
 import SellerOrderDetailPage from './pages/seller/SellerOrderDetailPage';
 import SellerIncomePage from './pages/seller/SellerIncomePage';
 import { DriverDashboardPage } from './pages/DriverDashboardPage';
+import DriverJobsPage from './pages/driver/DriverJobsPage';
+import DriverJobDetailPage from './pages/driver/DriverJobDetailPage';
+import DriverActiveJobPage from './pages/driver/DriverActiveJobPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import VoucherPage from './pages/admin/VoucherPage';
 import PromoPage from './pages/admin/PromoPage';
@@ -66,6 +69,9 @@ function App() {
             <Route path="/seller/orders/:id" element={<SellerOrderDetailPage />} />
             <Route path="/seller/reports/income" element={<SellerIncomePage />} />
             <Route path="/driver" element={<DriverDashboardPage />} />
+            <Route path="/driver/jobs" element={<DriverJobsPage />} />
+            <Route path="/driver/jobs/:id" element={<DriverJobDetailPage />} />
+            <Route path="/driver/active-job" element={<DriverActiveJobPage />} />
             <Route path="/admin" element={<AdminDashboardPage />} />
             <Route path="/admin/vouchers" element={<VoucherPage />} />
             <Route path="/admin/promos" element={<PromoPage />} />
