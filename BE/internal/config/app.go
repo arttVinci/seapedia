@@ -70,7 +70,7 @@ func Bootstrap(config *BootstrapConfig) {
 	sellerOrderUseCase := usecase.NewSellerOrderUseCase(config.DB, config.Log, orderRepository, storeRepository, orderStatusHistoryRepository)
 	buyerReportUseCase := usecase.NewBuyerReportUseCase(config.DB, config.Log, orderRepository)
 	sellerReportUseCase := usecase.NewSellerReportUseCase(config.DB, config.Log, orderRepository, storeRepository)
-	driverUseCase := usecase.NewDriverUseCase(config.DB, config.Log, orderRepository, deliveryRepository)
+	driverUseCase := usecase.NewDriverUseCase(config.DB, config.Log, orderRepository, deliveryRepository, orderStatusHistoryRepository)
 
 	// Setup Controller
 	userController := controller.NewUserController(userUseCase, config.Log)
