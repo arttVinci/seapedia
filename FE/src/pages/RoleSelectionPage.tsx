@@ -1,21 +1,43 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { useSelectRole } from "../hooks/useSelectRole";
+import { useSelectRole } from "../hooks/mutations/auth/useSelectRole";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button } from "../components/ui";
 import { Store, ShoppingBag, Truck, ShieldCheck } from "lucide-react";
+import { useEffect, useState } from "react";
+import { authService } from "../services";
 
 export function RoleSelectionPage() {
   const { user } = useAuth();
-  const { selectRole } = useSelectRole();
+  const selectRoleMutation = useSelectRole();
   const navigate = useNavigate();
+  const [availableRoles, setAvailableRoles] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (!user) {
+  useEffect(() => {
+    authService.getRoles()
+      .then((data) => {
+        setAvailableRoles(data.roles);
+      })
+      .catch(console.error)
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
+
+  if (!user && !isLoading) {
+    navigate("/login");
     return null;
   }
 
   const handleRoleSelect = (role: string) => {
-    selectRole(role);
-    navigate(`/${role}`);
+    selectRoleMutation.mutate(
+      { role: role as any },
+      {
+        onSuccess: () => {
+          navigate(`/${role}`);
+        }
+      }
+    );
   };
 
   const getRoleIcon = (role: string) => {
@@ -50,32 +72,36 @@ export function RoleSelectionPage() {
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-3xl px-4">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {user.roles.map((role) => (
-            <Card 
-              key={role} 
-              className="cursor-pointer hover:border-blue-500 hover:shadow-md transition-all"
-              onClick={() => handleRoleSelect(role)}
-            >
-              <CardHeader>
-                <div className="flex items-center space-x-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
-                    {getRoleIcon(role)}
+        {isLoading ? (
+          <div className="text-center py-8">Memuat peran...</div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {availableRoles.map((role) => (
+              <Card 
+                key={role} 
+                className="cursor-pointer hover:border-blue-500 hover:shadow-md transition-all"
+                onClick={() => handleRoleSelect(role)}
+              >
+                <CardHeader>
+                  <div className="flex items-center space-x-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                      {getRoleIcon(role)}
+                    </div>
+                    <div>
+                      <CardTitle className="capitalize">{role}</CardTitle>
+                      <CardDescription>{getRoleDescription(role)}</CardDescription>
+                    </div>
                   </div>
-                  <div>
-                    <CardTitle className="capitalize">{role}</CardTitle>
-                    <CardDescription>{getRoleDescription(role)}</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Button variant="outline" className="w-full">
-                  Masuk sebagai {role}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                </CardHeader>
+                <CardContent>
+                  <Button variant="outline" className="w-full" isLoading={selectRoleMutation.isPending && selectRoleMutation.variables?.role === role}>
+                    Masuk sebagai {role}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

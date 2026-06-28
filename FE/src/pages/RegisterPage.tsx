@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useRegister } from "../hooks/useRegister";
+import { useRegister } from "../hooks/mutations/auth/useRegister";
 import { Button, Input, Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui";
 
 export function RegisterPage() {
-  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -17,11 +17,10 @@ export function RegisterPage() {
     setError("");
 
     registerMutation.mutate(
-      { name, email, password },
+      { username, email, password },
       {
         onSuccess: () => {
-          // New users only have 'buyer' role by default in our mock
-          navigate("/buyer");
+          navigate("/select-role");
         },
         onError: () => {
           setError("Registrasi gagal. Silakan coba lagi.");
@@ -48,12 +47,12 @@ export function RegisterPage() {
             )}
             <div className="space-y-2">
               <Input
-                label="Nama Lengkap"
+                label="Username"
                 type="text"
-                placeholder="John Doe"
+                placeholder="johndoe"
                 required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
             <div className="space-y-2">
