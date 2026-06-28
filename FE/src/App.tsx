@@ -32,6 +32,7 @@ import DriverActiveJobPage from './pages/driver/DriverActiveJobPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import VoucherPage from './pages/admin/VoucherPage';
 import PromoPage from './pages/admin/PromoPage';
+import BuyerExpensePage from './pages/buyer/BuyerExpensePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 function App() {
