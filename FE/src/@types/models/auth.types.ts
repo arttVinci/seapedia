@@ -29,6 +29,7 @@ export interface RegisterPayload {
   username: string;
   email: string;
   password: string;
+  role?: "buyer" | "seller" | "driver";
 }
 
 export interface AuthResponse {

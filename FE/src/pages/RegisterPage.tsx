@@ -7,6 +7,7 @@ export function RegisterPage() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<"buyer" | "seller" | "driver">("buyer");
   const [error, setError] = useState("");
   
   const registerMutation = useRegister();
@@ -17,7 +18,7 @@ export function RegisterPage() {
     setError("");
 
     registerMutation.mutate(
-      { username, email, password },
+      { username, email, password, role },
       {
         onSuccess: () => {
           navigate("/select-role");
@@ -73,6 +74,18 @@ export function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Role</label>
+              <select
+                className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                value={role}
+                onChange={(e) => setRole(e.target.value as "buyer" | "seller" | "driver")}
+              >
+                <option value="buyer">Buyer</option>
+                <option value="seller">Seller</option>
+                <option value="driver">Driver</option>
+              </select>
             </div>
             <Button
               className="w-full"
