@@ -3,6 +3,7 @@ package controller
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
+	"github.com/traa/seapedia/server/internal/delivery/http/middleware"
 	"github.com/traa/seapedia/server/internal/model"
 	"github.com/traa/seapedia/server/internal/usecase"
 )
@@ -47,7 +48,7 @@ func (c *DriverController) JobDetail(ctx *fiber.Ctx) error {
 
 func (c *DriverController) TakeJob(ctx *fiber.Ctx) error {
 	orderID := ctx.Params("id")
-	userID := ctx.Locals("user_id").(string)
+	userID := middleware.GetUser(ctx).ID
 
 	err := c.UseCase.TakeJob(ctx.UserContext(), userID, orderID)
 	if err != nil {
@@ -65,7 +66,7 @@ func (c *DriverController) TakeJob(ctx *fiber.Ctx) error {
 
 func (c *DriverController) CompleteJob(ctx *fiber.Ctx) error {
 	orderID := ctx.Params("id")
-	userID := ctx.Locals("user_id").(string)
+	userID := middleware.GetUser(ctx).ID
 
 	response, err := c.UseCase.CompleteJob(ctx.UserContext(), userID, orderID)
 	if err != nil {
@@ -80,7 +81,7 @@ func (c *DriverController) CompleteJob(ctx *fiber.Ctx) error {
 }
 
 func (c *DriverController) Dashboard(ctx *fiber.Ctx) error {
-	userID := ctx.Locals("user_id").(string)
+	userID := middleware.GetUser(ctx).ID
 
 	response, err := c.UseCase.Dashboard(ctx.UserContext(), userID)
 	if err != nil {
