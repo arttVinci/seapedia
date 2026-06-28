@@ -4,7 +4,7 @@ import { useSellerProducts } from '../hooks/queries/products/useSellerProducts';
 import { useSellerOrders } from '../hooks/queries/seller/useSellerOrders';
 
 export function SellerDashboardPage() {
-  const { data: storeData, isLoading: storeLoading, isError: storeError } = useSellerStore();
+  const { data: storeData } = useSellerStore();
   const { data: productsData, isLoading: productsLoading, isError: productsError } = useSellerProducts({ page: 1, size: 1 });
   const { data: orders, isLoading: ordersLoading, isError: ordersError } = useSellerOrders();
 

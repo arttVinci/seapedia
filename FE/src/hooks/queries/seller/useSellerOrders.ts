@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import orderService from '../../../services/orderService';
-import type { Order } from '../../../@types/models';
 
 export const SELLER_ORDERS_KEY = ['seller', 'orders'];
 
