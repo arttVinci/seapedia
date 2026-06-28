@@ -102,9 +102,35 @@ func (u *CheckoutUseCase) Preview(ctx context.Context, userID string, request *m
 	}
 
 	discount := int64(0)
-	// TODO: integrate voucher/promo discount calculation in Level 4
 	var voucherApplied *model.AppliedDiscountDetail = nil
 	var promoApplied *model.AppliedDiscountDetail = nil
+
+	if request.PromoCode != "" {
+		promo := new(entity.Promo)
+		if err := u.PromoRepository.FindByCode(db, promo, request.PromoCode); err != nil {
+			return nil, fiber.NewError(fiber.StatusBadRequest, "Kode promo tidak valid")
+		}
+		discount += promo.DiscountAmount
+		promoApplied = &model.AppliedDiscountDetail{
+			Code:   promo.Code,
+			Amount: promo.DiscountAmount,
+		}
+	}
+
+	if request.VoucherCode != "" {
+		voucher := new(entity.Voucher)
+		if err := u.VoucherRepository.FindByCode(db, voucher, request.VoucherCode); err != nil {
+			return nil, fiber.NewError(fiber.StatusBadRequest, "Kode voucher tidak valid")
+		}
+		if voucher.RemainingUsage <= 0 {
+			return nil, fiber.NewError(fiber.StatusBadRequest, "Voucher telah habis digunakan")
+		}
+		discount += voucher.DiscountAmount
+		voucherApplied = &model.AppliedDiscountDetail{
+			Code:   voucher.Code,
+			Amount: voucher.DiscountAmount,
+		}
+	}
 
 	taxable := subtotal - discount
 	if taxable < 0 {
@@ -167,6 +193,28 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 	}
 
 	discount := int64(0)
+
+	if request.PromoCode != "" {
+		promo := new(entity.Promo)
+		if err := u.PromoRepository.FindByCode(tx, promo, request.PromoCode); err != nil {
+			return "", 0, fiber.NewError(fiber.StatusBadRequest, "Kode promo tidak valid")
+		}
+		discount += promo.DiscountAmount
+	}
+
+	var voucher *entity.Voucher
+	if request.VoucherCode != "" {
+		voucher = new(entity.Voucher)
+		// use Lock for update for voucher since we decrement usage
+		if err := tx.Where("code = ?", request.VoucherCode).Clauses(clause.Locking{Strength: "UPDATE"}).Take(voucher).Error; err != nil {
+			return "", 0, fiber.NewError(fiber.StatusBadRequest, "Kode voucher tidak valid")
+		}
+		if voucher.RemainingUsage <= 0 {
+			return "", 0, fiber.NewError(fiber.StatusBadRequest, "Voucher telah habis digunakan")
+		}
+		discount += voucher.DiscountAmount
+	}
+
 	taxable := subtotal - discount
 	if taxable < 0 {
 		taxable = 0
@@ -236,6 +284,19 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 	// Create order
 	storeID := *cart.StoreID // since single-store cart, we just get it from cart
 	orderID := uuid.NewString()
+	var voucherID *string
+	if voucher != nil {
+		voucherID = &voucher.ID
+	}
+	var promoID *string
+	if request.PromoCode != "" {
+		promo := new(entity.Promo)
+		// we already validated code above, but we need ID
+		if err := u.PromoRepository.FindByCode(tx, promo, request.PromoCode); err == nil {
+			promoID = &promo.ID
+		}
+	}
+
 	order := &entity.Order{
 		ID:                  orderID,
 		BuyerID:             userID,
@@ -247,6 +308,8 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 		DeliveryFee:         deliveryFee,
 		Tax:                 tax,
 		FinalTotal:          finalTotal,
+		VoucherID:           voucherID,
+		PromoID:             promoID,
 		AddressID:           request.AddressID,
 		CreatedSimulatedDay: 1, // dummy for now, should read from sim_clock
 		DueSimulatedDay:     1 + dueSimulatedDay,
