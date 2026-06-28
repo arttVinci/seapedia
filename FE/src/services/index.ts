@@ -1,5 +1,5 @@
-export * from './authService';
+export { default as authService } from './authService';
+export { default as reviewService } from './reviewService';
 export * from './productService';
-export * from './reviewService';
 export * from './sellerProductService';
 export * from './storeService';
