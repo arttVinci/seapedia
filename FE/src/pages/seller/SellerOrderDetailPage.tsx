@@ -3,6 +3,7 @@ import { useSellerOrderDetail } from "../../hooks/queries/seller/useSellerOrderD
 import { useProcessOrder } from "../../hooks/mutations/seller/useProcessOrder";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
+import OrderTimeline from "../../components/ui/OrderTimeline";
 
 const SellerOrderDetailPage = () => {
   const { id } = useParams<{ id: string }>();
