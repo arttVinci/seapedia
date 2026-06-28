@@ -8,10 +8,10 @@ type CreateAddressRequest struct {
 }
 
 type UpdateAddressRequest struct {
-	Label       string `json:"label" validate:"required,max=50"`
-	Recipient   string `json:"recipient" validate:"required,max=100"`
-	Phone       string `json:"phone" validate:"required,max=20"`
-	FullAddress string `json:"full_address" validate:"required,max=500"`
+	Label       string `json:"label" validate:"omitempty,max=50"`
+	Recipient   string `json:"recipient" validate:"omitempty,max=100"`
+	Phone       string `json:"phone" validate:"omitempty,max=20"`
+	FullAddress string `json:"full_address" validate:"omitempty,max=500"`
 }
 
 type AddressResponse struct {

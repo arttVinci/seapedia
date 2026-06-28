@@ -50,7 +50,7 @@ func (c *ProductController) Detail(ctx *fiber.Ctx) error {
 }
 
 func (c *ProductController) ListMyProducts(ctx *fiber.Ctx) error {
-	userID := ctx.Locals("user").(string)
+	userID := middleware.GetUser(ctx).ID
 	request := &model.SellerProductSearchRequest{
 		Name: ctx.Query("name"),
 		Page: ctx.QueryInt("page", 1),
@@ -70,7 +70,7 @@ func (c *ProductController) ListMyProducts(ctx *fiber.Ctx) error {
 }
 
 func (c *ProductController) CreateProduct(ctx *fiber.Ctx) error {
-	userID := ctx.Locals("user").(string)
+	userID := middleware.GetUser(ctx).ID
 	request := new(model.CreateProductRequest)
 	if err := ctx.BodyParser(request); err != nil {
 		c.Log.Warnf("Failed to parse request body : %+v", err)
@@ -101,7 +101,7 @@ func (c *ProductController) UpdateProduct(ctx *fiber.Ctx) error {
 }
 
 func (c *ProductController) DeleteProduct(ctx *fiber.Ctx) error {
-	userID := ctx.Locals("user").(string)
+	userID := middleware.GetUser(ctx).ID
 	productID := ctx.Params("id")
 
 	err := c.UseCase.Delete(ctx.UserContext(), userID, productID)
