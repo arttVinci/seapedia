@@ -39,6 +39,7 @@
   - crud-pattern
   - money-calculation (untuk modul checkout, laporan, refund)
   - order-status-machine (untuk modul yang mengubah status pesanan)
+  - atomic-conditional-update (untuk proses ambil kerjaan dan refund overdue)
 - Tanggung jawab utama:
   - Entity, repository, usecase, controller, route per modul.
   - Middleware auth + role.
