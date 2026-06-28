@@ -1,0 +1,16 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import type { CheckoutRequest, CheckoutResponse } from "@/@types/models";
+import { checkoutService } from "@/services";
+import type { ApiError } from "@/api/apiError";
+
+export const useCheckout = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<CheckoutResponse, ApiError, CheckoutRequest>({
+    mutationFn: (payload) => checkoutService.checkout(payload),
+    onSuccess: () => {
+      // Invalidate cart queries since checkout will clear the cart
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+  });
+};
