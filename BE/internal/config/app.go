@@ -50,6 +50,7 @@ func Bootstrap(config *BootstrapConfig) {
 	orderRepository := repository.NewOrderRepository(config.Log)
 	orderStatusHistoryRepository := repository.NewOrderStatusHistoryRepository(config.Log)
 	sellerOrderUseCase := usecase.NewSellerOrderUseCase(config.DB, config.Log, orderRepository, storeRepository, orderStatusHistoryRepository)
+	buyerReportUseCase := usecase.NewBuyerReportUseCase(config.DB, config.Log, orderRepository)
 
 	// Setup Controller
 	userController := controller.NewUserController(userUseCase, config.Log)
@@ -58,6 +59,7 @@ func Bootstrap(config *BootstrapConfig) {
 	applicationReviewController := controller.NewApplicationReviewController(applicationReviewUseCase, config.Log)
 	cartController := controller.NewCartController(config.Log, cartUseCase)
 	sellerOrderController := controller.NewSellerOrderController(config.Log, sellerOrderUseCase)
+	buyerReportController := controller.NewBuyerReportController(config.Log, buyerReportUseCase)
 
 	// Setup Middleware
 	authMiddleware := middleware.AuthMiddleware(config.Config, config.DB, revokedTokenRepository, config.Log)
@@ -72,6 +74,7 @@ func Bootstrap(config *BootstrapConfig) {
 		ApplicationReviewController: applicationReviewController,
 		CartController:              cartController,
 		SellerOrderController:       sellerOrderController,
+		BuyerReportController:       buyerReportController,
 		RoleMiddleware:              roleMiddleware,
 	}
 	routeConfig.Setup()

@@ -20,6 +20,7 @@ type RouteConfig struct {
 	CheckoutController          *controller.CheckoutController
 	OrderController             *controller.OrderController
 	SellerOrderController       *controller.SellerOrderController
+	BuyerReportController       *controller.BuyerReportController
 	RoleMiddleware              func(allowedRoles ...string) fiber.Handler
 }
 
