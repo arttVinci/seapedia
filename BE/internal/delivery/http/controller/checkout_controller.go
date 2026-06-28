@@ -40,3 +40,24 @@ func (c *CheckoutController) Preview(ctx *fiber.Ctx) error {
 		Success: true,
 	})
 }
+
+func (c *CheckoutController) Checkout(ctx *fiber.Ctx) error {
+	user := middleware.GetUser(ctx)
+
+	var request model.CheckoutPreviewRequest
+	if err := ctx.BodyParser(&request); err != nil {
+		c.Log.Warnf("Failed to parse request body: %+v", err)
+		return fiber.ErrBadRequest
+	}
+
+	err := c.UseCase.Checkout(ctx.UserContext(), user.ID, &request)
+	if err != nil {
+		return err
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(model.WebResponse[any]{
+		Data:    nil,
+		Message: "Pesanan berhasil dibuat",
+		Success: true,
+	})
+}

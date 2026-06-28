@@ -96,6 +96,7 @@ func (c *RouteConfig) SetupBuyerRoute() {
 
 	// Checkout
 	buyerGroup.Post("/checkout/_preview", c.CheckoutController.Preview)
+	buyerGroup.Post("/checkout", c.CheckoutController.Checkout)
 }
 func (c *RouteConfig) SetupDriverRoute() {
 	c.App.Group("/api/driver", c.AuthMiddleware, c.RoleMiddleware("driver"))
