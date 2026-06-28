@@ -22,6 +22,9 @@ import AddressPage from './pages/buyer/AddressPage';
 import { SellerDashboardPage } from './pages/SellerDashboardPage';
 import { ProductManagementPage } from './pages/seller/ProductManagementPage';
 import { StoreManagementPage } from './pages/seller/StoreManagementPage';
+import SellerOrdersPage from './pages/seller/SellerOrdersPage';
+import SellerOrderDetailPage from './pages/seller/SellerOrderDetailPage';
+import SellerIncomePage from './pages/seller/SellerIncomePage';
 import { DriverDashboardPage } from './pages/DriverDashboardPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import VoucherPage from './pages/admin/VoucherPage';
@@ -60,6 +63,7 @@ function App() {
             <Route path="/seller/products" element={<ProductManagementPage />} />
             <Route path="/seller/store" element={<StoreManagementPage />} />
             <Route path="/seller/orders" element={<SellerOrdersPage />} />
+            <Route path="/seller/orders/:id" element={<SellerOrderDetailPage />} />
             <Route path="/seller/reports/income" element={<SellerIncomePage />} />
             <Route path="/driver" element={<DriverDashboardPage />} />
             <Route path="/admin" element={<AdminDashboardPage />} />

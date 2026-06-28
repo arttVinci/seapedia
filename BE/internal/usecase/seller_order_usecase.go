@@ -5,11 +5,11 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
+	"github.com/google/uuid"
 	"github.com/traa/seapedia/server/internal/entity"
 	"github.com/traa/seapedia/server/internal/model"
 	"github.com/traa/seapedia/server/internal/model/converter"
 	"github.com/traa/seapedia/server/internal/repository"
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -54,6 +54,24 @@ func (u *SellerOrderUseCase) ListSellerOrders(ctx context.Context, userID string
 	}
 
 	return converter.OrdersToResponses(orders), nil
+}
+
+func (u *SellerOrderUseCase) GetSellerOrderDetail(ctx context.Context, userID string, orderID string) (*model.OrderDetailResponse, error) {
+	db := u.DB.WithContext(ctx)
+
+	store := new(entity.Store)
+	if err := u.StoreRepository.FindByUserID(db, store, userID); err != nil {
+		u.Log.Warnf("Failed to find store by user id : %+v", err)
+		return nil, fiber.NewError(fiber.StatusNotFound, "Anda belum memiliki toko")
+	}
+
+	order, err := u.OrderRepository.FindByStoreAndID(db, store.ID, orderID)
+	if err != nil {
+		u.Log.Warnf("Failed to find seller order : %+v", err)
+		return nil, fiber.NewError(fiber.StatusNotFound, "Pesanan tidak ditemukan")
+	}
+
+	return converter.OrderToDetailResponse(order), nil
 }
 
 func (u *SellerOrderUseCase) ProcessOrder(ctx context.Context, userID string, orderID string) error {

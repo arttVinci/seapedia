@@ -22,6 +22,11 @@ class OrderService {
     return response.data.data;
   }
 
+  async getSellerOrderDetail(id: string): Promise<OrderDetail> {
+    const response = await apiClient.get<ApiResponse<OrderDetail>>(`/seller/orders/${id}`);
+    return response.data.data;
+  }
+
   async processOrder(id: string): Promise<void> {
     await apiClient.post<ApiResponse<void>>(`/seller/orders/${id}/_process`);
   }
