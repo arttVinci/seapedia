@@ -10,7 +10,8 @@ export function AdminDashboardPage() {
             <CardTitle className="text-sm font-medium">Total Pengguna</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1,234</div>
+            <div className="text-2xl font-bold text-gray-400">---</div>
+            <p className="text-xs text-gray-400 mt-1">Segera hadir</p>
           </CardContent>
         </Card>
         <Card>
@@ -18,7 +19,8 @@ export function AdminDashboardPage() {
             <CardTitle className="text-sm font-medium">Total Transaksi</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">892</div>
+            <div className="text-2xl font-bold text-gray-400">---</div>
+            <p className="text-xs text-gray-400 mt-1">Segera hadir</p>
           </CardContent>
         </Card>
       </div>

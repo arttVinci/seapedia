@@ -1,8 +1,13 @@
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, Button } from '../components/ui';
 import { ShoppingCart } from 'lucide-react';
+import { useWallet } from '../hooks/queries/buyer/useWallet';
+import { useOrders } from '../hooks/queries/buyer/useOrders';
 
 export function BuyerDashboardPage() {
+  const { data: walletData, isLoading: walletLoading, isError: walletError } = useWallet();
+  const { data: orders, isLoading: ordersLoading, isError: ordersError } = useOrders();
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -17,18 +22,32 @@ export function BuyerDashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Pesanan</CardTitle>
+            <CardTitle className="text-sm font-medium">Saldo Dompet</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
+            {walletLoading ? (
+              <div className="text-2xl font-bold text-gray-400">Memuat...</div>
+            ) : walletError ? (
+              <div className="text-sm text-red-500">Gagal memuat</div>
+            ) : (
+              <div className="text-2xl font-bold">
+                Rp {walletData?.balance?.toLocaleString('id-ID') ?? 0}
+              </div>
+            )}
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Ulasan Diberikan</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Pesanan</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">5</div>
+            {ordersLoading ? (
+              <div className="text-2xl font-bold text-gray-400">Memuat...</div>
+            ) : ordersError ? (
+              <div className="text-sm text-red-500">Gagal memuat</div>
+            ) : (
+              <div className="text-2xl font-bold">{orders?.length ?? 0}</div>
+            )}
           </CardContent>
         </Card>
       </div>
