@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
+	"github.com/traa/seapedia/server/internal/delivery/http/middleware"
 	"github.com/traa/seapedia/server/internal/model"
 	"github.com/traa/seapedia/server/internal/usecase"
 )
@@ -84,7 +85,7 @@ func (c *ProductController) CreateProduct(ctx *fiber.Ctx) error {
 }
 
 func (c *ProductController) UpdateProduct(ctx *fiber.Ctx) error {
-	userID := ctx.Locals("user").(string)
+	userID := middleware.GetUser(ctx).ID
 	productID := ctx.Params("id")
 	request := new(model.UpdateProductRequest)
 	if err := ctx.BodyParser(request); err != nil {

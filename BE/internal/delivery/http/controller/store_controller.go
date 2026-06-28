@@ -27,7 +27,7 @@ func (c *StoreController) Detail(ctx *fiber.Ctx) error {
 }
 
 func (c *StoreController) GetMyStore(ctx *fiber.Ctx) error {
-	userID := ctx.Locals("user").(string)
+	userID := middleware.GetUser(ctx).ID
 	response, err := c.UseCase.FindByUserID(ctx.UserContext(), userID)
 	if err != nil {
 		return err
