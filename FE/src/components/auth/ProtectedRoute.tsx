@@ -2,14 +2,14 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
 export function ProtectedRoute() {
-  const { token, activeRole, user } = useAuth();
+  const { token, activeRole } = useAuth();
 
   if (!token) {
     return <Navigate to="/login" replace />;
   }
 
-  // If user has multiple roles and hasn't selected one yet
-  if (user && user.roles.length > 1 && !activeRole) {
+  // Jika sudah login tapi belum memilih peran
+  if (!activeRole) {
     return <Navigate to="/select-role" replace />;
   }
 
