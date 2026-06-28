@@ -24,6 +24,8 @@ import { ProductManagementPage } from './pages/seller/ProductManagementPage';
 import { StoreManagementPage } from './pages/seller/StoreManagementPage';
 import { DriverDashboardPage } from './pages/DriverDashboardPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
+import VoucherPage from './pages/admin/VoucherPage';
+import PromoPage from './pages/admin/PromoPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 function App() {
@@ -61,6 +63,8 @@ function App() {
             <Route path="/seller/reports/income" element={<SellerIncomePage />} />
             <Route path="/driver" element={<DriverDashboardPage />} />
             <Route path="/admin" element={<AdminDashboardPage />} />
+            <Route path="/admin/vouchers" element={<VoucherPage />} />
+            <Route path="/admin/promos" element={<PromoPage />} />
           </Route>
         </Route>
 
