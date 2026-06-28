@@ -50,7 +50,7 @@ class ApiClient {
     // Handle 401 Unauthorized
     if (error.response?.status === 401) {
       localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN);
-      window.location.href = "/auth/login";
+      window.location.href = "/login";
     }
 
     const message = error.response?.data?.message || "An error occurred";
