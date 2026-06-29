@@ -83,8 +83,9 @@ export function RegisterPage() {
             setIsLoading(false);
           }
         },
-        onError: () => {
-          setError("Registrasi gagal. Silakan coba lagi.");
+        onError: (err: any) => {
+          const errMsg = err?.response?.data?.message || "Registrasi gagal. Silakan coba lagi.";
+          setError(errMsg);
           setIsLoading(false);
         },
       },

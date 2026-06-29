@@ -98,10 +98,10 @@ export function OpenShopModal({ isOpen, onClose }: OpenShopModalProps) {
           </div>
 
           <div className="pt-4 flex gap-3">
-            <Button type="button" variant="outline" className="w-full" onClick={onClose}>
+            <Button type="button" variant="outline" className="flex-1" onClick={onClose}>
               Batal
             </Button>
-            <Button type="submit" className="w-full" isLoading={isLoading}>
+            <Button type="submit" className="flex-1" isLoading={isLoading}>
               Buka Toko
             </Button>
           </div>

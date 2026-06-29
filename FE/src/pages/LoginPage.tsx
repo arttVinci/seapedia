@@ -23,8 +23,9 @@ export function LoginPage() {
         onSuccess: () => {
           navigate("/select-role", { state: { fromLogin: true } });
         },
-        onError: () => {
-          setError("Email atau password yang Anda masukkan salah.");
+        onError: (err: any) => {
+          const errMsg = err?.response?.data?.message || "Email atau password yang Anda masukkan salah.";
+          setError(errMsg);
         },
       }
     );
