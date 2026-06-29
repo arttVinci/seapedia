@@ -4,11 +4,12 @@ import { useSellerProducts } from "../../hooks/queries/products/useSellerProduct
 import { useCreateProduct } from "../../hooks/mutations/products/useCreateProduct";
 import { useUpdateProduct } from "../../hooks/mutations/products/useUpdateProduct";
 import { useDeleteProduct } from "../../hooks/mutations/products/useDeleteProduct";
+import { useUploadProductImage } from "../../hooks/mutations/products/useUploadProductImage";
 import { Card, CardContent } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { ConfirmModal } from "../../components/ui/ConfirmModal";
-import { X, Search } from "lucide-react";
+import { X, Search, Upload } from "lucide-react";
 import type { CreateProductPayload } from "../../@types/models";
 
 interface ProductFormData {
@@ -46,6 +47,7 @@ export function ProductManagementPage() {
   const createMutation = useCreateProduct();
   const updateMutation = useUpdateProduct();
   const deleteMutation = useDeleteProduct();
+  const uploadMutation = useUploadProductImage();
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -87,6 +89,22 @@ export function ProductManagementPage() {
   ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const url = await uploadMutation.mutateAsync({ 
+        file, 
+        id: editingProductId || undefined 
+      });
+      setForm((prev) => ({ ...prev, image_url: url }));
+      toast.success("Gambar berhasil diunggah");
+    } catch (err: any) {
+      toast.error(err instanceof Error ? err.message : "Gagal mengunggah gambar");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -407,26 +425,53 @@ export function ProductManagementPage() {
                 </div>
 
                 <div>
-                  <Input
-                    label="URL Gambar"
-                    name="image_url"
-                    placeholder="https://..."
-                    value={form.image_url}
-                    onChange={handleFormChange}
-                    className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  />
-                  {form.image_url && (
-                    <div className="mt-3 relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
-                      <img
-                        src={form.image_url}
-                        alt="Preview"
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = "none";
-                        }}
-                      />
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Gambar Produk
+                  </label>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="relative overflow-hidden cursor-pointer"
+                        disabled={uploadMutation.isPending}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                          onChange={handleImageUpload}
+                          disabled={uploadMutation.isPending}
+                        />
+                        <Upload className="h-4 w-4 mr-2" />
+                        {uploadMutation.isPending ? "Mengunggah..." : "Pilih Gambar"}
+                      </Button>
+                      <span className="text-xs text-gray-500">
+                        Format: JPG, PNG (Maks 7MB)
+                      </span>
                     </div>
-                  )}
+                    
+                    <Input
+                      name="image_url"
+                      placeholder="Atau masukkan URL gambar..."
+                      value={form.image_url}
+                      onChange={handleFormChange}
+                      className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    />
+
+                    {form.image_url && (
+                      <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shadow-sm mt-2">
+                        <img
+                          src={form.image_url}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = "none";
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
               </form>
             </div>

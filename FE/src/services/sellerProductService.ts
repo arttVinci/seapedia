@@ -27,6 +27,20 @@ class SellerProductService {
   async deleteProduct(id: string): Promise<void> {
     await apiClient.delete(`/seller/products/${id}`);
   }
+
+  async uploadProductImage(file: File, id?: string): Promise<string> {
+    const formData = new FormData();
+    formData.append("image", file);
+    if (id) {
+      formData.append("id", id);
+    }
+    const response = await apiClient.post<ApiResponse<string>>('/seller/products/upload-image', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data.data;
+  }
 }
 
 export const sellerProductService = new SellerProductService();
