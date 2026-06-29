@@ -8,7 +8,7 @@ export function Footer() {
           <div className="col-span-full lg:col-span-1">
             <span className="flex-none text-xl font-semibold text-white">SEAPEDIA</span>
             <p className="my-5 text-gray-400 text-sm">
-              Marketplace hasil laut segar langsung dari nelayan ke dapur Anda. Belanja seafood berkualitas dengan harga terbaik.
+              Pusat belanja gadget, laptop, dan handphone terlengkap. Kami menyediakan produk original dengan garansi resmi dan harga terbaik.
             </p>
           </div>
 
@@ -35,10 +35,7 @@ export function Footer() {
               <Link to="/catalog" className="inline-flex text-gray-400 gap-x-2 hover:text-gray-200 text-sm">
                 Katalog Produk
               </Link>
-              <Link to="/products/:id/reviews" className="inline-flex text-gray-400 gap-x-2 hover:text-gray-200 text-sm">
-                Ulasan
-              </Link>
-              <span className="inline-flex text-gray-400 gap-x-2 text-sm">
+              <span className="inline-flex text-gray-400 gap-x-2 text-sm cursor-pointer hover:text-gray-200">
                 Hubungi Kami
               </span>
             </div>

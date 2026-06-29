@@ -240,7 +240,18 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 	// Lock wallet for update
 	wallet := new(entity.Wallet)
 	if err := u.WalletRepository.FindByUserIDForUpdate(tx, wallet, userID); err != nil {
-		return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal mendapatkan dompet")
+		if err == gorm.ErrRecordNotFound {
+			wallet = &entity.Wallet{
+				ID:      uuid.NewString(),
+				UserID:  userID,
+				Balance: 0,
+			}
+			if createErr := u.WalletRepository.Create(tx, wallet); createErr != nil {
+				return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal membuat dompet baru")
+			}
+		} else {
+			return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal mendapatkan dompet")
+		}
 	}
 
 	if int64(wallet.Balance) < finalTotal {

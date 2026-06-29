@@ -1,13 +1,13 @@
 import { Link, useLocation } from "react-router-dom";
-import { 
-  Home, 
-  Package, 
-  ShoppingCart, 
-  Users, 
-  Truck, 
+import {
+  Home,
+  Package,
+  ShoppingCart,
+  Users,
+  Truck,
   Settings,
   Star,
-  Store
+  Store,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 
@@ -19,36 +19,38 @@ export function Sidebar({ role }: SidebarProps) {
   const location = useLocation();
 
   const getRoleLinks = (userRole: string) => {
-    const baseLinks = [{ name: "Dashboard", href: "/dashboard", icon: Home }];
-    
     switch (userRole) {
       case "buyer":
         return [
-          ...baseLinks,
-          { name: "My Orders", href: "/dashboard/orders", icon: ShoppingCart },
-          { name: "My Reviews", href: "/dashboard/reviews", icon: Star },
+          { name: "Dashboard", href: "/buyer", icon: Home },
+          { name: "Keranjang", href: "/buyer/cart", icon: ShoppingCart },
+          { name: "Pesanan Saya", href: "/buyer/orders", icon: Package },
+          { name: "Dompet", href: "/buyer/wallet", icon: Store },
+          { name: "Alamat", href: "/buyer/addresses", icon: Home },
+          { name: "Laporan Pengeluaran", href: "/buyer/reports/expense", icon: Star },
         ];
       case "seller":
         return [
-          ...baseLinks,
+          { name: "Dashboard", href: "/seller", icon: Home },
           { name: "Toko Saya", href: "/seller/store", icon: Store },
           { name: "Produk Saya", href: "/seller/products", icon: Package },
-          { name: "Orders", href: "/dashboard/orders", icon: ShoppingCart },
+          { name: "Pesanan", href: "/seller/orders", icon: ShoppingCart },
+          { name: "Laporan Pendapatan", href: "/seller/reports/income", icon: Star },
         ];
       case "driver":
         return [
-          ...baseLinks,
+          { name: "Dashboard", href: "/driver", icon: Home },
           { name: "Cari Pekerjaan", href: "/driver/jobs", icon: Truck },
           { name: "Pekerjaan Aktif", href: "/driver/active-job", icon: Package },
         ];
       case "admin":
         return [
-          ...baseLinks,
-          { name: "Users", href: "/dashboard/users", icon: Users },
-          { name: "All Products", href: "/dashboard/products", icon: Package },
+          { name: "Dashboard", href: "/admin", icon: Home },
+          { name: "Vouchers", href: "/admin/vouchers", icon: Star },
+          { name: "Promos", href: "/admin/promos", icon: Star },
         ];
       default:
-        return baseLinks;
+        return [{ name: "Dashboard", href: "/dashboard", icon: Home }];
     }
   };
 
@@ -71,7 +73,7 @@ export function Sidebar({ role }: SidebarProps) {
                   "group flex items-center rounded-md px-3 py-2 text-sm font-medium",
                   isActive
                     ? "bg-blue-50 text-blue-700"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
                 )}
               >
                 <Icon
@@ -79,7 +81,7 @@ export function Sidebar({ role }: SidebarProps) {
                     "mr-3 h-5 w-5 flex-shrink-0",
                     isActive
                       ? "text-blue-700"
-                      : "text-gray-400 group-hover:text-gray-500"
+                      : "text-gray-400 group-hover:text-gray-500",
                   )}
                   aria-hidden="true"
                 />
