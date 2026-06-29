@@ -12,7 +12,7 @@ export interface RoleResponse {
 }
 
 export interface SelectRolePayload {
-  role: "buyer" | "seller" | "driver";
+  role: "buyer" | "seller" | "driver" | "admin";
 }
 
 export interface SelectRoleResponse {
