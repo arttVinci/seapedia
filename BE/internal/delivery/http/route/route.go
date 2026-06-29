@@ -70,6 +70,7 @@ func (c *RouteConfig) SetupAuthRoute() {
 	// Role routes
 	authGroup.Get("/_roles", c.UserController.Roles)
 	authGroup.Post("/_select-role", c.UserController.SelectRole)
+	authGroup.Post("/_add-role", c.UserController.AddRole)
 	authGroup.Get("/_current", c.UserController.Current)
 }
 

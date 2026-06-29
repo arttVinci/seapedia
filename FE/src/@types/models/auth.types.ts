@@ -40,3 +40,11 @@ export interface AuthResponse {
 export interface RegisterResponse {
   user: User;
 }
+
+export interface AddRolePayload {
+  role: "buyer" | "seller" | "driver";
+}
+
+export interface AddRoleResponse {
+  role: string;
+}

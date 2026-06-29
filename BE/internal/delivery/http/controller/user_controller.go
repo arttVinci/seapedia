@@ -212,3 +212,49 @@ func (c *UserController) Current(ctx *fiber.Ctx) error {
 		Success: true,
 	})
 }
+
+func (c *UserController) AddRole(ctx *fiber.Ctx) error {
+	authModel := middleware.GetUser(ctx)
+
+	request := new(model.AddRoleRequest)
+	if err := ctx.BodyParser(request); err != nil {
+		c.Log.Warnf("Failed to parse request body: %+v", err)
+		return ctx.Status(fiber.StatusBadRequest).JSON(model.ApiErrorResponse{
+			Message:    "Invalid request body",
+			StatusCode: fiber.StatusBadRequest,
+		})
+	}
+
+	response, err := c.UserUseCase.AddRole(ctx.UserContext(), authModel, request)
+	if err != nil {
+		if errors.Is(err, model.ErrValidation) {
+			return ctx.Status(fiber.StatusBadRequest).JSON(model.ApiErrorResponse{
+				Message:    "Validation Error",
+				StatusCode: fiber.StatusBadRequest,
+			})
+		}
+		if errors.Is(err, model.ErrNotFound) {
+			return ctx.Status(fiber.StatusNotFound).JSON(model.ApiErrorResponse{
+				Message:    "User not found",
+				StatusCode: fiber.StatusNotFound,
+			})
+		}
+		if errors.Is(err, model.ErrConflict) {
+			return ctx.Status(fiber.StatusConflict).JSON(model.ApiErrorResponse{
+				Message:    "Peran sudah dimiliki",
+				StatusCode: fiber.StatusConflict,
+			})
+		}
+		return ctx.Status(fiber.StatusInternalServerError).JSON(model.ApiErrorResponse{
+			Message:    "Internal Server Error",
+			StatusCode: fiber.StatusInternalServerError,
+		})
+	}
+
+	return ctx.Status(fiber.StatusOK).JSON(model.WebResponse[*model.AddRoleResponse]{
+		Data:    response,
+		Message: "Role added successfully",
+		Success: true,
+	})
+}
+

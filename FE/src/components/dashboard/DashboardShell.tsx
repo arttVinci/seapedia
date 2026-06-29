@@ -18,7 +18,7 @@ export function DashboardShell() {
       },
       onError: () => {
         navigate("/"); // Force navigate even on error since client token is cleared
-      }
+      },
     });
   };
 
@@ -31,9 +31,7 @@ export function DashboardShell() {
 
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="flex h-16 items-center justify-between border-b border-gray-200 bg-white px-4 sm:px-6">
-          <h1 className="text-xl font-semibold text-gray-900">
-            Dashboard
-          </h1>
+          <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
           <div className="flex items-center space-x-4">
             {activeRole && (
               <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
@@ -48,7 +46,13 @@ export function DashboardShell() {
                 <User size={18} />
               </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={handleLogout} isLoading={logoutMutation.isPending} className="text-gray-500">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              isLoading={logoutMutation.isPending}
+              className="text-gray-500"
+            >
               <LogOut size={16} className="mr-1" />
               Logout
             </Button>

@@ -30,15 +30,15 @@ export function ProductDetailPage() {
         onError: (err: AxiosError<ApiErrorResponse>) => {
           if (err.response?.status === 409) {
             setErrorMsg(
-              err.response.data.message || "Konflik: Produk dari toko berbeda."
+              err.response.data.message || "Konflik: Produk dari toko berbeda.",
             );
           } else {
             alert(
-              err.response?.data?.message || "Gagal menambahkan ke keranjang"
+              err.response?.data?.message || "Gagal menambahkan ke keranjang",
             );
           }
         },
-      }
+      },
     );
   };
 
@@ -154,15 +154,11 @@ export function ProductDetailPage() {
               </div>
               <button
                 onClick={handleAddToCart}
-                disabled={
-                  addToCartMutation.isPending || product.stock < 1
-                }
+                disabled={addToCartMutation.isPending || product.stock < 1}
                 className="w-full inline-flex items-center justify-center px-5 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
               >
                 <ShoppingCart className="mr-2 h-5 w-5" />
-                {addToCartMutation.isPending
-                  ? "Menambahkan..."
-                  : "+ Keranjang"}
+                {addToCartMutation.isPending ? "Menambahkan..." : "+ Keranjang"}
               </button>
             </div>
           )}
@@ -205,7 +201,9 @@ export function ProductDetailPage() {
         </nav>
         <div className="mt-5">
           {activeTab === "desc" && (
-            <p className="text-gray-600 whitespace-pre-wrap">{product.description}</p>
+            <p className="text-gray-600 whitespace-pre-wrap">
+              {product.description}
+            </p>
           )}
           {activeTab === "info" && (
             <p className="text-gray-600">

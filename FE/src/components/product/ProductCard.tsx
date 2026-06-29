@@ -1,17 +1,12 @@
-import { ShoppingCart } from "lucide-react";
-import { Card, CardContent, CardFooter } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { ShoppingCart, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 import type { Product } from "@/@types";
 
 interface ProductCardProps {
   product: Product;
-  onAddToCart?: (product: Product) => void;
-  onClick?: (product: Product) => void;
+  onAddToCart?: (e: React.MouseEvent, product: Product) => void;
+  onClick;
 }
-
-const LOW_STOCK_THRESHOLD = 5;
 
 function formatPrice(price: number) {
   return new Intl.NumberFormat("id-ID", {
@@ -26,85 +21,68 @@ export function ProductCard({
   onAddToCart,
   onClick,
 }: ProductCardProps) {
-  const isOutOfStock = product.stock <= 0;
-  const isLowStock = !isOutOfStock && product.stock <= LOW_STOCK_THRESHOLD;
-
-  const finalPrice = product.price;
-
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.stopPropagation(); // mencegah trigger onClick card
-    if (!isOutOfStock) onAddToCart?.(product);
-  };
-
   return (
-    <Card
-      onClick={() => onClick?.(product)}
-      className={cn(
-        "group flex flex-col overflow-hidden transition-all duration-200",
-        "hover:shadow-lg hover:-translate-y-0.5",
-        onClick && "cursor-pointer",
-        isOutOfStock && "opacity-75",
-      )}
+    <div
+      key={product.id}
+      className="group flex flex-col rounded-[1.25rem] border border-slate-200/75 bg-white p-4 shadow-sm hover:shadow-xl hover:shadow-blue-900/5 hover:-translate-y-1 transition-all duration-300"
     >
       {/* Image */}
-      <div className="relative aspect-square overflow-hidden bg-muted">
-        <img
-          src={product.image_url}
-          alt={product.name}
-          loading="lazy"
-          className={cn(
-            "h-full w-full object-cover transition-transform duration-300",
-            "group-hover:scale-105",
-            isOutOfStock && "grayscale",
-          )}
-        />
-
-        {/* Badges overlay */}
-        <div className="absolute left-2 top-2 flex flex-col gap-1">
-          {isLowStock && (
-            <Badge variant="secondary" className="shadow-sm">
-              Sisa {product.stock}
-            </Badge>
-          )}
-        </div>
-
-        {isOutOfStock && (
-          <div className="absolute inset-0 flex items-center justify-center bg-background/60">
-            <Badge
-              variant="outline"
-              className="bg-background text-sm font-medium"
-            >
-              Stok Habis
-            </Badge>
-          </div>
-        )}
+      <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-50 mb-4 flex items-center justify-center">
+        <Link to={`/products/${product.id}`} className="block w-full h-full">
+          <img
+            className="w-full h-full object-contain p-6 group-hover:scale-110 transition-transform duration-500"
+            src={product.image_url || "/image/handphone-kategori.jpg"}
+            alt={product.name}
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = "/image/iphone-kategori.jpg";
+            }}
+          />
+        </Link>
       </div>
 
-      {/* Content */}
-      <CardContent className="flex flex-1 flex-col gap-1.5 p-4">
-        <h3 className="line-clamp-2 text-sm font-semibold leading-snug">
+      <div className="flex flex-col flex-grow">
+        {/* Title */}
+        <Link
+          to={onClick}
+          className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-800 hover:text-blue-600 transition-colors mb-1"
+        >
           {product.name}
-        </h3>
+        </Link>
 
-        <div className="mt-auto flex items-baseline gap-2 pt-1">
-          <span className="text-base font-bold text-foreground">
-            {formatPrice(finalPrice)}
+        {/* Rating bintang */}
+        <div className="flex items-center gap-1.5 mb-2">
+          <div className="flex items-center">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className={`h-3.5 w-3.5 ${
+                  i < Math.round(4)
+                    ? "fill-amber-400 text-amber-400"
+                    : "fill-slate-200 text-slate-200"
+                }`}
+              />
+            ))}
+          </div>
+          <span className="text-[11px] font-medium text-slate-500">
+            {(4).toFixed(1)}
+            <span className="text-slate-400 ml-0.5">(21)</span>
           </span>
         </div>
-      </CardContent>
 
-      {/* Footer / Action */}
-      <CardFooter className="p-4 pt-0">
-        <Button
-          onClick={handleAddToCart}
-          disabled={isOutOfStock}
-          className="w-full"
-          size="sm"
-        >
-          <ShoppingCart className="mr-2 h-4 w-4" />
-          {isOutOfStock ? "Habis" : "Tambah ke Keranjang"}
-        </Button>
-      </CardFooter>
-    </Card>
+        {/* Spacer: dorong harga + tombol ke bawah */}
+        <div className="mt-auto pt-3 flex items-center justify-between gap-2">
+          <p className="text-base font-bold tracking-tight text-slate-900 truncate">
+            {formatPrice(product.price)}
+          </p>
+          <button
+            onClick={(e) => onAddToCart?.(e, product)}
+            className="cursor-pointer disabled:cursor-not-allowed shrink-0 inline-flex justify-center items-center rounded-xl bg-white border border-slate-200 p-2.5 text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-colors active:scale-95 disabled:opacity-50 shadow-sm"
+            title="Tambah ke Keranjang"
+          >
+            <ShoppingCart className="h-4 w-4" />
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
