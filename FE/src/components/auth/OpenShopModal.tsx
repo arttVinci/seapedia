@@ -1,9 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authService, storeService } from "../../services";
-import { useAuth } from "../../contexts/AuthContext";
 import { X } from "lucide-react";
 import { Button, Input } from "../ui";
+
+import { useQueryClient } from "@tanstack/react-query";
+
+import { useAddRole } from "../../hooks/mutations/auth/useAddRole";
+import { useSelectRole } from "../../hooks/mutations/auth/useSelectRole";
+import { useCreateStore } from "../../hooks/mutations/stores/useCreateStore";
 
 interface OpenShopModalProps {
   isOpen: boolean;
@@ -17,7 +21,11 @@ export function OpenShopModal({ isOpen, onClose }: OpenShopModalProps) {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
-  const { handleSelectRoleSuccess } = useAuth();
+  const queryClient = useQueryClient();
+
+  const addRoleMutation = useAddRole();
+  const selectRoleMutation = useSelectRole();
+  const createStoreMutation = useCreateStore();
 
   if (!isOpen) return null;
 
@@ -32,25 +40,31 @@ export function OpenShopModal({ isOpen, onClose }: OpenShopModalProps) {
     setError("");
 
     try {
-      // 1. Add seller role
-      await authService.addRole({ role: "seller" });
+      // 1. Add seller role (ignore if already owned)
+      try {
+        await addRoleMutation.mutateAsync({ role: "seller" });
+      } catch (err: any) {
+        if (err?.response?.status !== 409) {
+          throw err;
+        }
+      }
       
       // 2. Select seller role
-      const selectResp = await authService.selectRole({ role: "seller" });
-      handleSelectRoleSuccess(selectResp.token, selectResp.active_role);
+      await selectRoleMutation.mutateAsync({ role: "seller" });
       
       // 3. Create store
-      await storeService.createStore({
+      await createStoreMutation.mutateAsync({
         name: storeName,
         description: storeDescription,
       });
 
-      // 4. Close modal and navigate
+      // 4. Invalidate cache and close modal
+      await queryClient.invalidateQueries({ queryKey: ["roles"] });
       onClose();
       navigate("/seller");
     } catch (err: any) {
-      console.error(err);
-      setError("Gagal membuat toko. Silakan coba lagi.");
+      const errMsg = err?.response?.data?.message || "Gagal membuat toko. Silakan coba lagi.";
+      setError(errMsg);
     } finally {
       setIsLoading(false);
     }

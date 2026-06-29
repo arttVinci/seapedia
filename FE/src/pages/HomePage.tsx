@@ -310,6 +310,9 @@ export function HomePage() {
           )}
         </div>
       </div>
+
+      {/* Ulasan Aplikasi */}
+      <AppReviews />
     </div>
   );
 }

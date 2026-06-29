@@ -15,15 +15,22 @@ export function ProductDetailPage() {
   const { data: product, isLoading, isError } = useProductDetail(String(id));
   const addToCartMutation = useAddToCart();
 
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState<number | string>(1);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("desc");
 
   const handleAddToCart = () => {
     if (!product) return;
+    
+    const parsedQuantity = typeof quantity === 'string' ? parseInt(quantity) : quantity;
+    if (isNaN(parsedQuantity) || parsedQuantity < 1) {
+      toast.error("Kuantitas tidak valid");
+      return;
+    }
+    
     setErrorMsg(null);
     addToCartMutation.mutate(
-      { product_id: product.id, quantity },
+      { product_id: product.id, quantity: parsedQuantity },
       {
         onSuccess: () => {
           toast.success("Berhasil ditambahkan ke keranjang!");
@@ -128,27 +135,39 @@ export function ProductDetailPage() {
               <div className="flex items-center border border-gray-300 rounded-lg">
                 <button
                   className="px-4 py-2.5 text-gray-600 hover:bg-gray-100 disabled:opacity-50 rounded-l-lg"
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  disabled={quantity <= 1}
+                  onClick={() => {
+                    const q = typeof quantity === 'string' ? parseInt(quantity) : quantity;
+                    setQuantity(Math.max(1, (isNaN(q) ? 1 : q) - 1));
+                  }}
+                  disabled={Number(quantity) <= 1}
                 >
                   -
                 </button>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   className="w-16 text-center py-2.5 border-x border-gray-300 focus:outline-none focus:ring-0"
                   value={quantity}
                   onChange={(e) => {
-                    const val = parseInt(e.target.value);
-                    if (!isNaN(val))
-                      setQuantity(Math.min(product.stock, Math.max(1, val)));
+                    const val = e.target.value;
+                    if (val === '') {
+                      setQuantity('');
+                      return;
+                    }
+                    const parsedVal = parseInt(val);
+                    if (!isNaN(parsedVal)) {
+                      setQuantity(Math.min(product.stock, Math.max(1, parsedVal)));
+                    }
                   }}
                 />
                 <button
                   className="px-4 py-2.5 text-gray-600 hover:bg-gray-100 disabled:opacity-50 rounded-r-lg"
-                  onClick={() =>
-                    setQuantity((q) => Math.min(product.stock, q + 1))
-                  }
-                  disabled={quantity >= product.stock}
+                  onClick={() => {
+                    const q = typeof quantity === 'string' ? parseInt(quantity) : quantity;
+                    setQuantity(Math.min(product.stock, (isNaN(q) ? 0 : q) + 1));
+                  }}
+                  disabled={Number(quantity) >= product.stock}
                 >
                   +
                 </button>
@@ -163,16 +182,6 @@ export function ProductDetailPage() {
               </button>
             </div>
           )}
-
-          {/* Link to Reviews */}
-          <div className="pt-2">
-            <Link
-              to={`/products/${product.id}/reviews`}
-              className="text-blue-600 hover:text-blue-500 font-medium text-sm"
-            >
-              Lihat Ulasan Produk &rarr;
-            </Link>
-          </div>
         </div>
       </div>
 

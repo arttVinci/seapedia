@@ -24,10 +24,12 @@ export function LoginPage() {
           navigate("/select-role", { state: { fromLogin: true } });
         },
         onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || "Email atau password yang Anda masukkan salah.";
+          const errMsg =
+            err?.response?.data?.message ||
+            "Email atau password yang Anda masukkan salah.";
           setError(errMsg);
         },
-      }
+      },
     );
   };
 
@@ -38,12 +40,14 @@ export function LoginPage() {
         {/* Decorative background circles */}
         <div className="absolute top-0 left-0 w-96 h-96 bg-white opacity-5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-400 opacity-20 rounded-full translate-x-1/3 translate-y-1/3"></div>
-        
+
         <div className="relative z-10 flex items-center gap-3">
           <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
             <Anchor className="h-8 w-8 text-white" />
           </div>
-          <span className="text-2xl font-bold text-white tracking-tight">SEAPEDIA</span>
+          <span className="text-2xl font-bold text-white tracking-tight">
+            SEAPEDIA
+          </span>
         </div>
 
         <div className="relative z-10 space-y-6 max-w-lg">
@@ -51,12 +55,12 @@ export function LoginPage() {
             Kembali ke lautan peluang.
           </h1>
           <p className="text-blue-100 text-lg leading-relaxed">
-            Masuk ke akun Anda untuk mengelola hasil laut, memantau pesanan, atau mencari tangkapan terbaik hari ini.
+            Masuk ke akun Anda untuk mengelola, memantau pesanan
           </p>
         </div>
 
         <div className="relative z-10 flex items-center gap-4 text-blue-200 text-sm">
-          <span>© 2026 Seapedia. All rights reserved.</span>
+          <span>© 2026 Compfest. All rights reserved.</span>
         </div>
       </div>
 
@@ -72,8 +76,12 @@ export function LoginPage() {
 
         <div className="w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
           <div className="space-y-3">
-            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Selamat Datang</h2>
-            <p className="text-gray-500">Masukkan kredensial Anda untuk melanjutkan ke dashboard.</p>
+            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
+              Selamat Datang
+            </h2>
+            <p className="text-gray-500">
+              Masukkan kredensial Anda untuk melanjutkan ke dashboard.
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -85,7 +93,7 @@ export function LoginPage() {
                 {error}
               </div>
             )}
-            
+
             <div className="space-y-5">
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
@@ -118,7 +126,11 @@ export function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
                 </button>
               </div>
             </div>

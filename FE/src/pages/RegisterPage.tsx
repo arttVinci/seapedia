@@ -1,10 +1,24 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useRegister } from "../hooks/mutations/auth/useRegister";
-import { useAuth } from "../contexts/AuthContext";
-import { authService, storeService } from "../services";
-import { Anchor, Mail, Lock, User, Store, Truck, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { useAddRole } from "../hooks/mutations/auth/useAddRole";
+import { useSelectRole } from "../hooks/mutations/auth/useSelectRole";
+import { useLogin } from "../hooks/mutations/auth/useLogin";
+import { useCreateStore } from "../hooks/mutations/stores/useCreateStore";
+import {
+  Anchor,
+  Mail,
+  Lock,
+  User,
+  Store,
+  Truck,
+  ArrowRight,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { Button, Input } from "../components/ui";
+
+import { useQueryClient } from "@tanstack/react-query";
 
 export function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -13,11 +27,13 @@ export function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
+  const queryClient = useQueryClient();
+
   // Roles
   const [isSeller, setIsSeller] = useState(false);
   const [isDriver, setIsDriver] = useState(false);
-  
+
   // Store details
   const [storeName, setStoreName] = useState("");
   const [storeDescription, setStoreDescription] = useState("");
@@ -26,8 +42,11 @@ export function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const registerMutation = useRegister();
+  const loginMutation = useLogin();
+  const addRoleMutation = useAddRole();
+  const selectRoleMutation = useSelectRole();
+  const createStoreMutation = useCreateStore();
   const navigate = useNavigate();
-  const { handleLoginSuccess, handleSelectRoleSuccess } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,41 +69,40 @@ export function RegisterPage() {
       {
         onSuccess: async () => {
           try {
-            const authResp = await authService.login({ email, password });
-            handleLoginSuccess(authResp.token);
+            await loginMutation.mutateAsync({ email, password });
 
             if (isSeller) {
-              await authService.addRole({ role: "seller" });
-              const selectResp = await authService.selectRole({ role: "seller" });
-              
-              // Update token for store creation
-              handleSelectRoleSuccess(selectResp.token, selectResp.active_role);
-              
-              await storeService.createStore({
+              await addRoleMutation.mutateAsync({ role: "seller" });
+              await selectRoleMutation.mutateAsync({ role: "seller" });
+              await createStoreMutation.mutateAsync({
                 name: storeName,
                 description: storeDescription,
               });
             }
 
             if (isDriver) {
-              await authService.addRole({ role: "driver" });
+              await addRoleMutation.mutateAsync({ role: "driver" });
             }
 
             // Default fallback role to buyer
-            const selectBuyerResp = await authService.selectRole({ role: "buyer" });
-            handleSelectRoleSuccess(selectBuyerResp.token, selectBuyerResp.active_role);
-            
+            await selectRoleMutation.mutateAsync({ role: "buyer" });
+
+            await queryClient.invalidateQueries({ queryKey: ["roles"] });
             navigate("/");
           } catch (err: any) {
             console.error(err);
-            setError("Akun berhasil dibuat, namun gagal mengatur peran/toko. Silakan atur di pengaturan.");
+            setError(
+              "Akun berhasil dibuat, namun gagal mengatur peran/toko. Silakan atur di pengaturan.",
+            );
             setTimeout(() => navigate("/"), 2000);
           } finally {
             setIsLoading(false);
           }
         },
         onError: (err: any) => {
-          const errMsg = err?.response?.data?.message || "Registrasi gagal. Silakan coba lagi.";
+          const errMsg =
+            err?.response?.data?.message ||
+            "Registrasi gagal. Silakan coba lagi.";
           setError(errMsg);
           setIsLoading(false);
         },
@@ -98,25 +116,28 @@ export function RegisterPage() {
       <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-blue-900 via-blue-700 to-blue-500 p-12 flex-col justify-between relative overflow-hidden fixed h-screen">
         <div className="absolute top-0 left-0 w-96 h-96 bg-white opacity-5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-400 opacity-20 rounded-full translate-x-1/3 translate-y-1/3"></div>
-        
+
         <div className="relative z-10 flex items-center gap-3">
           <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
             <Anchor className="h-8 w-8 text-white" />
           </div>
-          <span className="text-2xl font-bold text-white tracking-tight">SEAPEDIA</span>
+          <span className="text-2xl font-bold text-white tracking-tight">
+            SEAPEDIA
+          </span>
         </div>
 
         <div className="relative z-10 space-y-6 max-w-lg">
           <h1 className="text-4xl lg:text-5xl font-extrabold text-white leading-tight">
-            Mulai Perjalanan Maritim Anda.
+            Mulai Perjalanan Anda.
           </h1>
           <p className="text-blue-100 text-lg leading-relaxed">
-            Bergabunglah dengan ekosistem kelautan terbesar. Baik sebagai pembeli, penjual hasil laut, maupun kurir pengantar.
+            Bergabunglah dengan ekosistem terbesar. Baik sebagai pembeli,
+            penjual, maupun kurir pengantar.
           </p>
         </div>
 
         <div className="relative z-10 flex items-center gap-4 text-blue-200 text-sm">
-          <span>© 2026 Seapedia. All rights reserved.</span>
+          <span>© 2026 Compfest. All rights reserved.</span>
         </div>
       </div>
 
@@ -132,8 +153,12 @@ export function RegisterPage() {
 
         <div className="w-full max-w-lg space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out mt-8 lg:mt-0">
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Buat Akun Baru</h2>
-            <p className="text-sm text-gray-500">Lengkapi data diri Anda di bawah ini untuk memulai.</p>
+            <h2 className="text-2xl font-bold text-gray-900 tracking-tight">
+              Buat Akun Baru
+            </h2>
+            <p className="text-sm text-gray-500">
+              Lengkapi data diri Anda di bawah ini untuk memulai.
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -145,7 +170,7 @@ export function RegisterPage() {
                 {error}
               </div>
             )}
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
@@ -194,7 +219,11 @@ export function RegisterPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
 
@@ -215,47 +244,78 @@ export function RegisterPage() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
             </div>
-            
+
             <div className="space-y-2 pt-1">
-              <label className="text-sm font-semibold text-gray-900">Peran Anda</label>
+              <label className="text-sm font-semibold text-gray-900">
+                Peran Anda
+              </label>
               <div className="grid grid-cols-3 gap-3">
                 <label className="flex items-center gap-2 p-2 rounded-xl border border-gray-100 bg-gray-50 cursor-not-allowed opacity-70">
-                  <input type="checkbox" checked disabled className="rounded text-blue-600 w-3 h-3" />
-                  <div className="flex flex-col">
-                    <span className="text-xs font-medium text-gray-900">Buyer</span>
-                    <span className="text-[10px] text-gray-500 leading-tight">Peran default</span>
-                  </div>
-                </label>
-                
-                <label className={`flex items-center gap-2 p-2 rounded-xl border transition-all cursor-pointer ${isSeller ? 'border-blue-500 bg-blue-50/50' : 'border-gray-200 hover:border-blue-300'}`}>
-                  <input 
-                    type="checkbox" 
-                    checked={isSeller} 
-                    onChange={(e) => setIsSeller(e.target.checked)}
-                    className="rounded text-blue-600 w-3 h-3 focus:ring-blue-500" 
+                  <input
+                    type="checkbox"
+                    checked
+                    disabled
+                    className="rounded text-blue-600 w-3 h-3"
                   />
-                  <Store className={`w-4 h-4 ${isSeller ? 'text-blue-600' : 'text-gray-400'}`} />
                   <div className="flex flex-col">
-                    <span className="text-xs font-medium text-gray-900">Seller</span>
-                    <span className="text-[10px] text-gray-500 leading-tight">Buka toko</span>
+                    <span className="text-xs font-medium text-gray-900">
+                      Buyer
+                    </span>
+                    <span className="text-[10px] text-gray-500 leading-tight">
+                      Peran default
+                    </span>
                   </div>
                 </label>
 
-                <label className={`flex items-center gap-2 p-2 rounded-xl border transition-all cursor-pointer ${isDriver ? 'border-blue-500 bg-blue-50/50' : 'border-gray-200 hover:border-blue-300'}`}>
-                  <input 
-                    type="checkbox" 
-                    checked={isDriver} 
-                    onChange={(e) => setIsDriver(e.target.checked)}
-                    className="rounded text-blue-600 w-3 h-3 focus:ring-blue-500" 
+                <label
+                  className={`flex items-center gap-2 p-2 rounded-xl border transition-all cursor-pointer ${isSeller ? "border-blue-500 bg-blue-50/50" : "border-gray-200 hover:border-blue-300"}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isSeller}
+                    onChange={(e) => setIsSeller(e.target.checked)}
+                    className="rounded text-blue-600 w-3 h-3 focus:ring-blue-500"
                   />
-                  <Truck className={`w-4 h-4 ${isDriver ? 'text-blue-600' : 'text-gray-400'}`} />
+                  <Store
+                    className={`w-4 h-4 ${isSeller ? "text-blue-600" : "text-gray-400"}`}
+                  />
                   <div className="flex flex-col">
-                    <span className="text-xs font-medium text-gray-900">Driver</span>
-                    <span className="text-[10px] text-gray-500 leading-tight">Kirim kurir</span>
+                    <span className="text-xs font-medium text-gray-900">
+                      Seller
+                    </span>
+                    <span className="text-[10px] text-gray-500 leading-tight">
+                      Buka toko
+                    </span>
+                  </div>
+                </label>
+
+                <label
+                  className={`flex items-center gap-2 p-2 rounded-xl border transition-all cursor-pointer ${isDriver ? "border-blue-500 bg-blue-50/50" : "border-gray-200 hover:border-blue-300"}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isDriver}
+                    onChange={(e) => setIsDriver(e.target.checked)}
+                    className="rounded text-blue-600 w-3 h-3 focus:ring-blue-500"
+                  />
+                  <Truck
+                    className={`w-4 h-4 ${isDriver ? "text-blue-600" : "text-gray-400"}`}
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-xs font-medium text-gray-900">
+                      Driver
+                    </span>
+                    <span className="text-[10px] text-gray-500 leading-tight">
+                      Kirim kurir
+                    </span>
                   </div>
                 </label>
               </div>
@@ -265,7 +325,9 @@ export function RegisterPage() {
               <div className="space-y-3 p-4 mt-2 bg-gray-50 border border-gray-200 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
                 <div className="flex items-center gap-2 mb-1">
                   <Store className="w-4 h-4 text-blue-600" />
-                  <h4 className="text-sm font-semibold text-gray-900">Detail Toko Anda</h4>
+                  <h4 className="text-sm font-semibold text-gray-900">
+                    Detail Toko Anda
+                  </h4>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <Input

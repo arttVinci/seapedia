@@ -3,9 +3,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../../contexts/AuthContext";
 import { useLogout } from "../../hooks/mutations/auth/useLogout";
+import { useSelectRole } from "../../hooks/mutations/auth/useSelectRole";
+import { useAddRole } from "../../hooks/mutations/auth/useAddRole";
 import { useRoles } from "../../hooks/queries/auth/useRoles";
 import { useWallet } from "../../hooks/queries/buyer/useWallet";
-import { authService } from "../../services";
 import { OpenShopModal } from "../auth/OpenShopModal";
 import {
   Anchor,
@@ -47,7 +48,7 @@ const getRoleIcon = (role: string) => {
 };
 
 export function Navbar() {
-  const { user, token, activeRole, handleSelectRoleSuccess } = useAuth();
+  const { user, token, activeRole } = useAuth();
   const logoutMutation = useLogout();
   const navigate = useNavigate();
   const location = useLocation();
@@ -97,6 +98,8 @@ export function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const selectRoleMutation = useSelectRole();
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
@@ -129,10 +132,9 @@ export function Navbar() {
     if (role === activeRole) return;
     try {
       setIsSwitchingRole(true);
-      const res = await authService.selectRole({
+      await selectRoleMutation.mutateAsync({
         role: role as "buyer" | "seller" | "driver" | "admin",
       });
-      handleSelectRoleSuccess(res.token, res.active_role);
       setRoleDropdownOpen(false);
 
       if (role === "seller") {
@@ -154,12 +156,14 @@ export function Navbar() {
 
   const [isJoiningDriver, setIsJoiningDriver] = useState(false);
 
+  const addRoleMutation = useAddRole();
+
   const handleJoinDriver = async () => {
     setIsJoiningDriver(true);
     try {
-      await authService.addRole({ role: "driver" });
-      const selectResp = await authService.selectRole({ role: "driver" });
-      handleSelectRoleSuccess(selectResp.token, selectResp.active_role);
+      await addRoleMutation.mutateAsync({ role: "driver" });
+      await selectRoleMutation.mutateAsync({ role: "driver" });
+      
       setRoleDropdownOpen(false);
       navigate("/driver");
     } catch (err) {
@@ -480,10 +484,34 @@ export function Navbar() {
                                     Dashboard Toko
                                   </Link>
                                   <Link
+                                    to="/seller/products"
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
+                                  >
+                                    Manajemen Produk
+                                  </Link>
+                                  <Link
+                                    to="/seller/store"
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
+                                  >
+                                    Pengaturan Toko
+                                  </Link>
+                                  <Link
                                     to="/seller/orders"
                                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
                                   >
                                     Pesanan Masuk
+                                  </Link>
+                                  <Link
+                                    to="/seller/orders/history"
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
+                                  >
+                                    Riwayat Pesanan
+                                  </Link>
+                                  <Link
+                                    to="/seller/reports/income"
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
+                                  >
+                                    Laporan Pendapatan
                                   </Link>
                                 </>
                               )}
@@ -729,10 +757,34 @@ export function Navbar() {
                           Dashboard Toko
                         </Link>
                         <Link
+                          to="/seller/products"
+                          className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                        >
+                          Manajemen Produk
+                        </Link>
+                        <Link
+                          to="/seller/store"
+                          className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                        >
+                          Pengaturan Toko
+                        </Link>
+                        <Link
                           to="/seller/orders"
                           className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600"
                         >
                           Pesanan Masuk
+                        </Link>
+                        <Link
+                          to="/seller/orders/history"
+                          className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                        >
+                          Riwayat Pesanan
+                        </Link>
+                        <Link
+                          to="/seller/reports/income"
+                          className="block px-3 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600"
+                        >
+                          Laporan Pendapatan
                         </Link>
                       </div>
                     )}
