@@ -26,6 +26,7 @@ import { SellerDashboardPage } from "./pages/SellerDashboardPage";
 import { ProductManagementPage } from "./pages/seller/ProductManagementPage";
 import { StoreManagementPage } from "./pages/seller/StoreManagementPage";
 import SellerOrdersPage from "./pages/seller/SellerOrdersPage";
+import SellerOrderHistoryPage from "./pages/seller/SellerOrderHistoryPage";
 import SellerOrderDetailPage from "./pages/seller/SellerOrderDetailPage";
 import SellerIncomePage from "./pages/seller/SellerIncomePage";
 import { DriverDashboardPage } from "./pages/DriverDashboardPage";
@@ -80,6 +81,7 @@ function App() {
               <Route path="/seller/products" element={<ProductManagementPage />} />
               <Route path="/seller/store" element={<StoreManagementPage />} />
               <Route path="/seller/orders" element={<SellerOrdersPage />} />
+              <Route path="/seller/orders/history" element={<SellerOrderHistoryPage />} />
               <Route path="/seller/orders/:id" element={<SellerOrderDetailPage />} />
               <Route path="/seller/reports/income" element={<SellerIncomePage />} />
               

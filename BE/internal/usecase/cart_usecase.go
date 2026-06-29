@@ -99,6 +99,12 @@ func (u *CartUsecase) AddItem(userID string, request *model.AddCartItemRequest) 
 			return nil, fiber.NewError(fiber.StatusConflict,
 				"Produk dari toko berbeda. Kosongkan keranjang terlebih dahulu atau belanja dari satu toko.")
 		}
+		if cart.StoreID == nil {
+			if err := tx.Model(&cart).Update("store_id", product.StoreID).Error; err != nil {
+				tx.Rollback()
+				return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal memperbarui toko keranjang")
+			}
+		}
 	}
 
 	// check if product already in cart

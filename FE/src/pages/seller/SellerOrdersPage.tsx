@@ -12,12 +12,14 @@ export default function SellerOrdersPage() {
       <h1 className="text-2xl font-bold">Pesanan Masuk</h1>
       <div className="space-y-4">
         {isLoading && <p>Loading...</p>}
-        {!isLoading && (!orders || orders.length === 0) && (
+        {!isLoading && (!orders || orders.filter((order) => !['Pesanan Selesai', 'Dibatalkan', 'Refund'].includes(order.status)).length === 0) && (
           <Card className="p-6 text-center text-gray-500">
             Belum ada pesanan masuk.
           </Card>
         )}
-        {orders?.map(order => (
+        {orders
+          ?.filter((order) => !['Pesanan Selesai', 'Dibatalkan', 'Refund'].includes(order.status))
+          .map(order => (
           <Card key={order.id} className="p-4">
             <div className="flex justify-between items-center">
               <div>

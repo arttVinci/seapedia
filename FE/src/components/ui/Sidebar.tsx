@@ -49,6 +49,7 @@ export function Sidebar({ role }: SidebarProps) {
             icon: ShoppingCart,
             links: [
               { name: "Pesanan Masuk", href: "/seller/orders" },
+              { name: "Riwayat Pesanan", href: "/seller/orders/history" },
             ]
           },
           {
