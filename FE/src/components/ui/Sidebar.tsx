@@ -3,7 +3,6 @@ import {
   Home,
   Package,
   ShoppingCart,
-  Users,
   Truck,
   Settings,
   Star,
@@ -27,7 +26,11 @@ export function Sidebar({ role }: SidebarProps) {
           { name: "Pesanan Saya", href: "/buyer/orders", icon: Package },
           { name: "Dompet", href: "/buyer/wallet", icon: Store },
           { name: "Alamat", href: "/buyer/addresses", icon: Home },
-          { name: "Laporan Pengeluaran", href: "/buyer/reports/expense", icon: Star },
+          {
+            name: "Laporan Pengeluaran",
+            href: "/buyer/reports/expense",
+            icon: Star,
+          },
         ];
       case "seller":
         return [
@@ -35,13 +38,21 @@ export function Sidebar({ role }: SidebarProps) {
           { name: "Toko Saya", href: "/seller/store", icon: Store },
           { name: "Produk Saya", href: "/seller/products", icon: Package },
           { name: "Pesanan", href: "/seller/orders", icon: ShoppingCart },
-          { name: "Laporan Pendapatan", href: "/seller/reports/income", icon: Star },
+          {
+            name: "Laporan Pendapatan",
+            href: "/seller/reports/income",
+            icon: Star,
+          },
         ];
       case "driver":
         return [
           { name: "Dashboard", href: "/driver", icon: Home },
           { name: "Cari Pekerjaan", href: "/driver/jobs", icon: Truck },
-          { name: "Pekerjaan Aktif", href: "/driver/active-job", icon: Package },
+          {
+            name: "Pekerjaan Aktif",
+            href: "/driver/active-job",
+            icon: Package,
+          },
         ];
       case "admin":
         return [

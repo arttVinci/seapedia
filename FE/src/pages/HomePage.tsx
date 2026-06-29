@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Cpu,
   ShoppingCart,
+  Star,
 } from "lucide-react";
 
 export function HomePage() {
@@ -23,56 +24,62 @@ export function HomePage() {
   const handleAddToCart = (e: React.MouseEvent, productId: string) => {
     e.preventDefault(); // Prevent navigating to detail page
     if (!token) {
-      navigate('/login');
+      navigate("/login");
       return;
     }
-    if (activeRole !== 'buyer') {
-      alert('Hanya pembeli yang dapat menambahkan ke keranjang.');
+    if (activeRole !== "buyer") {
+      alert("Hanya pembeli yang dapat menambahkan ke keranjang.");
       return;
     }
     addToCartMutation.mutate(
       { product_id: productId, quantity: 1 },
       {
-        onSuccess: () => alert('Berhasil ditambahkan ke keranjang!'),
+        onSuccess: () => alert("Berhasil ditambahkan ke keranjang!"),
         onError: (err: any) => {
           if (err.response?.status === 409) {
-            alert(err.response.data.message || 'Konflik: Produk dari toko berbeda. Kosongkan keranjang terlebih dahulu.');
+            alert(
+              err.response.data.message ||
+                "Konflik: Produk dari toko berbeda. Kosongkan keranjang terlebih dahulu.",
+            );
           } else {
-            alert(err.response?.data?.message || 'Gagal menambahkan ke keranjang');
+            alert(
+              err.response?.data?.message || "Gagal menambahkan ke keranjang",
+            );
           }
         },
-      }
+      },
     );
   };
 
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-slate-900 via-slate-800 to-gray-900 py-24 sm:py-32 overflow-hidden">
-        {/* Abstract tech background elements */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-blue-600/10 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 rounded-full bg-purple-600/10 blur-3xl"></div>
-        
+      <div className="relative bg-white pt-24 pb-32 sm:pt-32 sm:pb-40 overflow-hidden border-b border-slate-100">
+        {/* Abstract tech background elements - Light Theme */}
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-blue-100/50 blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 rounded-full bg-purple-100/50 blur-3xl"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] rounded-full bg-cyan-50/50 blur-3xl"></div>
+
         <div className="relative max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-blue-200 text-sm font-medium mb-6 backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-sm font-semibold mb-8 backdrop-blur-sm shadow-sm transition-transform hover:scale-105">
             <Cpu className="w-4 h-4" />
             <span>Pusat Gadget & Elektronik Terlengkap</span>
           </div>
-          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-6xl md:text-7xl drop-shadow-lg">
-            Teknologi Terkini, <br className="hidden sm:block" /> 
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
+          <h1 className="text-5xl font-extrabold tracking-tight text-slate-900 sm:text-6xl md:text-7xl drop-shadow-sm">
+            Teknologi Terkini, <br className="hidden sm:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">
               Di Genggaman Anda
             </span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-slate-300 leading-relaxed font-light">
-            Jelajahi koleksi laptop, handphone, dan aksesoris pintar terbaik. 
+          <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-slate-600 leading-relaxed font-normal">
+            Jelajahi koleksi laptop, handphone, dan aksesoris pintar terbaik.
             Belanja produk original dengan garansi resmi dan harga kompetitif.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
             <Link to="/catalog">
               <Button
                 size="lg"
-                className="w-full sm:w-auto bg-blue-600 text-white hover:bg-blue-700 font-semibold px-8 py-4 rounded-xl shadow-lg shadow-blue-900/20 transition-all hover:-translate-y-1"
+                className="w-full sm:w-auto bg-blue-600 text-white hover:bg-blue-700 font-semibold px-8 py-4 rounded-xl shadow-lg shadow-blue-600/20 transition-all hover:-translate-y-1"
               >
                 Mulai Belanja
               </Button>
@@ -81,7 +88,7 @@ export function HomePage() {
               <Button
                 size="lg"
                 variant="outline"
-                className="w-full sm:w-auto border-2 border-slate-600 text-white hover:bg-slate-800 hover:border-slate-500 font-semibold px-8 py-4 rounded-xl transition-all hover:-translate-y-1 backdrop-blur-sm"
+                className="w-full sm:w-auto bg-white border-2 border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 font-semibold px-8 py-4 rounded-xl shadow-sm transition-all hover:-translate-y-1"
               >
                 Daftar Sekarang
               </Button>
@@ -173,53 +180,71 @@ export function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-6">
             {data?.data.map((product) => (
               <div
                 key={product.id}
-                className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:shadow-xl hover:shadow-blue-900/5 hover:border-blue-200 transition-all duration-300"
+                className="group flex flex-col rounded-[1.25rem] border border-slate-200/75 bg-white p-4 shadow-sm hover:shadow-xl hover:shadow-blue-900/5 hover:-translate-y-1 transition-all duration-300"
               >
-                <div className="relative h-56 w-full rounded-xl overflow-hidden bg-slate-50 mb-4">
-                  <Link to={`/products/${product.id}`} className="block w-full h-full">
+                {/* Image */}
+                <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-50 mb-4 flex items-center justify-center">
+                  <Link
+                    to={`/products/${product.id}`}
+                    className="block w-full h-full"
+                  >
                     <img
-                      className="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-500"
+                      className="w-full h-full object-contain p-6 group-hover:scale-110 transition-transform duration-500"
                       src={product.image_url || "/image/handphone-kategori.jpg"}
                       alt={product.name}
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = "/image/iphone-kategori.jpg";
+                        (e.target as HTMLImageElement).src =
+                          "/image/iphone-kategori.jpg";
                       }}
                     />
                   </Link>
                 </div>
-                
-                <div className="flex flex-col flex-grow justify-between">
-                  <div>
-                    <Link
-                      to={`/products/${product.id}`}
-                      className="line-clamp-2 text-lg font-bold leading-snug text-slate-900 hover:text-blue-600 transition-colors"
-                    >
-                      {product.name}
-                    </Link>
-                    <p className="mt-2 text-xl font-extrabold text-blue-600">
-                      Rp{product.price?.toLocaleString("id-ID")}
-                    </p>
+
+                <div className="flex flex-col flex-grow">
+                  {/* Title */}
+                  <Link
+                    to={`/products/${product.id}`}
+                    className="line-clamp-2 text-[15px] font-semibold leading-snug text-slate-800 hover:text-blue-600 transition-colors mb-1"
+                  >
+                    {product.name}
+                  </Link>
+
+                  {/* Rating bintang */}
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <div className="flex items-center">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-3.5 w-3.5 ${
+                            i < Math.round(4)
+                              ? "fill-amber-400 text-amber-400"
+                              : "fill-slate-200 text-slate-200"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-[11px] font-medium text-slate-500">
+                      {(4).toFixed(1)}
+                      <span className="text-slate-400 ml-0.5">(21)</span>
+                    </span>
                   </div>
 
-                  <div className="mt-4 flex gap-2 w-full overflow-hidden">
-                    <Link
-                      to={`/products/${product.id}`}
-                      className="inline-flex justify-center items-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-800 transition-colors active:scale-95"
-                    >
-                      Detail
-                    </Link>
+                  {/* Spacer: dorong harga + tombol ke bawah */}
+                  <div className="mt-auto pt-3 flex items-center justify-between gap-2">
+                    <p className="text-base font-bold tracking-tight text-slate-900 truncate">
+                      Rp{product.price?.toLocaleString("id-ID")}
+                    </p>
                     <button
                       onClick={(e) => handleAddToCart(e, product.id)}
                       disabled={addToCartMutation.isPending}
-                      className="flex-1 inline-flex justify-center items-center rounded-xl bg-blue-600 px-3 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition-colors active:scale-95 disabled:opacity-50"
+                      className="cursor-pointer disabled:cursor-not-allowed shrink-0 inline-flex justify-center items-center rounded-xl bg-white border border-slate-200 p-2.5 text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-colors active:scale-95 disabled:opacity-50 shadow-sm"
                       title="Tambah ke Keranjang"
                     >
-                      <ShoppingCart className="h-4 w-4 mr-1.5" />
-                      Beli
+                      <ShoppingCart className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
@@ -237,7 +262,8 @@ export function HomePage() {
               Official Store & Distributor
             </h2>
             <p className="text-slate-500 mt-3 text-lg max-w-2xl mx-auto">
-              Temukan berbagai toko resmi terpercaya dengan rating tertinggi dan pelayanan terbaik.
+              Temukan berbagai toko resmi terpercaya dengan rating tertinggi dan
+              pelayanan terbaik.
             </p>
           </div>
 
