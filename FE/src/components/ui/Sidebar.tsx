@@ -1,12 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
 import {
-  Home,
   Package,
   ShoppingCart,
   Truck,
   Settings,
-  Star,
   Store,
+  User,
+  Wallet,
+  Activity,
+  Tags,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 
@@ -14,101 +16,137 @@ interface SidebarProps {
   role: string;
 }
 
+interface SidebarGroup {
+  title: string;
+  icon: React.ElementType;
+  links: { name: string; href: string }[];
+}
+
 export function Sidebar({ role }: SidebarProps) {
   const location = useLocation();
 
-  const getRoleLinks = (userRole: string) => {
+  const getRoleGroups = (userRole: string): SidebarGroup[] => {
     switch (userRole) {
-      case "buyer":
-        return [
-          { name: "Dashboard", href: "/buyer", icon: Home },
-          { name: "Keranjang", href: "/buyer/cart", icon: ShoppingCart },
-          { name: "Pesanan Saya", href: "/buyer/orders", icon: Package },
-          { name: "Dompet", href: "/buyer/wallet", icon: Store },
-          { name: "Alamat", href: "/buyer/addresses", icon: Home },
-          {
-            name: "Laporan Pengeluaran",
-            href: "/buyer/reports/expense",
-            icon: Star,
-          },
-        ];
       case "seller":
         return [
-          { name: "Dashboard", href: "/seller", icon: Home },
-          { name: "Toko Saya", href: "/seller/store", icon: Store },
-          { name: "Produk Saya", href: "/seller/products", icon: Package },
-          { name: "Pesanan", href: "/seller/orders", icon: ShoppingCart },
           {
-            name: "Laporan Pendapatan",
-            href: "/seller/reports/income",
-            icon: Star,
+            title: "Toko Saya",
+            icon: Store,
+            links: [
+              { name: "Dashboard Utama", href: "/seller" },
+              { name: "Pengaturan Toko", href: "/seller/store" },
+            ]
           },
+          {
+            title: "Produk",
+            icon: Package,
+            links: [
+              { name: "Daftar Produk", href: "/seller/products" },
+            ]
+          },
+          {
+            title: "Pesanan",
+            icon: ShoppingCart,
+            links: [
+              { name: "Pesanan Masuk", href: "/seller/orders" },
+            ]
+          },
+          {
+            title: "Keuangan",
+            icon: Wallet,
+            links: [
+              { name: "Laporan Pendapatan", href: "/seller/reports/income" },
+            ]
+          }
         ];
       case "driver":
         return [
-          { name: "Dashboard", href: "/driver", icon: Home },
-          { name: "Cari Pekerjaan", href: "/driver/jobs", icon: Truck },
           {
-            name: "Pekerjaan Aktif",
-            href: "/driver/active-job",
-            icon: Package,
-          },
+            title: "Pekerjaan",
+            icon: Truck,
+            links: [
+              { name: "Dashboard", href: "/driver" },
+              { name: "Cari Pekerjaan", href: "/driver/jobs" },
+              { name: "Pekerjaan Aktif", href: "/driver/active-job" },
+            ]
+          }
         ];
       case "admin":
         return [
-          { name: "Dashboard", href: "/admin", icon: Home },
-          { name: "Vouchers", href: "/admin/vouchers", icon: Star },
-          { name: "Promos", href: "/admin/promos", icon: Star },
+          {
+            title: "Manajemen",
+            icon: Activity,
+            links: [
+              { name: "Dashboard", href: "/admin" },
+            ]
+          },
+          {
+            title: "Promosi",
+            icon: Tags,
+            links: [
+              { name: "Vouchers", href: "/admin/vouchers" },
+              { name: "Promos", href: "/admin/promos" },
+            ]
+          }
         ];
       default:
-        return [{ name: "Dashboard", href: "/dashboard", icon: Home }];
+        // Fallback
+        return [
+          {
+            title: "Akun Saya",
+            icon: User,
+            links: [
+              { name: "Dashboard", href: "/dashboard" },
+            ]
+          }
+        ];
     }
   };
 
-  const links = getRoleLinks(role);
+  const groups = getRoleGroups(role);
 
   return (
-    <div className="flex h-full flex-col overflow-y-auto border-r border-gray-200 bg-white px-3 py-4">
-      <div className="mb-6 px-3">
-        <h2 className="text-lg font-semibold text-gray-900">Dashboard</h2>
+    <div className="flex flex-col rounded-2xl bg-white border border-gray-100 shadow-xl shadow-gray-200/40 p-5">
+      <div className="space-y-8">
+        {groups.map((group, index) => (
+          <div key={index}>
+            <div className="flex items-center gap-3 px-1 mb-4">
+              <group.icon className="h-6 w-6 text-gray-900" strokeWidth={1.5} />
+              <h3 className="text-base font-bold text-gray-900">{group.title}</h3>
+            </div>
+            <ul className="space-y-1">
+              {group.links.map((link) => {
+                const isExactActive = location.pathname === link.href;
+
+                return (
+                  <li key={link.name}>
+                    <Link
+                      to={link.href}
+                      className={cn(
+                        "block rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                        isExactActive
+                          ? "bg-blue-50 text-blue-700 font-semibold"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      )}
+                    >
+                      {link.name}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
       </div>
-      <ul className="space-y-1">
-        {links.map((link) => {
-          const isActive = location.pathname === link.href;
-          const Icon = link.icon;
-          return (
-            <li key={link.name}>
-              <Link
-                to={link.href}
-                className={cn(
-                  "group flex items-center rounded-md px-3 py-2 text-sm font-medium",
-                  isActive
-                    ? "bg-blue-50 text-blue-700"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-gray-900",
-                )}
-              >
-                <Icon
-                  className={cn(
-                    "mr-3 h-5 w-5 flex-shrink-0",
-                    isActive
-                      ? "text-blue-700"
-                      : "text-gray-400 group-hover:text-gray-500",
-                  )}
-                  aria-hidden="true"
-                />
-                {link.name}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-      <div className="mt-auto pt-4">
+      
+      {/* Settings at the bottom */}
+      <div className="mt-8 pt-6 border-t border-gray-100">
         <Link
           to="/dashboard/settings"
-          className="group flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+          className="flex items-center gap-3 px-1 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
         >
-          <Settings className="mr-3 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500" />
-          Settings
+          <Settings className="h-5 w-5 text-gray-500" strokeWidth={1.5} />
+          Pengaturan
         </Link>
       </div>
     </div>

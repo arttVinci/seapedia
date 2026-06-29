@@ -18,6 +18,7 @@ import {
   Store,
   Users,
   Search,
+  Wallet,
 } from "lucide-react";
 
 const roleDisplayNames: Record<string, string> = {
@@ -284,61 +285,80 @@ export function Navbar() {
                       </button>
 
                       {dropdownOpen && (
-                        <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-100 rounded-xl shadow-lg py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                          <div className="px-4 py-3 border-b border-gray-50 mb-2">
-                            <div className="flex items-center gap-3">
-                              <div className="bg-blue-100 p-2 rounded-full">
-                                <User className="h-5 w-5 text-blue-700" />
-                              </div>
-                              <div className="overflow-hidden">
-                                <p className="text-sm font-bold text-gray-900 truncate">
-                                  {user.username}
-                                </p>
-                                <p className="text-xs text-gray-500 truncate">
-                                  {user.email}
-                                </p>
-                              </div>
+                        <div className={`absolute right-0 mt-2 ${activeRole === "buyer" ? "w-[480px]" : "w-64"} bg-white border border-gray-200 rounded-xl shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-200 overflow-hidden`}>
+                          <div className="px-4 py-3 border-b border-gray-100 flex items-center gap-3 bg-white">
+                            <div className="bg-blue-100 p-2 rounded-full shadow-sm">
+                              <User className="h-5 w-5 text-blue-700" />
+                            </div>
+                            <div className="overflow-hidden">
+                              <p className="text-sm font-bold text-gray-900 truncate">
+                                {user.username}
+                              </p>
+                              <p className="text-xs text-gray-500 truncate">
+                                {user.email}
+                              </p>
                             </div>
                           </div>
 
-                          {activeRole === "buyer" && (
-                            <div className="py-1 border-b border-gray-50">
+                          <div className={activeRole === "buyer" ? "flex bg-white" : "bg-white"}>
+                            {/* Left Column for Buyer (Wallet & Points) */}
+                            {activeRole === "buyer" && (
+                              <div className="w-[55%] p-3 border-r border-gray-100 flex flex-col gap-3">
+                                {/* Wallet Info */}
+                                <div className="p-3 border border-gray-100 rounded-lg bg-gray-50 flex flex-col gap-2 shadow-sm">
+                                  <div className="flex items-center gap-2">
+                                    <div className="bg-green-100 p-1.5 rounded-md">
+                                      <Wallet className="h-4 w-4 text-green-600" />
+                                    </div>
+                                    <span className="text-xs font-semibold text-gray-700">Saldo Seapedia</span>
+                                  </div>
+                                  <div className="flex items-center justify-between mt-1">
+                                    <span className="text-sm font-bold text-gray-900">Rp0</span>
+                                    <Link to="/buyer/wallet" className="text-xs font-bold text-blue-600 hover:text-blue-700">
+                                      Top Up
+                                    </Link>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Right Column (Navigation Links) */}
+                            <div className={`${activeRole === "buyer" ? "w-[45%]" : "w-full"} py-2`}>
+                              {activeRole === "buyer" && (
+                                <>
+                                  <Link
+                                    to="/buyer/orders"
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
+                                  >
+                                    Pembelian
+                                  </Link>
+                                  <Link
+                                    to="/buyer/addresses"
+                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
+                                  >
+                                    Alamat
+                                  </Link>
+                                </>
+                              )}
+
                               <Link
-                                to="/buyer/orders"
-                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                                to="/settings"
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors"
                               >
-                                Pembelian
+                                Pengaturan
                               </Link>
-                              <Link
-                                to="/buyer/wallet"
-                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
-                              >
-                                Dompet
-                              </Link>
-                              <Link
-                                to="/buyer/addresses"
-                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
-                              >
-                                Alamat
-                              </Link>
+
+                              <div className="border-t border-gray-100 mt-2 pt-2">
+                                <button
+                                  onClick={handleLogout}
+                                  className="flex w-full items-center justify-between px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-red-600 transition-colors"
+                                >
+                                  Keluar
+                                  <LogOut className="h-4 w-4 text-gray-400" />
+                                </button>
+                              </div>
                             </div>
-                          )}
-
-                          <Link
-                            to="/settings"
-                            className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors mt-1"
-                          >
-                            <Settings className="h-4 w-4" />
-                            Pengaturan
-                          </Link>
-
-                          <button
-                            onClick={handleLogout}
-                            className="flex w-full items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors mt-1 border-t border-gray-50 pt-3"
-                          >
-                            <LogOut className="h-4 w-4" />
-                            Keluar
-                          </button>
+                          </div>
                         </div>
                       )}
                     </div>

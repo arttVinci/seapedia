@@ -7,7 +7,6 @@ import { useAuth } from "../contexts/AuthContext";
 import { ProductCard } from "../components/product/ProductCard";
 import {
   Sparkles,
-  Search,
   Shirt,
   Smartphone,
   Home,
@@ -81,24 +80,6 @@ export function HomePage() {
             Jutaan produk dari fashion, rumah tangga, kecantikan, hingga
             kebutuhan harian. Gratis ongkir & harga terbaik setiap hari!
           </p>
-
-          {/* Search bar khas marketplace */}
-          <div className="mx-auto mt-10 flex max-w-2xl items-center gap-2 rounded-2xl bg-white p-2 shadow-xl shadow-blue-900/10">
-            <div className="flex flex-1 items-center gap-2 pl-3 text-slate-400">
-              <Search className="h-5 w-5" />
-              <input
-                type="text"
-                placeholder="Cari produk, brand, atau kategori..."
-                className="w-full bg-transparent py-2.5 text-slate-800 placeholder:text-slate-400 focus:outline-none"
-              />
-            </div>
-            <Button
-              size="lg"
-              className="bg-blue-600 text-white hover:bg-blue-700 font-semibold px-8 rounded-xl"
-            >
-              Cari
-            </Button>
-          </div>
         </div>
       </div>
 

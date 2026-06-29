@@ -53,8 +53,9 @@ function App() {
 
         {/* Protected Dashboard Routes */}
         <Route element={<ProtectedRoute />}>
-          {/* Buyer Routes - now using PublicLayout so Navbar is always visible */}
+          {/* Buyer & Dashboard Routes wrapped in PublicLayout so Navbar is always visible */}
           <Route element={<PublicLayout />}>
+            {/* Buyer Routes */}
             <Route path="/buyer" element={<BuyerDashboardPage />} />
             <Route path="/buyer/cart" element={<CartPage />} />
             <Route path="/buyer/checkout" element={<CheckoutPage />} />
@@ -63,29 +64,30 @@ function App() {
             <Route path="/buyer/wallet" element={<WalletPage />} />
             <Route path="/buyer/addresses" element={<AddressPage />} />
             <Route path="/buyer/reports/expense" element={<BuyerExpensePage />} />
-          </Route>
 
-          <Route element={<DashboardShell />}>
-            <Route path="/dashboard" element={<DashboardPage />} />
-            
-            {/* Seller Routes */}
-            <Route path="/seller" element={<SellerDashboardPage />} />
-            <Route path="/seller/products" element={<ProductManagementPage />} />
-            <Route path="/seller/store" element={<StoreManagementPage />} />
-            <Route path="/seller/orders" element={<SellerOrdersPage />} />
-            <Route path="/seller/orders/:id" element={<SellerOrderDetailPage />} />
-            <Route path="/seller/reports/income" element={<SellerIncomePage />} />
-            
-            {/* Driver Routes */}
-            <Route path="/driver" element={<DriverDashboardPage />} />
-            <Route path="/driver/jobs" element={<DriverJobsPage />} />
-            <Route path="/driver/jobs/:id" element={<DriverJobDetailPage />} />
-            <Route path="/driver/active-job" element={<DriverActiveJobPage />} />
-            
-            {/* Admin Routes */}
-            <Route path="/admin" element={<AdminDashboardPage />} />
-            <Route path="/admin/vouchers" element={<VoucherPage />} />
-            <Route path="/admin/promos" element={<PromoPage />} />
+            {/* Seller, Driver, Admin Routes (With Sidebar) */}
+            <Route element={<DashboardShell />}>
+              <Route path="/dashboard" element={<DashboardPage />} />
+              
+              {/* Seller Routes */}
+              <Route path="/seller" element={<SellerDashboardPage />} />
+              <Route path="/seller/products" element={<ProductManagementPage />} />
+              <Route path="/seller/store" element={<StoreManagementPage />} />
+              <Route path="/seller/orders" element={<SellerOrdersPage />} />
+              <Route path="/seller/orders/:id" element={<SellerOrderDetailPage />} />
+              <Route path="/seller/reports/income" element={<SellerIncomePage />} />
+              
+              {/* Driver Routes */}
+              <Route path="/driver" element={<DriverDashboardPage />} />
+              <Route path="/driver/jobs" element={<DriverJobsPage />} />
+              <Route path="/driver/jobs/:id" element={<DriverJobDetailPage />} />
+              <Route path="/driver/active-job" element={<DriverActiveJobPage />} />
+              
+              {/* Admin Routes */}
+              <Route path="/admin" element={<AdminDashboardPage />} />
+              <Route path="/admin/vouchers" element={<VoucherPage />} />
+              <Route path="/admin/promos" element={<PromoPage />} />
+            </Route>
           </Route>
         </Route>
 
