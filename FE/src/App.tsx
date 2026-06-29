@@ -47,15 +47,17 @@ function App() {
         {/* Public Routes */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route element={<GuestRoute />}>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-          </Route>
           <Route path="/catalog" element={<CatalogPage />} />
           <Route path="/stores/:id" element={<StorePage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
           <Route path="/products/:id/reviews" element={<ReviewsPage />} />
           <Route path="/select-role" element={<RoleSelectionPage />} />
+        </Route>
+
+        {/* Auth Routes (No Navbar/Footer) */}
+        <Route element={<GuestRoute />}>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Route>
 
         {/* Protected Dashboard Routes */}
