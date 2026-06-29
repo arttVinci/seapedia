@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type ReactNode,
+} from "react";
 import type { User } from "../@types/models";
 import { authService } from "../services";
 
@@ -30,10 +36,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (storedRole) {
         setActiveRoleState(storedRole);
       }
-      
+
       // Fetch user data with stored token
-      authService.getCurrentUser()
-        .then(userData => {
+      authService
+        .getCurrentUser()
+        .then((userData) => {
           setUser(userData);
         })
         .catch(() => {
@@ -51,15 +58,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const handleLoginSuccess = (newToken: string) => {
     setToken(newToken);
     localStorage.setItem("seapedia_token", newToken);
-    
+
     // Clear active role on login (requires user to select again)
     setActiveRoleState(null);
     localStorage.removeItem("seapedia_active_role");
 
     // Fetch user profile immediately
-    authService.getCurrentUser().then(userData => {
-      setUser(userData);
-    }).catch(console.error);
+    authService
+      .getCurrentUser()
+      .then((userData) => {
+        setUser(userData);
+      })
+      .catch(console.error);
   };
 
   const handleLogout = () => {
@@ -78,14 +88,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      token, 
-      activeRole, 
-      handleLoginSuccess, 
-      handleLogout, 
-      handleSelectRoleSuccess 
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        activeRole,
+        handleLoginSuccess,
+        handleLogout,
+        handleSelectRoleSuccess,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

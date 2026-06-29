@@ -21,7 +21,13 @@ func (r *StoreRepository) FindByUserID(db *gorm.DB, store *entity.Store, userID 
 
 func (r *StoreRepository) FindAll(db *gorm.DB) ([]entity.Store, error) {
 	var stores []entity.Store
-	err := db.Order("created_at desc").Limit(10).Find(&stores).Error
+	err := db.
+		Select("stores.*, COUNT(products.id) as product_count").
+		Joins("LEFT JOIN products ON products.store_id = stores.id").
+		Group("stores.id").
+		Order("product_count desc").
+		Limit(3).
+		Find(&stores).Error
 	return stores, err
 }
 

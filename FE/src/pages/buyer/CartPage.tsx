@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { useCart } from '../../hooks/queries/buyer/useCart';
 import { useUpdateCartItem } from '../../hooks/mutations/buyer/useUpdateCartItem';
 import { useDeleteCartItem } from '../../hooks/mutations/buyer/useDeleteCartItem';
 import { AxiosError } from 'axios';
 import type { ApiErrorResponse } from '../../@types/api/response.types';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 
 export const CartPage: React.FC = () => {
   const { data: cart, isLoading, error } = useCart();
@@ -12,6 +14,7 @@ export const CartPage: React.FC = () => {
   const deleteCartItemMutation = useDeleteCartItem();
 
   const [conflictError, setConflictError] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; itemId: string | null }>({ isOpen: false, itemId: null });
 
   const handleUpdateQuantity = (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
@@ -23,7 +26,7 @@ export const CartPage: React.FC = () => {
           if (err.response?.status === 409) {
             setConflictError(err.response.data.message || 'Produk dari toko yang berbeda.');
           } else {
-            alert(err.response?.data?.message || 'Gagal mengubah kuantitas.');
+            toast.error(err.response?.data?.message || 'Gagal mengubah kuantitas.');
           }
         },
       }
@@ -31,20 +34,18 @@ export const CartPage: React.FC = () => {
   };
 
   const handleDeleteItem = (itemId: string) => {
-    if (window.confirm('Hapus produk ini dari keranjang?')) {
-      deleteCartItemMutation.mutate(itemId, {
-        onError: (err: AxiosError<ApiErrorResponse>) => {
-          alert(err.response?.data?.message || 'Gagal menghapus produk.');
-        },
-      });
-    }
+    deleteCartItemMutation.mutate(itemId, {
+      onError: (err: AxiosError<ApiErrorResponse>) => {
+        toast.error(err.response?.data?.message || 'Gagal menghapus produk.');
+      },
+    });
   };
 
   const handleClearCart = () => {
     if (cart?.items) {
       Promise.all(cart.items.map(item => deleteCartItemMutation.mutateAsync(item.id)))
         .then(() => setConflictError(null))
-        .catch(() => alert('Gagal mengosongkan keranjang.'));
+        .catch(() => toast.error('Gagal mengosongkan keranjang.'));
     }
   };
 
@@ -160,7 +161,7 @@ export const CartPage: React.FC = () => {
                       +
                     </button>
                     <button
-                      onClick={() => handleDeleteItem(item.id)}
+                      onClick={() => setDeleteConfirm({ isOpen: true, itemId: item.id })}
                       disabled={deleteCartItemMutation.isPending}
                       className="text-red-500 hover:text-red-700 ml-2 text-sm font-medium"
                     >
@@ -233,6 +234,17 @@ export const CartPage: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      <ConfirmModal
+        isOpen={deleteConfirm.isOpen}
+        onClose={() => setDeleteConfirm({ isOpen: false, itemId: null })}
+        onConfirm={() => {
+          if (deleteConfirm.itemId) handleDeleteItem(deleteConfirm.itemId);
+        }}
+        title="Hapus Produk"
+        message="Apakah Anda yakin ingin menghapus produk ini dari keranjang?"
+        confirmText="Hapus"
+      />
     </div>
   );
 };

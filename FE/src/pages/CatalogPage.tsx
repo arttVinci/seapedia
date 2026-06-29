@@ -1,14 +1,24 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { useProducts } from "../hooks/queries/products/useProducts";
 import { Store } from "lucide-react";
 
 export function CatalogPage() {
+  const [searchParams] = useSearchParams();
+  const initialQuery = searchParams.get("q") || "";
+  
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(initialQuery);
   const [sort, setSort] = useState("newest");
   const perPage = 8;
-  const { data, isLoading } = useProducts({ page, size: perPage, title: search });
+  const { data, isLoading } = useProducts({ page, size: perPage, name: search });
+
+  // Update local search state when URL changes
+  useEffect(() => {
+    const q = searchParams.get("q") || "";
+    setSearch(q);
+    setPage(1); // Reset page on new search
+  }, [searchParams]);
 
   const totalPages = data ? Math.ceil(data.total / perPage) : 1;
   const filteredProducts = data?.data ?? [];

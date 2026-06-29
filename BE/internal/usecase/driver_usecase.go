@@ -60,10 +60,10 @@ func (u *DriverUseCase) ListJobs(ctx context.Context) ([]model.JobResponse, erro
 	return converter.OrdersToJobResponses(orders), nil
 }
 
-func (u *DriverUseCase) JobDetail(ctx context.Context, orderID string) (*model.OrderDetailResponse, error) {
+func (u *DriverUseCase) JobDetail(ctx context.Context, orderID string, userID string) (*model.OrderDetailResponse, error) {
 	db := u.DB.WithContext(ctx)
 
-	order, err := u.OrderRepository.FindJobByID(db, orderID)
+	order, err := u.OrderRepository.FindJobByID(db, orderID, userID)
 	if err != nil {
 		u.Log.Warnf("Failed to find job detail: %+v", err)
 		return nil, fiber.NewError(fiber.StatusNotFound, "Pekerjaan tidak ditemukan atau sudah diambil")

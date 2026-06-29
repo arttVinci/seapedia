@@ -99,6 +99,12 @@ func (u *CartUsecase) AddItem(userID string, request *model.AddCartItemRequest) 
 			return nil, fiber.NewError(fiber.StatusConflict,
 				"Produk dari toko berbeda. Kosongkan keranjang terlebih dahulu atau belanja dari satu toko.")
 		}
+		if cart.StoreID == nil {
+			if err := tx.Model(&cart).Update("store_id", product.StoreID).Error; err != nil {
+				tx.Rollback()
+				return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal memperbarui toko keranjang")
+			}
+		}
 	}
 
 	// check if product already in cart
@@ -179,7 +185,7 @@ func (u *CartUsecase) UpdateItem(userID string, itemID string, request *model.Up
 			return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal memeriksa keranjang")
 		}
 		if count == 0 {
-			if err := tx.Model(&entity.Cart{}).Where("id = ?", item.CartID).Update("store_id", "").Error; err != nil {
+			if err := tx.Model(&entity.Cart{}).Where("id = ?", item.CartID).Update("store_id", nil).Error; err != nil {
 				tx.Rollback()
 				return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal mengosongkan toko keranjang")
 			}
@@ -237,7 +243,7 @@ func (u *CartUsecase) DeleteItem(userID string, itemID string) (*model.CartRespo
 		return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal memeriksa keranjang")
 	}
 	if count == 0 {
-		if err := tx.Model(&entity.Cart{}).Where("id = ?", item.CartID).Update("store_id", "").Error; err != nil {
+		if err := tx.Model(&entity.Cart{}).Where("id = ?", item.CartID).Update("store_id", nil).Error; err != nil {
 			tx.Rollback()
 			return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal mengosongkan toko keranjang")
 		}

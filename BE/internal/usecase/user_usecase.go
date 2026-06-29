@@ -326,3 +326,60 @@ func (c *UserUseCase) Current(ctx context.Context, authModel *model.Auth) (*mode
 
 	return converter.UserToCurrentResponse(user, authModel.ActiveRole), nil
 }
+
+func (c *UserUseCase) AddRole(ctx context.Context, authModel *model.Auth, request *model.AddRoleRequest) (*model.AddRoleResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	err := c.Validate.Struct(request)
+	if err != nil {
+		c.Log.Warnf("Invalid request body : %+v", err)
+		return nil, model.ErrValidation
+	}
+
+	user := new(entity.User)
+	err = c.UserRepository.FindById(tx, user, authModel.ID)
+	if err != nil {
+		c.Log.Warnf("Failed find user by id : %+v", err)
+		return nil, model.ErrNotFound
+	}
+
+	var userRoles []entity.UserRole
+	err = c.UserRoleRepository.FindByUserID(tx, &userRoles, authModel.ID)
+	if err != nil {
+		c.Log.Warnf("Failed find user roles : %+v", err)
+		return nil, err
+	}
+
+	// Cek apakah role sudah dimiliki
+	for _, ur := range userRoles {
+		if ur.Role == request.Role {
+			c.Log.Warnf("Role already owned : %+v", request.Role)
+			return nil, model.ErrConflict
+		}
+	}
+
+	userRole := &entity.UserRole{
+		ID:     uuid.NewString(),
+		UserID: user.ID,
+		Role:   request.Role,
+	}
+
+	err = c.UserRoleRepository.Create(tx, userRole)
+	if err != nil {
+		c.Log.Warnf("Failed create user role : %+v", err)
+		return nil, err
+	}
+
+	// Jika role seller, langsung buatkan toko dihapus karena akan dibuat secara manual oleh frontend
+
+	if err := tx.Commit().Error; err != nil {
+		c.Log.Warnf("Failed commit transaction : %+v", err)
+		return nil, err
+	}
+
+	return &model.AddRoleResponse{
+		Role: request.Role,
+	}, nil
+}
+

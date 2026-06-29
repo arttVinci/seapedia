@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useCheckoutPreview } from "../../hooks/mutations/buyer/useCheckoutPreview";
 import { useCheckout } from "../../hooks/mutations/buyer/useCheckout";
 
@@ -51,7 +52,7 @@ const CheckoutPage = () => {
           navigate("/buyer/orders");
         },
         onError: (err) => {
-          alert(`Checkout failed: ${err.message}`);
+          toast.error(`Checkout failed: ${err.message}`);
         },
       }
     );
@@ -337,7 +338,15 @@ const CheckoutPage = () => {
 
             <button
               onClick={handleCheckout}
-              disabled={checkout.isPending || !summary}
+              disabled={
+                checkout.isPending ||
+                !summary ||
+                !billingName.trim() ||
+                !billingEmail.trim() ||
+                !billingPhone.trim() ||
+                !billingStreet.trim() ||
+                !billingCity.trim()
+              }
               className="w-full mt-6 inline-flex items-center justify-center px-5 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
             >
               {checkout.isPending ? (

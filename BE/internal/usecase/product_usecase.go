@@ -15,15 +15,16 @@ import (
 )
 
 type ProductUseCase struct {
-	DB                *gorm.DB
-	Log               *logrus.Logger
-	Validate          *validator.Validate
-	ProductRepository *repository.ProductRepository
-	StoreRepository   *repository.StoreRepository
+	DB                    *gorm.DB
+	Log                   *logrus.Logger
+	Validate              *validator.Validate
+	ProductRepository     *repository.ProductRepository
+	StoreRepository       *repository.StoreRepository
+	UploadImageRepository *repository.UploadImageRepository
 }
 
-func NewProductUseCase(db *gorm.DB, log *logrus.Logger, validate *validator.Validate, productRepo *repository.ProductRepository, storeRepo *repository.StoreRepository) *ProductUseCase {
-	return &ProductUseCase{DB: db, Log: log, Validate: validate, ProductRepository: productRepo, StoreRepository: storeRepo}
+func NewProductUseCase(db *gorm.DB, log *logrus.Logger, validate *validator.Validate, productRepo *repository.ProductRepository, storeRepo *repository.StoreRepository, uploadRepo *repository.UploadImageRepository) *ProductUseCase {
+	return &ProductUseCase{DB: db, Log: log, Validate: validate, ProductRepository: productRepo, StoreRepository: storeRepo, UploadImageRepository: uploadRepo}
 }
 
 func (u *ProductUseCase) Search(ctx context.Context, request *model.SearchProductRequest) ([]model.ProductResponse, int64, error) {

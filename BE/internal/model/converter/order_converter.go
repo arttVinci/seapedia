@@ -57,10 +57,17 @@ func OrderToDetailResponse(order *entity.Order) *model.OrderDetailResponse {
 		}
 	}
 
+	storeName := ""
+	if order.Store != nil {
+		storeName = order.Store.Name
+	}
+
 	return &model.OrderDetailResponse{
 		ID:                  order.ID,
+		OrderID:             order.ID,
 		BuyerID:             order.BuyerID,
 		StoreID:             order.StoreID,
+		StoreName:           storeName,
 		Status:              order.Status,
 		DeliveryMethod:      order.DeliveryMethod,
 		Subtotal:            order.Subtotal,

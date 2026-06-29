@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
-import { useSellerProducts } from '../../hooks/queries/products/useSellerProducts';
-import { useCreateProduct } from '../../hooks/mutations/products/useCreateProduct';
-import { useUpdateProduct } from '../../hooks/mutations/products/useUpdateProduct';
-import { useDeleteProduct } from '../../hooks/mutations/products/useDeleteProduct';
-import { Card, CardContent } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import type { CreateProductPayload, UpdateProductPayload } from '../../@types/models';
+import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { useSellerProducts } from "../../hooks/queries/products/useSellerProducts";
+import { useCreateProduct } from "../../hooks/mutations/products/useCreateProduct";
+import { useUpdateProduct } from "../../hooks/mutations/products/useUpdateProduct";
+import { useDeleteProduct } from "../../hooks/mutations/products/useDeleteProduct";
+import { useUploadProductImage } from "../../hooks/mutations/products/useUploadProductImage";
+import { Card, CardContent } from "../../components/ui/Card";
+import { Button } from "../../components/ui/Button";
+import { Input } from "../../components/ui/Input";
+import { ConfirmModal } from "../../components/ui/ConfirmModal";
+import { X, Search, Upload } from "lucide-react";
+import type { CreateProductPayload } from "../../@types/models";
 
 interface ProductFormData {
   name: string;
@@ -18,37 +22,47 @@ interface ProductFormData {
 
 function emptyForm(): ProductFormData {
   return {
-    name: '',
-    description: '',
-    price: '',
-    stock: '',
-    image_url: '',
+    name: "",
+    description: "",
+    price: "",
+    stock: "",
+    image_url: "",
   };
 }
 
 export function ProductManagementPage() {
-  
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const limit = 8;
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    isOpen: boolean;
+    productId: string | null;
+  }>({ isOpen: false, productId: null });
 
-  const { data, isLoading, isError, error } = useSellerProducts({ page, size: limit, title: search || undefined });
+  const { data, isLoading, isError, error } = useSellerProducts({
+    page,
+    size: limit,
+    name: search || undefined,
+  });
   const createMutation = useCreateProduct();
   const updateMutation = useUpdateProduct();
   const deleteMutation = useDeleteProduct();
+  const uploadMutation = useUploadProductImage();
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [form, setForm] = useState<ProductFormData>(emptyForm());
-  const [formError, setFormError] = useState('');
+  const [formError, setFormError] = useState("");
 
-  const totalPages = data ? Math.ceil(data.total / limit) : 1;
+  const totalPages = data
+    ? Math.max(1, (data as any).total_page || 1, Math.ceil(data.total / limit))
+    : 1;
 
   const openCreate = () => {
     setEditingProductId(null);
     setForm(emptyForm());
-    setFormError('');
+    setFormError("");
     setIsModalOpen(true);
   };
 
@@ -56,12 +70,12 @@ export function ProductManagementPage() {
     setEditingProductId(product.id);
     setForm({
       name: product.name,
-      description: product.description || '',
+      description: product.description || "",
       price: String(product.price),
       stock: String(product.stock),
-      image_url: product.image_url || '',
+      image_url: product.image_url || "",
     });
-    setFormError('');
+    setFormError("");
     setIsModalOpen(true);
   };
 
@@ -70,17 +84,35 @@ export function ProductManagementPage() {
     setEditingProductId(null);
   };
 
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const url = await uploadMutation.mutateAsync({ 
+        file, 
+        id: editingProductId || undefined 
+      });
+      setForm((prev) => ({ ...prev, image_url: url }));
+      toast.success("Gambar berhasil diunggah");
+    } catch (err: any) {
+      toast.error(err instanceof Error ? err.message : "Gagal mengunggah gambar");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormError('');
+    setFormError("");
 
     if (!form.name || !form.price || !form.stock) {
-      setFormError('Nama, harga, dan stok wajib diisi.');
+      setFormError("Nama, harga, dan stok wajib diisi.");
       return;
     }
 
@@ -88,46 +120,49 @@ export function ProductManagementPage() {
     const stock = parseInt(form.stock, 10);
 
     if (isNaN(price) || price <= 0) {
-      setFormError('Harga harus berupa angka positif.');
+      setFormError("Harga harus berupa angka positif.");
       return;
     }
     if (isNaN(stock) || stock < 0) {
-      setFormError('Stok harus berupa angka >= 0.');
+      setFormError("Stok harus berupa angka >= 0.");
       return;
     }
 
     try {
+      const payload: CreateProductPayload = {
+        name: form.name,
+        description: form.description,
+        price,
+        stock,
+        image_url: form.image_url,
+      };
+
       if (editingProductId) {
-        const payload: UpdateProductPayload = {
-          name: form.name,
-          description: form.description,
-          price,
-          stock,
-          image_url: form.image_url,
-        };
         await updateMutation.mutateAsync({ id: editingProductId, payload });
+        toast.success("Produk berhasil diperbarui!");
       } else {
-        const payload: CreateProductPayload = {
-          name: form.name,
-          description: form.description,
-          price,
-          stock,
-          image_url: form.image_url,
-        };
         await createMutation.mutateAsync(payload);
+        toast.success("Produk berhasil ditambahkan!");
+        // Reset pencarian dan halaman ke awal agar produk baru langsung terlihat
+        setSearch("");
+        setPage(1);
       }
       closeModal();
     } catch (err: any) {
-      setFormError(err instanceof Error ? err.message : 'Gagal menyimpan produk.');
+      setFormError(
+        err instanceof Error ? err.message : "Gagal menyimpan produk.",
+      );
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus produk ini?')) return;
     try {
       await deleteMutation.mutateAsync(id);
+      toast.success("Produk berhasil dihapus!");
     } catch (err: any) {
-      alert(err instanceof Error ? err.message : 'Gagal menghapus produk.');
+      toast.error(
+        err instanceof Error ? err.message : "Gagal menghapus produk.",
+      );
     }
   };
 
@@ -143,38 +178,49 @@ export function ProductManagementPage() {
           <h1 className="text-2xl font-bold text-gray-900">Manajemen Produk</h1>
           <p className="text-sm text-gray-500">Kelola produk toko Anda.</p>
         </div>
-        <Button onClick={openCreate}>Tambah Produk</Button>
+        <Button onClick={openCreate} className="shadow-sm hover:shadow">
+          Tambah Produk
+        </Button>
       </div>
 
       {/* Search */}
-      <form onSubmit={handleSearchSubmit} className="flex gap-2 max-w-md">
-        <Input
-          type="text"
-          placeholder="Cari produk..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <Button type="submit" variant="secondary">Cari</Button>
-      </form>
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
+        <form
+          onSubmit={handleSearchSubmit}
+          className="flex flex-col sm:flex-row gap-3 w-full max-w-lg"
+        >
+          <Input
+            type="text"
+            placeholder="Cari produk berdasarkan nama..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            icon={<Search className="h-5 w-5" />}
+            className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm"
+          />
+        </form>
+      </div>
 
       {/* Table */}
       {isLoading ? (
         <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-16 w-full animate-pulse rounded-md bg-gray-200" />
+            <div
+              key={i}
+              className="h-16 w-full animate-pulse rounded-md bg-gray-200"
+            />
           ))}
         </div>
       ) : isError ? (
         <div className="text-red-500 bg-red-50 p-4 rounded-md">
-          {(error as Error)?.message || 'Gagal memuat data produk.'}
+          {(error as Error)?.message || "Gagal memuat data produk."}
         </div>
       ) : !data || data.data.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <p className="text-gray-500 mb-4">
               {search
-                ? 'Tidak ada produk yang cocok dengan pencarian Anda.'
-                : 'Belum ada produk. Tambah produk pertama Anda.'}
+                ? "Tidak ada produk yang cocok dengan pencarian Anda."
+                : "Belum ada produk. Tambah produk pertama Anda."}
             </p>
             {!search && <Button onClick={openCreate}>Tambah Produk</Button>}
           </CardContent>
@@ -210,7 +256,9 @@ export function ProductManagementPage() {
                           className="h-10 w-10 rounded object-cover"
                         />
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{product.name}</p>
+                          <p className="text-sm font-medium text-gray-900">
+                            {product.name}
+                          </p>
                           <p className="text-xs text-gray-500 truncate max-w-[200px]">
                             {product.description}
                           </p>
@@ -218,18 +266,29 @@ export function ProductManagementPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-900">
-                      Rp{product.price.toLocaleString('id-ID')}
+                      Rp{product.price.toLocaleString("id-ID")}
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-900">{product.stock}</td>
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      {product.stock}
+                    </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex justify-end gap-2">
-                        <Button size="sm" variant="outline" onClick={() => openEdit(product)}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => openEdit(product)}
+                        >
                           Edit
                         </Button>
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleDelete(product.id)}
+                          onClick={() =>
+                            setDeleteConfirm({
+                              isOpen: true,
+                              productId: product.id,
+                            })
+                          }
                           disabled={deleteMutation.isPending}
                           className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
                         >
@@ -244,19 +303,25 @@ export function ProductManagementPage() {
           </div>
 
           {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2">
+          <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg border border-gray-200">
+            <div className="text-sm text-gray-500 font-medium">
+              Menampilkan{" "}
+              <span className="text-gray-900">{data.data.length}</span> dari
+              total <span className="text-gray-900">{data.total}</span> produk
+            </div>
+
+            <div className="flex items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
               >
                 Sebelumnya
               </Button>
-              <span className="text-sm text-gray-500">
-                Halaman {page} dari {totalPages}
-              </span>
+              <div className="flex items-center justify-center min-w-[6rem] px-2 text-sm font-medium text-gray-700">
+                Hal {page} dari {totalPages}
+              </div>
               <Button
                 variant="outline"
                 size="sm"
@@ -266,99 +331,188 @@ export function ProductManagementPage() {
                 Selanjutnya
               </Button>
             </div>
-          )}
+          </div>
         </>
       )}
 
       {/* Modal Form */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-6">
-            <h2 className="text-lg font-semibold mb-4">
-              {editingProductId ? 'Edit Produk' : 'Tambah Produk'}
-            </h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+            onClick={closeModal}
+          ></div>
 
-            {formError && (
-              <div className="mb-4 text-sm text-red-600 bg-red-50 p-3 rounded-md">
-                {formError}
-              </div>
-            )}
+          {/* Modal Content */}
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-auto relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
+              <h2 className="text-xl font-bold text-gray-800">
+                {editingProductId ? "Edit Produk" : "Tambah Produk Baru"}
+              </h2>
+              <button
+                onClick={closeModal}
+                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium mb-1">Nama</label>
+            {/* Body (Scrollable) */}
+            <div className="p-6 overflow-y-auto custom-scrollbar">
+              {formError && (
+                <div className="mb-5 text-sm text-red-600 bg-red-50 p-4 rounded-xl border border-red-100 flex items-start gap-3">
+                  <div className="mt-0.5">⚠️</div>
+                  <div>{formError}</div>
+                </div>
+              )}
+
+              <form
+                id="product-form"
+                onSubmit={handleSubmit}
+                className="space-y-5"
+              >
                 <Input
+                  label="Nama Produk"
                   name="name"
+                  placeholder="Contoh: Sepatu Sneakers Pria"
                   value={form.name}
                   onChange={handleFormChange}
+                  className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   required
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Deskripsi</label>
-                <textarea
-                  name="description"
-                  value={form.description}
-                  onChange={handleFormChange}
-                  rows={3}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+
                 <div>
-                  <label className="block text-sm font-medium mb-1">Harga</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Deskripsi Produk
+                  </label>
+                  <textarea
+                    name="description"
+                    placeholder="Jelaskan detail, bahan, dan keunggulan produk Anda..."
+                    value={form.description}
+                    onChange={handleFormChange}
+                    rows={4}
+                    className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-shadow resize-none"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
                   <Input
+                    label="Harga (Rp)"
                     name="price"
                     type="number"
                     min="0"
                     step="1"
+                    placeholder="0"
                     value={form.price}
                     onChange={handleFormChange}
+                    className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     required
                   />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Stok</label>
                   <Input
+                    label="Stok"
                     name="stock"
                     type="number"
                     min="0"
                     step="1"
+                    placeholder="0"
                     value={form.stock}
                     onChange={handleFormChange}
+                    className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     required
                   />
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">URL Gambar</label>
-                <Input
-                  name="image_url"
-                  value={form.image_url}
-                  onChange={handleFormChange}
-                  placeholder="https://..."
-                />
-              </div>
 
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="outline" onClick={closeModal}>
-                  Batal
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={createMutation.isPending || updateMutation.isPending}
-                >
-                  {createMutation.isPending || updateMutation.isPending
-                    ? 'Menyimpan...'
-                    : editingProductId
-                    ? 'Simpan'
-                    : 'Tambah'}
-                </Button>
-              </div>
-            </form>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Gambar Produk
+                  </label>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="relative overflow-hidden cursor-pointer"
+                        disabled={uploadMutation.isPending}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                          onChange={handleImageUpload}
+                          disabled={uploadMutation.isPending}
+                        />
+                        <Upload className="h-4 w-4 mr-2" />
+                        {uploadMutation.isPending ? "Mengunggah..." : "Pilih Gambar"}
+                      </Button>
+                      <span className="text-xs text-gray-500">
+                        Format: JPG, PNG (Maks 7MB)
+                      </span>
+                    </div>
+                    
+                    <Input
+                      name="image_url"
+                      placeholder="Atau masukkan URL gambar..."
+                      value={form.image_url}
+                      onChange={handleFormChange}
+                      className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                    />
+
+                    {form.image_url && (
+                      <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shadow-sm mt-2">
+                        <img
+                          src={form.image_url}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = "none";
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3 rounded-b-2xl">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={closeModal}
+                className="px-6"
+              >
+                Batal
+              </Button>
+              <Button
+                type="submit"
+                form="product-form"
+                disabled={createMutation.isPending || updateMutation.isPending}
+                className="px-6 shadow-md hover:shadow-lg transition-shadow"
+              >
+                {createMutation.isPending || updateMutation.isPending
+                  ? "Menyimpan..."
+                  : editingProductId
+                    ? "Simpan Perubahan"
+                    : "Tambah Produk"}
+              </Button>
+            </div>
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={deleteConfirm.isOpen}
+        onClose={() => setDeleteConfirm({ isOpen: false, productId: null })}
+        onConfirm={() => {
+          if (deleteConfirm.productId) handleDelete(deleteConfirm.productId);
+        }}
+        title="Hapus Produk"
+        message="Apakah Anda yakin ingin menghapus produk ini? Tindakan ini tidak dapat dibatalkan."
+        confirmText="Hapus Produk"
+      />
     </div>
   );
 }

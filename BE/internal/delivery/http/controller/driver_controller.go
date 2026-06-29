@@ -34,8 +34,9 @@ func (c *DriverController) ListJobs(ctx *fiber.Ctx) error {
 
 func (c *DriverController) JobDetail(ctx *fiber.Ctx) error {
 	orderID := ctx.Params("id")
+	userID := middleware.GetUser(ctx).ID
 
-	response, err := c.UseCase.JobDetail(ctx.UserContext(), orderID)
+	response, err := c.UseCase.JobDetail(ctx.UserContext(), orderID, userID)
 	if err != nil {
 		return err
 	}

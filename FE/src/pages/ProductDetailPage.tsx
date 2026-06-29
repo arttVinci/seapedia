@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useProductDetail } from "../hooks/queries/products/useProductDetail";
 import { useAddToCart } from "../hooks/mutations/buyer/useAddToCart";
 import { ShoppingCart, Store } from "lucide-react";
@@ -14,31 +15,38 @@ export function ProductDetailPage() {
   const { data: product, isLoading, isError } = useProductDetail(String(id));
   const addToCartMutation = useAddToCart();
 
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState<number | string>(1);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("desc");
 
   const handleAddToCart = () => {
     if (!product) return;
+    
+    const parsedQuantity = typeof quantity === 'string' ? parseInt(quantity) : quantity;
+    if (isNaN(parsedQuantity) || parsedQuantity < 1) {
+      toast.error("Kuantitas tidak valid");
+      return;
+    }
+    
     setErrorMsg(null);
     addToCartMutation.mutate(
-      { product_id: product.id, quantity },
+      { product_id: product.id, quantity: parsedQuantity },
       {
         onSuccess: () => {
-          alert("Berhasil ditambahkan ke keranjang!");
+          toast.success("Berhasil ditambahkan ke keranjang!");
         },
         onError: (err: AxiosError<ApiErrorResponse>) => {
           if (err.response?.status === 409) {
             setErrorMsg(
-              err.response.data.message || "Konflik: Produk dari toko berbeda."
+              err.response.data.message || "Konflik: Produk dari toko berbeda.",
             );
           } else {
-            alert(
-              err.response?.data?.message || "Gagal menambahkan ke keranjang"
+            toast.error(
+              err.response?.data?.message || "Gagal menambahkan ke keranjang",
             );
           }
         },
-      }
+      },
     );
   };
 
@@ -127,55 +135,53 @@ export function ProductDetailPage() {
               <div className="flex items-center border border-gray-300 rounded-lg">
                 <button
                   className="px-4 py-2.5 text-gray-600 hover:bg-gray-100 disabled:opacity-50 rounded-l-lg"
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  disabled={quantity <= 1}
+                  onClick={() => {
+                    const q = typeof quantity === 'string' ? parseInt(quantity) : quantity;
+                    setQuantity(Math.max(1, (isNaN(q) ? 1 : q) - 1));
+                  }}
+                  disabled={Number(quantity) <= 1}
                 >
                   -
                 </button>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   className="w-16 text-center py-2.5 border-x border-gray-300 focus:outline-none focus:ring-0"
                   value={quantity}
                   onChange={(e) => {
-                    const val = parseInt(e.target.value);
-                    if (!isNaN(val))
-                      setQuantity(Math.min(product.stock, Math.max(1, val)));
+                    const val = e.target.value;
+                    if (val === '') {
+                      setQuantity('');
+                      return;
+                    }
+                    const parsedVal = parseInt(val);
+                    if (!isNaN(parsedVal)) {
+                      setQuantity(Math.min(product.stock, Math.max(1, parsedVal)));
+                    }
                   }}
                 />
                 <button
                   className="px-4 py-2.5 text-gray-600 hover:bg-gray-100 disabled:opacity-50 rounded-r-lg"
-                  onClick={() =>
-                    setQuantity((q) => Math.min(product.stock, q + 1))
-                  }
-                  disabled={quantity >= product.stock}
+                  onClick={() => {
+                    const q = typeof quantity === 'string' ? parseInt(quantity) : quantity;
+                    setQuantity(Math.min(product.stock, (isNaN(q) ? 0 : q) + 1));
+                  }}
+                  disabled={Number(quantity) >= product.stock}
                 >
                   +
                 </button>
               </div>
               <button
                 onClick={handleAddToCart}
-                disabled={
-                  addToCartMutation.isPending || product.stock < 1
-                }
+                disabled={addToCartMutation.isPending || product.stock < 1}
                 className="w-full inline-flex items-center justify-center px-5 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
               >
                 <ShoppingCart className="mr-2 h-5 w-5" />
-                {addToCartMutation.isPending
-                  ? "Menambahkan..."
-                  : "+ Keranjang"}
+                {addToCartMutation.isPending ? "Menambahkan..." : "+ Keranjang"}
               </button>
             </div>
           )}
-
-          {/* Link to Reviews */}
-          <div className="pt-2">
-            <Link
-              to={`/products/${product.id}/reviews`}
-              className="text-blue-600 hover:text-blue-500 font-medium text-sm"
-            >
-              Lihat Ulasan Produk &rarr;
-            </Link>
-          </div>
         </div>
       </div>
 
@@ -205,7 +211,9 @@ export function ProductDetailPage() {
         </nav>
         <div className="mt-5">
           {activeTab === "desc" && (
-            <p className="text-gray-600 whitespace-pre-wrap">{product.description}</p>
+            <p className="text-gray-600 whitespace-pre-wrap">
+              {product.description}
+            </p>
           )}
           {activeTab === "info" && (
             <p className="text-gray-600">

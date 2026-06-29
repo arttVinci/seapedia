@@ -22,8 +22,10 @@ type OrderResponse struct {
 
 type OrderDetailResponse struct {
 	ID                  string                       `json:"id"`
+	OrderID             string                       `json:"order_id"`
 	BuyerID             string                       `json:"buyer_id"`
 	StoreID             string                       `json:"store_id"`
+	StoreName           string                       `json:"store_name"`
 	Status              string                       `json:"status"`
 	DeliveryMethod      string                       `json:"delivery_method"`
 	Subtotal            int64                        `json:"subtotal"`

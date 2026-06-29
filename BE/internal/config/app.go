@@ -10,6 +10,7 @@ import (
 	"github.com/traa/seapedia/server/internal/delivery/http/controller"
 	"github.com/traa/seapedia/server/internal/delivery/http/middleware"
 	"github.com/traa/seapedia/server/internal/delivery/http/route"
+	"github.com/traa/seapedia/server/internal/pkg/storage"
 	"github.com/traa/seapedia/server/internal/repository"
 	"github.com/traa/seapedia/server/internal/usecase"
 )
@@ -23,6 +24,13 @@ type BootstrapConfig struct {
 }
 
 func Bootstrap(config *BootstrapConfig) {
+	// Setup Cloudinary
+	cloudinaryClient, err := NewCloudinary(config.Config)
+	if err != nil {
+		config.Log.Fatalf("Failed to initialize cloudinary: %v", err)
+	}
+	cloudinaryStorage := storage.NewCloudinaryStorage(cloudinaryClient)
+
 	// Setup Repository
 	userRepository := repository.NewUserRepository(config.Log)
 	userRoleRepository := repository.NewUserRoleRepository(config.Log)
@@ -41,6 +49,7 @@ func Bootstrap(config *BootstrapConfig) {
 	deliveryRepository := repository.NewDeliveryRepository(config.Log)
 	voucherRepository := repository.NewVoucherRepository(config.Log)
 	promoRepository := repository.NewPromoRepository(config.Log)
+	uploadImageRepository := repository.NewUploadImageRepository(cloudinaryStorage, config.Log)
 
 	// Setup UseCase
 	userUseCase := usecase.NewUserUseCase(
@@ -53,7 +62,7 @@ func Bootstrap(config *BootstrapConfig) {
 		revokedTokenRepository,
 		storeRepository,
 	)
-	productUseCase := usecase.NewProductUseCase(config.DB, config.Log, config.Validate, productRepository, storeRepository)
+	productUseCase := usecase.NewProductUseCase(config.DB, config.Log, config.Validate, productRepository, storeRepository, uploadImageRepository)
 	storeUseCase := usecase.NewStoreUseCase(config.DB, config.Log, config.Validate, storeRepository)
 	applicationReviewUseCase := usecase.NewApplicationReviewUseCase(config.DB, config.Log, config.Validate, applicationReviewRepository)
 	cartUseCase := usecase.NewCartUsecase(config.DB, config.Log, config.Validate, cartRepository, cartItemRepository, productRepository)

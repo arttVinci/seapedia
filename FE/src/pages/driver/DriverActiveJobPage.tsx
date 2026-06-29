@@ -1,9 +1,12 @@
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 import { Card, CardContent, CardHeader, CardTitle, Button } from '../../components/ui';
 import { useDashboard } from '../../hooks/queries/driver/useDashboard';
 import { useJobDetail } from '../../hooks/queries/driver/useJobDetail';
 import { useCompleteJob } from '../../hooks/mutations/driver/useCompleteJob';
 import { formatCurrency } from '../../utils/formatters';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 
 export default function DriverActiveJobPage() {
   const navigate = useNavigate();
@@ -13,6 +16,7 @@ export default function DriverActiveJobPage() {
 
   const { data: jobRes, isLoading: isLoadingJob } = useJobDetail(activeJobId || '');
   const completeJobMutation = useCompleteJob();
+  const [showConfirm, setShowConfirm] = useState(false);
 
   if (isLoadingDashboard || (activeJobId && isLoadingJob)) return <div className="p-4">Memuat pekerjaan aktif...</div>;
   if (!activeJobId) {
@@ -29,16 +33,14 @@ export default function DriverActiveJobPage() {
   if (!job) return <div className="p-4 text-red-500">Gagal memuat detail pekerjaan aktif.</div>;
 
   const handleCompleteJob = () => {
-    if (window.confirm('Apakah Anda yakin telah menyelesaikan pengiriman ini?')) {
-      completeJobMutation.mutate(job.order_id, {
-        onSuccess: () => {
-          navigate('/driver'); // Kembali ke dashboard
-        },
-        onError: (err: any) => {
-          alert(err.response?.data?.message || 'Gagal menyelesaikan pekerjaan.');
-        }
-      });
-    }
+    completeJobMutation.mutate(job.id, {
+      onSuccess: () => {
+        navigate('/driver'); // Kembali ke dashboard
+      },
+      onError: (err: any) => {
+        toast.error(err.response?.data?.message || 'Gagal menyelesaikan pekerjaan.');
+      }
+    });
   };
 
   return (
@@ -103,13 +105,22 @@ export default function DriverActiveJobPage() {
           
           <Button 
             className="w-full h-14 text-lg bg-green-600 hover:bg-green-700" 
-            onClick={handleCompleteJob}
-            isLoading={completeJobMutation.isPending}
+            onClick={() => setShowConfirm(true)}
+            disabled={completeJobMutation.isPending}
           >
             Selesaikan Pengiriman
           </Button>
         </div>
       </div>
+      
+      <ConfirmModal
+        isOpen={showConfirm}
+        onClose={() => setShowConfirm(false)}
+        onConfirm={handleCompleteJob}
+        title="Selesaikan Pekerjaan"
+        message="Apakah Anda yakin telah menyelesaikan pengiriman ini?"
+        confirmText="Ya, Selesai"
+      />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { Card, CardContent, CardHeader, CardTitle, Button } from '../../components/ui';
 import { useJobDetail } from '../../hooks/queries/driver/useJobDetail';
 import { useTakeJob } from '../../hooks/mutations/driver/useTakeJob';
@@ -21,7 +22,7 @@ export default function DriverJobDetailPage() {
         navigate('/driver/active-job');
       },
       onError: (err: any) => {
-        alert(err.response?.data?.message || 'Gagal mengambil pekerjaan. Mungkin sudah diambil pengemudi lain.');
+        toast.error(err.response?.data?.message || 'Gagal mengambil pekerjaan. Mungkin sudah diambil pengemudi lain.');
       }
     });
   };
@@ -84,8 +85,7 @@ export default function DriverJobDetailPage() {
               <Button 
                 className="w-full h-12 text-lg" 
                 onClick={handleTakeJob}
-                isLoading={takeJobMutation.isPending}
-                disabled={job.status !== 'Menunggu Pengiriman'}
+                disabled={takeJobMutation.isPending || job.status !== 'Menunggu Pengiriman'}
               >
                 Ambil Pekerjaan Ini
               </Button>

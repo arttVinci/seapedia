@@ -70,6 +70,7 @@ func (c *RouteConfig) SetupAuthRoute() {
 	// Role routes
 	authGroup.Get("/_roles", c.UserController.Roles)
 	authGroup.Post("/_select-role", c.UserController.SelectRole)
+	authGroup.Post("/_add-role", c.UserController.AddRole)
 	authGroup.Get("/_current", c.UserController.Current)
 }
 
@@ -81,6 +82,7 @@ func (c *RouteConfig) SetupSellerRoute() {
 
 	sellerGroup.Get("/products", c.ProductController.ListMyProducts)
 	sellerGroup.Post("/products", c.ProductController.CreateProduct)
+	sellerGroup.Post("/products/upload-image", c.ProductController.UploadImage)
 	sellerGroup.Put("/products/:id", c.ProductController.UpdateProduct)
 	sellerGroup.Delete("/products/:id", c.ProductController.DeleteProduct)
 

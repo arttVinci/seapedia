@@ -306,7 +306,14 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 	}
 
 	// Create order
-	storeID := *cart.StoreID // since single-store cart, we just get it from cart
+	var storeID string
+	if cart.StoreID != nil {
+		storeID = *cart.StoreID // since single-store cart, we just get it from cart
+	} else if len(products) > 0 {
+		storeID = products[0].StoreID
+	} else {
+		return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal mendapatkan data toko")
+	}
 	orderID := uuid.NewString()
 	var voucherID *string
 	if voucher != nil {

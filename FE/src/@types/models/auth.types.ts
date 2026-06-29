@@ -12,7 +12,7 @@ export interface RoleResponse {
 }
 
 export interface SelectRolePayload {
-  role: "buyer" | "seller" | "driver";
+  role: "buyer" | "seller" | "driver" | "admin";
 }
 
 export interface SelectRoleResponse {
@@ -39,4 +39,12 @@ export interface AuthResponse {
 
 export interface RegisterResponse {
   user: User;
+}
+
+export interface AddRolePayload {
+  role: "buyer" | "seller" | "driver";
+}
+
+export interface AddRoleResponse {
+  role: string;
 }

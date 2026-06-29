@@ -3,26 +3,15 @@ import { useAuth } from "../contexts/AuthContext";
 import { useSelectRole } from "../hooks/mutations/auth/useSelectRole";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, Button } from "../components/ui";
 import { Store, ShoppingBag, Truck, ShieldCheck } from "lucide-react";
-import { useEffect, useState } from "react";
-import { authService } from "../services";
+import { useRoles } from "../hooks/queries/auth/useRoles";
 
 export function RoleSelectionPage() {
   const { user } = useAuth();
   const selectRoleMutation = useSelectRole();
   const navigate = useNavigate();
-  const [availableRoles, setAvailableRoles] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    authService.getRoles()
-      .then((data) => {
-        setAvailableRoles(data.roles);
-      })
-      .catch(console.error)
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
+  
+  const { data, isLoading } = useRoles();
+  const availableRoles = data?.roles || [];
 
   if (!user && !isLoading) {
     navigate("/login");
@@ -34,7 +23,11 @@ export function RoleSelectionPage() {
       { role: role as any },
       {
         onSuccess: () => {
-          navigate(`/${role}`);
+          if (role === "buyer") {
+            navigate("/");
+          } else {
+            navigate(`/${role}`);
+          }
         }
       }
     );

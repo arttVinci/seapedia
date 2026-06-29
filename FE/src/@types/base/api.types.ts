@@ -28,5 +28,5 @@ export interface PaginatedApiResponse<T> {
 export interface SearchParams {
   page: number;
   size: number;
-  title?: string;
+  name?: string;
 }
