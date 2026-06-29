@@ -9,7 +9,6 @@ import { GuestRoute } from "./components/auth/GuestRoute";
 import { HomePage } from "./pages/HomePage";
 import { CatalogPage } from "./pages/CatalogPage";
 import { ProductDetailPage } from "./pages/ProductDetailPage";
-import { ReviewsPage } from "./pages/ReviewsPage";
 import { LoginPage } from "./pages/LoginPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { RoleSelectionPage } from "./pages/RoleSelectionPage";
@@ -50,7 +49,6 @@ function App() {
           <Route path="/catalog" element={<CatalogPage />} />
           <Route path="/stores/:id" element={<StorePage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
-          <Route path="/products/:id/reviews" element={<ReviewsPage />} />
           <Route path="/select-role" element={<RoleSelectionPage />} />
         </Route>
 

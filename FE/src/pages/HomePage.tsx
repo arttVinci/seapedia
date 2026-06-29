@@ -6,6 +6,7 @@ import { usePublicStores } from "../hooks/queries/stores/usePublicStores";
 import { useAddToCart } from "../hooks/mutations/buyer/useAddToCart";
 import { useAuth } from "../contexts/AuthContext";
 import { ProductCard } from "../components/product/ProductCard";
+import { AppReviews } from "../components/home/AppReviews";
 import {
   Sparkles,
   Shirt,
