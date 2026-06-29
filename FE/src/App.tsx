@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { PublicLayout } from "./layouts/PublicLayout";
+import { DashboardLayout } from "./layouts/DashboardLayout";
 import { DashboardShell } from "./components/dashboard/DashboardShell";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { HomePage } from "./pages/HomePage";
@@ -53,8 +54,8 @@ function App() {
 
         {/* Protected Dashboard Routes */}
         <Route element={<ProtectedRoute />}>
-          {/* Buyer & Dashboard Routes wrapped in PublicLayout so Navbar is always visible */}
-          <Route element={<PublicLayout />}>
+          {/* Buyer & Dashboard Routes wrapped in DashboardLayout so Navbar is visible but no Footer */}
+          <Route element={<DashboardLayout />}>
             {/* Buyer Routes */}
             <Route path="/buyer" element={<BuyerDashboardPage />} />
             <Route path="/buyer/cart" element={<CartPage />} />

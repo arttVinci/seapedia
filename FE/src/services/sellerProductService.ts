@@ -4,11 +4,13 @@ import type { ApiResponse } from "../@types/base/api.types";
 import type { SearchParams } from "../@types/base/api.types";
 
 class SellerProductService {
-  async getMyProducts(params: SearchParams): Promise<{ data: Product[]; total: number }> {
-    const response = await apiClient.get<ApiResponse<Product[]>>('/seller/products', { params });
+  async getMyProducts(params: SearchParams): Promise<{ data: Product[]; total: number; total_page: number }> {
+    const response = await apiClient.get<any>('/seller/products', { params });
+    const meta = response.data.paging || response.data.meta || {};
     return {
       data: response.data.data,
-      total: response.data.paging?.total_item || 0,
+      total: meta.total_item || 0,
+      total_page: meta.total_page || 1,
     };
   }
 

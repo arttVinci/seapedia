@@ -43,7 +43,7 @@ export function ProductManagementPage() {
   const [form, setForm] = useState<ProductFormData>(emptyForm());
   const [formError, setFormError] = useState('');
 
-  const totalPages = data ? Math.ceil(data.total / limit) : 1;
+  const totalPages = data ? Math.max(1, (data as any).total_page || 1, Math.ceil(data.total / limit)) : 1;
 
   const openCreate = () => {
     setEditingProductId(null);
@@ -244,19 +244,23 @@ export function ProductManagementPage() {
           </div>
 
           {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2">
+          <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-lg border border-gray-200">
+            <div className="text-sm text-gray-500 font-medium">
+              Menampilkan <span className="text-gray-900">{data.data.length}</span> dari total <span className="text-gray-900">{data.total}</span> produk
+            </div>
+            
+            <div className="flex items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
               >
                 Sebelumnya
               </Button>
-              <span className="text-sm text-gray-500">
-                Halaman {page} dari {totalPages}
-              </span>
+              <div className="flex items-center justify-center min-w-[6rem] px-2 text-sm font-medium text-gray-700">
+                Hal {page} dari {totalPages}
+              </div>
               <Button
                 variant="outline"
                 size="sm"
@@ -266,7 +270,7 @@ export function ProductManagementPage() {
                 Selanjutnya
               </Button>
             </div>
-          )}
+          </div>
         </>
       )}
 
