@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import { useLogout } from "../../hooks/mutations/auth/useLogout";
 import { useRoles } from "../../hooks/queries/auth/useRoles";
+import { useWallet } from "../../hooks/queries/buyer/useWallet";
 import { authService } from "../../services";
 import { OpenShopModal } from "../auth/OpenShopModal";
 import {
@@ -19,6 +20,8 @@ import {
   Users,
   Search,
   Wallet,
+  Check,
+  Truck,
 } from "lucide-react";
 
 const roleDisplayNames: Record<string, string> = {
@@ -26,6 +29,16 @@ const roleDisplayNames: Record<string, string> = {
   seller: "Penjual",
   driver: "Pengantar",
   admin: "Admin",
+};
+
+const getRoleIcon = (role: string) => {
+  switch (role) {
+    case 'buyer': return <ShoppingBag className="h-4 w-4" />;
+    case 'seller': return <Store className="h-4 w-4" />;
+    case 'driver': return <Truck className="h-4 w-4" />;
+    case 'admin': return <Settings className="h-4 w-4" />;
+    default: return <User className="h-4 w-4" />;
+  }
 };
 
 export function Navbar() {
@@ -38,6 +51,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const roleDropdownRef = useRef<HTMLDivElement>(null);
@@ -48,6 +62,16 @@ export function Navbar() {
   const { data: rolesData } = useRoles();
   const availableRoles = rolesData?.roles || [];
   const hasSellerRole = availableRoles.includes("seller");
+
+  const { data: walletData } = useWallet({ enabled: activeRole === "buyer" });
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(value);
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -89,18 +113,51 @@ export function Navbar() {
     });
   };
 
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/catalog?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   const handleSwitchRole = async (role: string) => {
     if (role === activeRole) return;
     try {
       setIsSwitchingRole(true);
-      const resp = await authService.selectRole({ role: role as any });
-      handleSelectRoleSuccess(resp.token, resp.active_role);
+      const res = await authService.selectRole({ role });
+      handleSelectRoleSuccess(res.token, res.active_role);
       setRoleDropdownOpen(false);
-      setMobileMenuOpen(false);
+
+      if (role === "seller") {
+        navigate("/seller");
+      } else if (role === "driver") {
+        navigate("/driver");
+      } else if (role === "admin") {
+        navigate("/admin");
+      }
     } catch (error) {
-      console.error(`Failed to switch to ${role}`, error);
+      console.error(error);
+      alert("Gagal memindahkan peran. Silakan coba lagi.");
     } finally {
       setIsSwitchingRole(false);
+    }
+  };
+
+  const [isJoiningDriver, setIsJoiningDriver] = useState(false);
+  
+  const handleJoinDriver = async () => {
+    setIsJoiningDriver(true);
+    try {
+      await authService.addRole({ role: "driver" });
+      const selectResp = await authService.selectRole({ role: "driver" });
+      handleSelectRoleSuccess(selectResp.token, selectResp.active_role);
+      setRoleDropdownOpen(false);
+      navigate("/driver");
+    } catch (err) {
+      console.error(err);
+      alert("Gagal bergabung menjadi mitra pengantar. Silakan coba lagi.");
+    } finally {
+      setIsJoiningDriver(false);
     }
   };
 
@@ -148,17 +205,18 @@ export function Navbar() {
 
               {/* Search Bar */}
               <div className="flex-1 hidden md:block max-w-3xl">
-                <div className="relative w-full">
+                <form onSubmit={handleSearchSubmit} className="relative w-full">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Search className="h-4 w-4 text-gray-400" />
                   </div>
                   <input
                      type="text"
-                     disabled
-                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm bg-gray-50 cursor-not-allowed"
+                     value={searchQuery}
+                     onChange={(e) => setSearchQuery(e.target.value)}
+                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm bg-gray-50"
                      placeholder="Cari di Seapedia..."
                   />
-                </div>
+                </form>
               </div>
             </div>
 
@@ -235,22 +293,33 @@ export function Navbar() {
                                 <button
                                   key={role}
                                   onClick={() => handleSwitchRole(role)}
-                                  className={`flex w-full items-center gap-2 px-4 py-2 text-sm transition-colors ${role === activeRole ? "text-blue-700 bg-blue-50 font-semibold cursor-default" : "text-gray-700 hover:bg-gray-50 hover:text-blue-700"}`}
+                                  className={`flex w-full items-center gap-2 px-4 py-2 text-sm transition-colors ${role === activeRole ? "text-blue-700 bg-blue-50 font-semibold cursor-default" : "text-gray-700 hover:bg-gray-100"}`}
                                 >
-                                  {roleDisplayNames[role] || role}{" "}
-                                  {role === activeRole && " (Aktif)"}
+                                  {getRoleIcon(role)}
+                                  <span className="flex-1 text-left">{roleDisplayNames[role] || role}</span>
+                                  {role === activeRole && <Check className="h-4 w-4" />}
                                 </button>
                               ))}
 
-                              {!hasSellerRole && (
-                                <div className="pt-2 mt-2 border-t border-gray-50">
-                                  <button
-                                    onClick={() => setIsShopModalOpen(true)}
-                                    className="flex w-full items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
-                                  >
-                                    <Store className="h-4 w-4" /> Buka Toko
-                                    Gratis
-                                  </button>
+                              {(!hasSellerRole || !availableRoles.includes("driver")) && (
+                                <div className="pt-2 mt-2 border-t border-gray-50 flex flex-col gap-1">
+                                  {!hasSellerRole && (
+                                    <button
+                                      onClick={() => setIsShopModalOpen(true)}
+                                      className="flex w-full items-center gap-2 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
+                                    >
+                                      <Store className="h-4 w-4" /> Buka Toko Gratis
+                                    </button>
+                                  )}
+                                  {!availableRoles.includes("driver") && (
+                                    <button
+                                      onClick={handleJoinDriver}
+                                      disabled={isJoiningDriver}
+                                      className="flex w-full items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50 transition-colors disabled:opacity-70"
+                                    >
+                                      <Truck className="h-4 w-4" /> Daftar Mitra Pengantar
+                                    </button>
+                                  )}
                                 </div>
                               )}
                             </div>
@@ -313,8 +382,8 @@ export function Navbar() {
                                     <span className="text-xs font-semibold text-gray-700">Saldo Seapedia</span>
                                   </div>
                                   <div className="flex items-center justify-between mt-1">
-                                    <span className="text-sm font-bold text-gray-900">Rp0</span>
-                                    <Link to="/buyer/wallet" className="text-xs font-bold text-blue-600 hover:text-blue-700">
+                                    <span className="text-sm font-bold text-gray-900">{formatCurrency(walletData?.balance || 0)}</span>
+                                    <Link to="/buyer/wallet" onClick={() => setMobileMenuOpen(false)} className="text-xs font-bold text-blue-600 hover:text-blue-700">
                                       Top Up
                                     </Link>
                                   </div>
@@ -400,17 +469,18 @@ export function Navbar() {
             }`}
           >
             <div className="px-4 py-4 space-y-2">
-              <div className="relative w-full mb-4 md:hidden">
+              <form onSubmit={handleSearchSubmit} className="relative w-full mb-4 md:hidden">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Search className="h-4 w-4 text-gray-400" />
                 </div>
                 <input
                    type="text"
-                   disabled
-                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm bg-gray-50 cursor-not-allowed"
+                   value={searchQuery}
+                   onChange={(e) => setSearchQuery(e.target.value)}
+                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm bg-gray-50"
                    placeholder="Cari di Seapedia..."
                 />
-              </div>
+              </form>
 
               <div className="pt-2 border-t border-gray-100">
                 {!token ? (
@@ -454,30 +524,53 @@ export function Navbar() {
                             <button
                               key={role}
                               onClick={() => handleSwitchRole(role)}
-                              className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors ${role === activeRole ? "text-blue-700 bg-blue-50 font-semibold" : "text-gray-700 hover:bg-blue-50 hover:text-blue-600"}`}
+                              className={`flex w-full items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${role === activeRole ? "text-blue-700 bg-blue-50 font-semibold cursor-default" : "text-gray-700 hover:bg-gray-100"}`}
                             >
-                              {roleDisplayNames[role] || role}{" "}
-                              {role === activeRole && " (Aktif)"}
+                              {getRoleIcon(role)}
+                              <span className="flex-1 text-left">{roleDisplayNames[role] || role}</span>
+                              {role === activeRole && <Check className="h-4 w-4" />}
                             </button>
                           ))}
-                          {!hasSellerRole && (
-                            <button
-                              onClick={() => setIsShopModalOpen(true)}
-                              className="flex w-full items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100"
-                            >
-                              <Store className="h-4 w-4" /> Buka Toko Gratis
-                            </button>
+                          {(!hasSellerRole || !availableRoles.includes("driver")) && (
+                            <div className="pt-2 mt-1 border-t border-gray-50 flex flex-col gap-1">
+                              {!hasSellerRole && (
+                                <button
+                                  onClick={() => setIsShopModalOpen(true)}
+                                  className="flex w-full items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100"
+                                >
+                                  <Store className="h-4 w-4" /> Buka Toko Gratis
+                                </button>
+                              )}
+                              {!availableRoles.includes("driver") && (
+                                <button
+                                  onClick={handleJoinDriver}
+                                  disabled={isJoiningDriver}
+                                  className="flex w-full items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 disabled:opacity-70"
+                                >
+                                  <Truck className="h-4 w-4" /> Daftar Mitra Pengantar
+                                </button>
+                              )}
+                            </div>
                           )}
                         </div>
                       </div>
                     ) : (
-                      <div className="px-3 pb-2 border-b border-gray-50">
+                      <div className="px-3 pb-2 border-b border-gray-50 flex flex-col gap-1">
                         {!hasSellerRole && activeRole === "buyer" && (
                           <button
                             onClick={() => setIsShopModalOpen(true)}
                             className="flex w-full items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100"
                           >
                             <Store className="h-4 w-4" /> Buka Toko Gratis
+                          </button>
+                        )}
+                        {!availableRoles.includes("driver") && activeRole === "buyer" && (
+                          <button
+                            onClick={handleJoinDriver}
+                            disabled={isJoiningDriver}
+                            className="flex w-full items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 disabled:opacity-70"
+                          >
+                            <Truck className="h-4 w-4" /> Daftar Mitra Pengantar
                           </button>
                         )}
                       </div>

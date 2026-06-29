@@ -4,6 +4,7 @@ import { PublicLayout } from "./layouts/PublicLayout";
 import { DashboardLayout } from "./layouts/DashboardLayout";
 import { DashboardShell } from "./components/dashboard/DashboardShell";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { GuestRoute } from "./components/auth/GuestRoute";
 import { HomePage } from "./pages/HomePage";
 import { CatalogPage } from "./pages/CatalogPage";
 import { ProductDetailPage } from "./pages/ProductDetailPage";
@@ -43,8 +44,10 @@ function App() {
         {/* Public Routes */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route element={<GuestRoute />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+          </Route>
           <Route path="/catalog" element={<CatalogPage />} />
           <Route path="/stores/:id" element={<StorePage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />

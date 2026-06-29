@@ -120,11 +120,25 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    }
+  }
   body {
     @apply bg-background text-foreground;
-    }
+  }
   html {
     @apply font-sans;
-    }
+  }
+  
+  /* Ensure all clickable elements explicitly have a pointer cursor */
+  button:not(:disabled), 
+  a:not([aria-disabled="true"]):not(:disabled), 
+  [role="button"]:not(:disabled) {
+    cursor: pointer !important;
+  }
+  
+  /* Optional: Disabled state cursors */
+  button:disabled,
+  a[aria-disabled="true"],
+  [role="button"]:disabled {
+    cursor: not-allowed;
+  }
 }

@@ -32,7 +32,7 @@ export function ProductManagementPage() {
   const [search, setSearch] = useState('');
   const limit = 8;
 
-  const { data, isLoading, isError, error } = useSellerProducts({ page, size: limit, title: search || undefined });
+  const { data, isLoading, isError, error } = useSellerProducts({ page, size: limit, name: search || undefined });
   const createMutation = useCreateProduct();
   const updateMutation = useUpdateProduct();
   const deleteMutation = useDeleteProduct();
