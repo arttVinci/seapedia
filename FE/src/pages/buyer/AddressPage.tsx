@@ -7,6 +7,7 @@ import { useCreateAddress } from "../../hooks/mutations/buyer/useCreateAddress";
 import { useUpdateAddress } from "../../hooks/mutations/buyer/useUpdateAddress";
 import { useDeleteAddress } from "../../hooks/mutations/buyer/useDeleteAddress";
 import type { Address } from "../../@types/models";
+import { ConfirmModal } from "../../components/ui/ConfirmModal";
 
 const AddressPage: React.FC = () => {
   const { data: addresses, isLoading, isError } = useAddresses();
@@ -16,6 +17,7 @@ const AddressPage: React.FC = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; addressId: string | null }>({ isOpen: false, addressId: null });
 
   const [formData, setFormData] = useState({
     label: "",
@@ -79,9 +81,7 @@ const AddressPage: React.FC = () => {
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus alamat ini?")) {
-      deleteAddress(id);
-    }
+    deleteAddress(id);
   };
 
   if (isLoading) return <div className="p-4">Loading addresses...</div>;
@@ -122,7 +122,7 @@ const AddressPage: React.FC = () => {
                   variant="outline"
                   size="sm"
                   className="text-red-600 hover:bg-red-50 hover:text-red-700 border-red-200"
-                  onClick={() => handleDelete(address.id)}
+                  onClick={() => setDeleteConfirm({ isOpen: true, addressId: address.id })}
                   disabled={isDeleting}
                 >
                   Hapus
@@ -196,6 +196,17 @@ const AddressPage: React.FC = () => {
           </div>
         </div>
       )}
+      
+      <ConfirmModal
+        isOpen={deleteConfirm.isOpen}
+        onClose={() => setDeleteConfirm({ isOpen: false, addressId: null })}
+        onConfirm={() => {
+          if (deleteConfirm.addressId) handleDelete(deleteConfirm.addressId);
+        }}
+        title="Hapus Alamat"
+        message="Apakah Anda yakin ingin menghapus alamat ini?"
+        confirmText="Hapus Alamat"
+      />
     </div>
   );
 };

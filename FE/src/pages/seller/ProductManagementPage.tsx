@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { useSellerProducts } from '../../hooks/queries/products/useSellerProducts';
 import { useCreateProduct } from '../../hooks/mutations/products/useCreateProduct';
 import { useUpdateProduct } from '../../hooks/mutations/products/useUpdateProduct';
@@ -6,6 +7,7 @@ import { useDeleteProduct } from '../../hooks/mutations/products/useDeleteProduc
 import { Card, CardContent } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
+import { ConfirmModal } from '../../components/ui/ConfirmModal';
 import type { CreateProductPayload, UpdateProductPayload } from '../../@types/models';
 
 interface ProductFormData {
@@ -31,6 +33,7 @@ export function ProductManagementPage() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const limit = 8;
+  const [deleteConfirm, setDeleteConfirm] = useState<{ isOpen: boolean; productId: string | null }>({ isOpen: false, productId: null });
 
   const { data, isLoading, isError, error } = useSellerProducts({ page, size: limit, name: search || undefined });
   const createMutation = useCreateProduct();
@@ -116,6 +119,7 @@ export function ProductManagementPage() {
         };
         await createMutation.mutateAsync(payload);
       }
+      toast.success(editingProductId ? 'Produk berhasil diperbarui!' : 'Produk berhasil ditambahkan!');
       closeModal();
     } catch (err: any) {
       setFormError(err instanceof Error ? err.message : 'Gagal menyimpan produk.');
@@ -123,11 +127,11 @@ export function ProductManagementPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus produk ini?')) return;
     try {
       await deleteMutation.mutateAsync(id);
+      toast.success('Produk berhasil dihapus!');
     } catch (err: any) {
-      alert(err instanceof Error ? err.message : 'Gagal menghapus produk.');
+      toast.error(err instanceof Error ? err.message : 'Gagal menghapus produk.');
     }
   };
 
@@ -229,7 +233,7 @@ export function ProductManagementPage() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => handleDelete(product.id)}
+                          onClick={() => setDeleteConfirm({ isOpen: true, productId: product.id })}
                           disabled={deleteMutation.isPending}
                           className="text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
                         >
@@ -363,6 +367,17 @@ export function ProductManagementPage() {
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={deleteConfirm.isOpen}
+        onClose={() => setDeleteConfirm({ isOpen: false, productId: null })}
+        onConfirm={() => {
+          if (deleteConfirm.productId) handleDelete(deleteConfirm.productId);
+        }}
+        title="Hapus Produk"
+        message="Apakah Anda yakin ingin menghapus produk ini? Tindakan ini tidak dapat dibatalkan."
+        confirmText="Hapus Produk"
+      />
     </div>
   );
 }

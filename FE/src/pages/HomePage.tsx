@@ -1,4 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { Button } from "../components/ui";
 import { useProducts } from "../hooks/queries/products/useProducts";
 import { usePublicStores } from "../hooks/queries/stores/usePublicStores";
@@ -36,21 +37,21 @@ export function HomePage() {
       return;
     }
     if (activeRole !== "buyer") {
-      alert("Hanya pembeli yang dapat menambahkan ke keranjang.");
+      toast.error("Hanya pembeli yang dapat menambahkan ke keranjang.");
       return;
     }
     addToCartMutation.mutate(
       { product_id: productId, quantity: 1 },
       {
-        onSuccess: () => alert("Berhasil ditambahkan ke keranjang!"),
+        onSuccess: () => toast.success("Berhasil ditambahkan ke keranjang!"),
         onError: (err: any) => {
           if (err.response?.status === 409) {
-            alert(
+            toast.error(
               err.response.data.message ||
                 "Konflik: Produk dari toko berbeda. Kosongkan keranjang terlebih dahulu.",
             );
           } else {
-            alert(
+            toast.error(
               err.response?.data?.message || "Gagal menambahkan ke keranjang",
             );
           }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useProductDetail } from "../hooks/queries/products/useProductDetail";
 import { useAddToCart } from "../hooks/mutations/buyer/useAddToCart";
 import { ShoppingCart, Store } from "lucide-react";
@@ -25,7 +26,7 @@ export function ProductDetailPage() {
       { product_id: product.id, quantity },
       {
         onSuccess: () => {
-          alert("Berhasil ditambahkan ke keranjang!");
+          toast.success("Berhasil ditambahkan ke keranjang!");
         },
         onError: (err: AxiosError<ApiErrorResponse>) => {
           if (err.response?.status === 409) {
@@ -33,7 +34,7 @@ export function ProductDetailPage() {
               err.response.data.message || "Konflik: Produk dari toko berbeda.",
             );
           } else {
-            alert(
+            toast.error(
               err.response?.data?.message || "Gagal menambahkan ke keranjang",
             );
           }

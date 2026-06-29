@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./contexts/AuthContext";
 import { PublicLayout } from "./layouts/PublicLayout";
 import { DashboardLayout } from "./layouts/DashboardLayout";
@@ -40,6 +41,7 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 function App() {
   return (
     <AuthProvider>
+      <Toaster position="top-right" />
       <Routes>
         {/* Public Routes */}
         <Route element={<PublicLayout />}>

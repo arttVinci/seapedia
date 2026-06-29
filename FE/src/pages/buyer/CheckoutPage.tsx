@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useCheckoutPreview } from "../../hooks/mutations/buyer/useCheckoutPreview";
 import { useCheckout } from "../../hooks/mutations/buyer/useCheckout";
 
@@ -51,7 +52,7 @@ const CheckoutPage = () => {
           navigate("/buyer/orders");
         },
         onError: (err) => {
-          alert(`Checkout failed: ${err.message}`);
+          toast.error(`Checkout failed: ${err.message}`);
         },
       }
     );

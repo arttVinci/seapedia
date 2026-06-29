@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useAuth } from "../../contexts/AuthContext";
 import { useLogout } from "../../hooks/mutations/auth/useLogout";
 import { useRoles } from "../../hooks/queries/auth/useRoles";
@@ -145,7 +146,7 @@ export function Navbar() {
       }
     } catch (error) {
       console.error(error);
-      alert("Gagal memindahkan peran. Silakan coba lagi.");
+      toast.error("Gagal memindahkan peran. Silakan coba lagi.");
     } finally {
       setIsSwitchingRole(false);
     }
@@ -163,7 +164,7 @@ export function Navbar() {
       navigate("/driver");
     } catch (err) {
       console.error(err);
-      alert("Gagal bergabung menjadi mitra pengantar. Silakan coba lagi.");
+      toast.error("Gagal bergabung menjadi mitra pengantar. Silakan coba lagi.");
     } finally {
       setIsJoiningDriver(false);
     }
