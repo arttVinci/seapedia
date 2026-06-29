@@ -34,7 +34,11 @@ export function RoleSelectionPage() {
       { role: role as any },
       {
         onSuccess: () => {
-          navigate(`/${role}`);
+          if (role === "buyer") {
+            navigate("/");
+          } else {
+            navigate(`/${role}`);
+          }
         }
       }
     );

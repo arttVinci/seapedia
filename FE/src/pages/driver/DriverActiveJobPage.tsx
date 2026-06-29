@@ -30,7 +30,7 @@ export default function DriverActiveJobPage() {
 
   const handleCompleteJob = () => {
     if (window.confirm('Apakah Anda yakin telah menyelesaikan pengiriman ini?')) {
-      completeJobMutation.mutate(job.order_id, {
+      completeJobMutation.mutate(job.id, {
         onSuccess: () => {
           navigate('/driver'); // Kembali ke dashboard
         },

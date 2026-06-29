@@ -1,11 +1,12 @@
 import { ShoppingCart, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { Product } from "@/@types";
+import { useAuth } from "../../contexts/AuthContext";
 
 interface ProductCardProps {
   product: Product;
   onAddToCart?: (e: React.MouseEvent, product: Product) => void;
-  onClick;
+  onClick: string;
 }
 
 function formatPrice(price: number) {
@@ -21,6 +22,7 @@ export function ProductCard({
   onAddToCart,
   onClick,
 }: ProductCardProps) {
+  const { activeRole } = useAuth();
   return (
     <div
       key={product.id}
@@ -74,13 +76,15 @@ export function ProductCard({
           <p className="text-base font-bold tracking-tight text-slate-900 truncate">
             {formatPrice(product.price)}
           </p>
-          <button
-            onClick={(e) => onAddToCart?.(e, product)}
-            className="cursor-pointer disabled:cursor-not-allowed shrink-0 inline-flex justify-center items-center rounded-xl bg-white border border-slate-200 p-2.5 text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-colors active:scale-95 disabled:opacity-50 shadow-sm"
-            title="Tambah ke Keranjang"
-          >
-            <ShoppingCart className="h-4 w-4" />
-          </button>
+          {activeRole === "buyer" && (
+            <button
+              onClick={(e) => onAddToCart?.(e, product)}
+              className="cursor-pointer disabled:cursor-not-allowed shrink-0 inline-flex justify-center items-center rounded-xl bg-white border border-slate-200 p-2.5 text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-colors active:scale-95 disabled:opacity-50 shadow-sm"
+              title="Tambah ke Keranjang"
+            >
+              <ShoppingCart className="h-4 w-4" />
+            </button>
+          )}
         </div>
       </div>
     </div>

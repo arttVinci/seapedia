@@ -128,7 +128,9 @@ export function Navbar() {
     if (role === activeRole) return;
     try {
       setIsSwitchingRole(true);
-      const res = await authService.selectRole({ role: role as "buyer" | "seller" | "driver" | "admin" });
+      const res = await authService.selectRole({
+        role: role as "buyer" | "seller" | "driver" | "admin",
+      });
       handleSelectRoleSuccess(res.token, res.active_role);
       setRoleDropdownOpen(false);
 
@@ -138,6 +140,8 @@ export function Navbar() {
         navigate("/driver");
       } else if (role === "admin") {
         navigate("/admin");
+      } else if (role === "buyer") {
+        navigate("/");
       }
     } catch (error) {
       console.error(error);

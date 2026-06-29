@@ -20,7 +20,10 @@ export function ProtectedRoute() {
     if (location.pathname.startsWith(prefix)) {
       const requiredRole = prefix.substring(1);
       if (activeRole !== requiredRole) {
-        // Arahkan ke dashboard peran yang sedang aktif
+        // Arahkan ke dashboard peran yang sedang aktif (atau homepage untuk buyer)
+        if (activeRole === "buyer") {
+          return <Navigate to="/" replace />;
+        }
         return <Navigate to={`/${activeRole}`} replace />;
       }
     }
