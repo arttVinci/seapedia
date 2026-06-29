@@ -104,7 +104,7 @@ export default function DriverActiveJobPage() {
           <Button 
             className="w-full h-14 text-lg bg-green-600 hover:bg-green-700" 
             onClick={handleCompleteJob}
-            isLoading={completeJobMutation.isPending}
+            disabled={completeJobMutation.isPending}
           >
             Selesaikan Pengiriman
           </Button>

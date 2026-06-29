@@ -58,7 +58,7 @@ func (r *OrderRepository) FindByStoreAndID(db *gorm.DB, storeID string, orderID 
 
 func (r *OrderRepository) FindJobByID(db *gorm.DB, orderID string, userID string) (*entity.Order, error) {
 	var order entity.Order
-	err := db.Preload("Items").Preload("StatusHistories").
+	err := db.Preload("Items").Preload("StatusHistories").Preload("Store").
 		Joins("JOIN deliveries ON deliveries.order_id = orders.id").
 		Where("orders.id = ? AND (deliveries.driver_id IS NULL OR deliveries.driver_id = ?)", orderID, userID).
 		Take(&order).Error

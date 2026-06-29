@@ -84,8 +84,7 @@ export default function DriverJobDetailPage() {
               <Button 
                 className="w-full h-12 text-lg" 
                 onClick={handleTakeJob}
-                isLoading={takeJobMutation.isPending}
-                disabled={job.status !== 'Menunggu Pengiriman'}
+                disabled={takeJobMutation.isPending || job.status !== 'Menunggu Pengiriman'}
               >
                 Ambil Pekerjaan Ini
               </Button>

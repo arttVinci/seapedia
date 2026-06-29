@@ -179,7 +179,7 @@ func (u *CartUsecase) UpdateItem(userID string, itemID string, request *model.Up
 			return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal memeriksa keranjang")
 		}
 		if count == 0 {
-			if err := tx.Model(&entity.Cart{}).Where("id = ?", item.CartID).Update("store_id", "").Error; err != nil {
+			if err := tx.Model(&entity.Cart{}).Where("id = ?", item.CartID).Update("store_id", nil).Error; err != nil {
 				tx.Rollback()
 				return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal mengosongkan toko keranjang")
 			}
@@ -237,7 +237,7 @@ func (u *CartUsecase) DeleteItem(userID string, itemID string) (*model.CartRespo
 		return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal memeriksa keranjang")
 	}
 	if count == 0 {
-		if err := tx.Model(&entity.Cart{}).Where("id = ?", item.CartID).Update("store_id", "").Error; err != nil {
+		if err := tx.Model(&entity.Cart{}).Where("id = ?", item.CartID).Update("store_id", nil).Error; err != nil {
 			tx.Rollback()
 			return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal mengosongkan toko keranjang")
 		}
