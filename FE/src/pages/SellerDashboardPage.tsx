@@ -1,12 +1,20 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui';
-import { useSellerStore } from '../hooks/queries/stores/useSellerStore';
-import { useSellerProducts } from '../hooks/queries/products/useSellerProducts';
-import { useSellerOrders } from '../hooks/queries/seller/useSellerOrders';
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui";
+import { useSellerStore } from "../hooks/queries/stores/useSellerStore";
+import { useSellerProducts } from "../hooks/queries/products/useSellerProducts";
+import { useSellerOrders } from "../hooks/queries/seller/useSellerOrders";
 
 export function SellerDashboardPage() {
   const { data: storeData } = useSellerStore();
-  const { data: productsData, isLoading: productsLoading, isError: productsError } = useSellerProducts({ page: 1, size: 1 });
-  const { data: orders, isLoading: ordersLoading, isError: ordersError } = useSellerOrders();
+  const {
+    data: productsData,
+    isLoading: productsLoading,
+    isError: productsError,
+  } = useSellerProducts({ page: 1, size: 1 });
+  const {
+    data: orders,
+    isLoading: ordersLoading,
+    isError: ordersError,
+  } = useSellerOrders();
 
   return (
     <div className="space-y-6">
@@ -29,7 +37,9 @@ export function SellerDashboardPage() {
             ) : productsError ? (
               <div className="text-sm text-red-500">Gagal memuat</div>
             ) : (
-              <div className="text-2xl font-bold">{productsData?.total ?? 0}</div>
+              <div className="text-2xl font-bold">
+                {productsData?.total ?? 0}
+              </div>
             )}
           </CardContent>
         </Card>

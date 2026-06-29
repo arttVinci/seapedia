@@ -38,9 +38,12 @@ import PromoPage from "./pages/admin/PromoPage";
 import BuyerExpensePage from "./pages/buyer/BuyerExpensePage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 
+import { ScrollToTop } from "./components/ui/ScrollToTop";
+
 function App() {
   return (
     <AuthProvider>
+      <ScrollToTop />
       <Toaster position="top-right" />
       <Routes>
         {/* Public Routes */}

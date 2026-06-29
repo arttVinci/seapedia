@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 
 export function HomePage() {
-  const { data, isLoading } = useProducts({ page: 1, size: 8 });
+  const { data, isLoading } = useProducts({ page: 1, size: 12 });
   const { data: stores, isLoading: storesLoading } = usePublicStores();
   const { token, activeRole } = useAuth();
   const addToCartMutation = useAddToCart();
@@ -199,7 +199,7 @@ export function HomePage() {
                 onAddToCart={(e: React.MouseEvent) =>
                   handleAddToCart(e, product.id)
                 }
-                onClick={() => navigate(`/products/${product.id}`)}
+                onClick={`/products/${product.id}`}
               />
             ))}
           </div>
@@ -271,7 +271,7 @@ export function HomePage() {
             </div>
           ) : stores && stores.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {stores.map((store) => (
+              {stores.slice(0, 3).map((store) => (
                 <div
                   key={store.id}
                   className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm hover:shadow-xl hover:shadow-blue-900/5 hover:-translate-y-1 transition-all duration-300 group cursor-pointer"

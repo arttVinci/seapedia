@@ -371,19 +371,7 @@ func (c *UserUseCase) AddRole(ctx context.Context, authModel *model.Auth, reques
 		return nil, err
 	}
 
-	// Jika role seller, langsung buatkan toko
-	if request.Role == "seller" {
-		store := &entity.Store{
-			ID:          uuid.NewString(),
-			UserID:      user.ID,
-			Name:        "Toko " + user.Username,
-			Description: "Toko milik " + user.Username,
-		}
-		if err := c.StoreRepository.Create(tx, store); err != nil {
-			c.Log.Warnf("Failed create store for seller : %+v", err)
-			return nil, err
-		}
-	}
+	// Jika role seller, langsung buatkan toko dihapus karena akan dibuat secara manual oleh frontend
 
 	if err := tx.Commit().Error; err != nil {
 		c.Log.Warnf("Failed commit transaction : %+v", err)
