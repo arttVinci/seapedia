@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { ChevronDown, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useCheckoutPreview } from "../../hooks/mutations/buyer/useCheckoutPreview";
@@ -13,20 +14,16 @@ const CheckoutPage = () => {
 
   const [deliveryMethod, setDeliveryMethod] = useState("regular");
   const [addressId, setAddressId] = useState("");
-  const [voucherCode, setVoucherCode] = useState("");
-  const [promoCode, setPromoCode] = useState("");
+  const [discountCode, setDiscountCode] = useState("");
 
   // Billing form fields
   const [billingName, setBillingName] = useState("");
-  const [billingEmail, setBillingEmail] = useState("");
   const [billingPhone, setBillingPhone] = useState("");
   const [billingStreet, setBillingStreet] = useState("");
-  const [billingCity, setBillingCity] = useState("");
-
 
   useEffect(() => {
     if (addressId && addresses) {
-      const selected = addresses.find(a => a.id === addressId);
+      const selected = addresses.find((a) => a.id === addressId);
       if (selected) {
         setBillingName(selected.recipient);
         setBillingPhone(selected.phone);
@@ -41,20 +38,25 @@ const CheckoutPage = () => {
       checkoutPreview.mutate({
         delivery_method: deliveryMethod,
         address_id: addressId,
-        voucher_code: voucherCode || undefined,
-        promo_code: promoCode || undefined,
+        discount_code: discountCode || undefined,
       });
     }
   }, [deliveryMethod, addressId]);
 
   const handleApplyDiscount = () => {
     if (!addressId) return toast.error("Silakan pilih alamat terlebih dahulu.");
-    checkoutPreview.mutate({
-      delivery_method: deliveryMethod,
-      address_id: addressId,
-      voucher_code: voucherCode || undefined,
-      promo_code: promoCode || undefined,
-    });
+    checkoutPreview.mutate(
+      {
+        delivery_method: deliveryMethod,
+        address_id: addressId,
+        discount_code: discountCode || undefined,
+      },
+      {
+        onError: (err: any) => {
+          toast.error(err.message || "Gagal menerapkan diskon.");
+        },
+      },
+    );
   };
 
   const handleCheckout = () => {
@@ -66,8 +68,7 @@ const CheckoutPage = () => {
       {
         delivery_method: deliveryMethod,
         address_id: addressId,
-        voucher_code: voucherCode || undefined,
-        promo_code: promoCode || undefined,
+        discount_code: discountCode || undefined,
       },
       {
         onSuccess: () => {
@@ -76,7 +77,7 @@ const CheckoutPage = () => {
         onError: (err) => {
           toast.error(`Checkout failed: ${err.message}`);
         },
-      }
+      },
     );
   };
 
@@ -91,8 +92,6 @@ const CheckoutPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
         {/* Left: Billing Form */}
         <div className="lg:col-span-3 space-y-6">
-
-
           {/* Billing Address */}
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
             <h2 className="text-lg font-semibold text-gray-900 mb-5">
@@ -103,19 +102,16 @@ const CheckoutPage = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Pilih Alamat Tersimpan
                 </label>
-                <select
+                <CustomSelect
                   value={addressId}
-                  onChange={(e) => setAddressId(e.target.value)}
-                  className="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500"
+                  onChange={setAddressId}
+                  placeholder="-- Pilih Alamat --"
                   disabled={isAddressesLoading}
-                >
-                  <option value="" disabled>-- Pilih Alamat --</option>
-                  {addresses?.map((addr) => (
-                    <option key={addr.id} value={addr.id}>
-                      {addr.label} ({addr.full_address.length > 30 ? addr.full_address.substring(0, 30) + '...' : addr.full_address})
-                    </option>
-                  ))}
-                </select>
+                  options={addresses?.map(addr => ({
+                    value: addr.id,
+                    label: `${addr.label} - ${addr.recipient}`
+                  })) || []}
+                />
               </div>
               {addressId && (
                 <>
@@ -155,9 +151,24 @@ const CheckoutPage = () => {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
-                { value: "instant", label: "Instant", desc: "2 Jam", price: "Rp 25.000" },
-                { value: "next_day", label: "Next Day", desc: "1 Hari", price: "Rp 15.000" },
-                { value: "regular", label: "Regular", desc: "3-5 Hari", price: "Rp 10.000" },
+                {
+                  value: "instant",
+                  label: "Instant",
+                  desc: "2 Jam",
+                  price: "Rp 25.000",
+                },
+                {
+                  value: "next_day",
+                  label: "Next Day",
+                  desc: "1 Hari",
+                  price: "Rp 15.000",
+                },
+                {
+                  value: "regular",
+                  label: "Regular",
+                  desc: "3-5 Hari",
+                  price: "Rp 10.000",
+                },
               ].map((method) => (
                 <label
                   key={method.value}
@@ -178,7 +189,9 @@ const CheckoutPage = () => {
                   <span className="text-sm font-semibold text-gray-900">
                     {method.label}
                   </span>
-                  <span className="text-xs text-gray-500 mt-1">{method.desc}</span>
+                  <span className="text-xs text-gray-500 mt-1">
+                    {method.desc}
+                  </span>
                   <span className="text-sm font-medium text-gray-900 mt-2">
                     {method.price}
                   </span>
@@ -195,28 +208,14 @@ const CheckoutPage = () => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Kode Voucher
+                  Kode
                 </label>
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    value={voucherCode}
-                    onChange={(e) => setVoucherCode(e.target.value)}
-                    placeholder="Masukkan kode voucher"
-                    className="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Kode Promo
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                    placeholder="Masukkan kode promo"
+                    value={discountCode}
+                    onChange={(e) => setDiscountCode(e.target.value)}
+                    placeholder="Masukkan kode voucher atau promo"
                     className="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500"
                   />
                 </div>
@@ -266,9 +265,12 @@ const CheckoutPage = () => {
                 {summary.promo_applied && (
                   <li className="inline-flex items-center px-4 py-3 border border-gray-200 border-t-0">
                     <div className="flex items-center justify-between w-full text-green-600">
-                      <span className="text-xs">Promo ({summary.promo_applied.code})</span>
+                      <span className="text-xs">
+                        Promo ({summary.promo_applied.code})
+                      </span>
                       <span className="text-xs font-medium">
-                        -Rp {summary.promo_applied.amount.toLocaleString("id-ID")}
+                        -Rp{" "}
+                        {summary.promo_applied.amount.toLocaleString("id-ID")}
                       </span>
                     </div>
                   </li>
@@ -276,16 +278,21 @@ const CheckoutPage = () => {
                 {summary.voucher_applied && (
                   <li className="inline-flex items-center px-4 py-3 border border-gray-200 border-t-0">
                     <div className="flex items-center justify-between w-full text-green-600">
-                      <span className="text-xs">Voucher ({summary.voucher_applied.code})</span>
+                      <span className="text-xs">
+                        Voucher ({summary.voucher_applied.code})
+                      </span>
                       <span className="text-xs font-medium">
-                        -Rp {summary.voucher_applied.amount.toLocaleString("id-ID")}
+                        -Rp{" "}
+                        {summary.voucher_applied.amount.toLocaleString("id-ID")}
                       </span>
                     </div>
                   </li>
                 )}
                 <li className="inline-flex items-center px-4 py-3 border border-gray-200 border-t-0">
                   <div className="flex items-center justify-between w-full">
-                    <span className="text-sm text-gray-600">Dasar Pengenaan Pajak</span>
+                    <span className="text-sm text-gray-600">
+                      Dasar Pengenaan Pajak
+                    </span>
                     <span className="text-sm font-medium text-gray-900">
                       Rp {summary.taxable.toLocaleString("id-ID")}
                     </span>
@@ -318,17 +325,14 @@ const CheckoutPage = () => {
               </ul>
             ) : (
               <p className="text-red-500 text-sm text-center py-4">
-                Gagal memuat ringkasan. {(!addressId) && "Pilih alamat terlebih dahulu."}
+                Gagal memuat ringkasan.{" "}
+                {!addressId && "Pilih alamat terlebih dahulu."}
               </p>
             )}
 
             <button
               onClick={handleCheckout}
-              disabled={
-                checkout.isPending ||
-                !summary ||
-                !addressId
-              }
+              disabled={checkout.isPending || !summary || !addressId}
               className="w-full mt-6 inline-flex items-center justify-center px-5 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
             >
               {checkout.isPending ? (
@@ -347,5 +351,69 @@ const CheckoutPage = () => {
   );
 };
 
-export default CheckoutPage;
+const CustomSelect = ({ value, onChange, options, placeholder, disabled }: any) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const selectedOption = options.find((opt: any) => opt.value === value);
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setIsOpen(!isOpen)}
+        className="py-2.5 sm:py-3 px-4 flex items-center justify-between w-full border border-gray-200 bg-white rounded-lg sm:text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:bg-gray-50 disabled:cursor-not-allowed transition-all text-left"
+      >
+        <span className="truncate">{selectedOption ? selectedOption.label : placeholder}</span>
+        <ChevronDown className={`w-4 h-4 text-gray-500 shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} />
+      </button>
+      
+      {isOpen && (
+        <div className="absolute z-[60] w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-xl overflow-hidden">
+          <ul className="max-h-60 overflow-y-auto py-1">
+            <li
+              onClick={() => {
+                onChange("");
+                setIsOpen(false);
+              }}
+              className={`px-4 py-2.5 text-sm cursor-pointer hover:bg-gray-50 transition-colors flex items-center justify-between ${
+                value === "" ? "bg-gray-50 text-gray-700 font-medium" : "text-gray-500"
+              }`}
+            >
+              <span className="truncate">-- Pilih Alamat --</span>
+              {value === "" && <Check className="w-4 h-4 text-gray-400" />}
+            </li>
+            {options.map((opt: any) => (
+              <li
+                key={opt.value}
+                onClick={() => {
+                  onChange(opt.value);
+                  setIsOpen(false);
+                }}
+                className={`px-4 py-2.5 text-sm cursor-pointer hover:bg-blue-50 transition-colors flex items-center justify-between ${
+                  value === opt.value ? "bg-blue-50/50 text-blue-700 font-medium" : "text-gray-700"
+                }`}
+              >
+                <span className="truncate">{opt.label}</span>
+                {value === opt.value && <Check className="w-4 h-4 text-blue-600" />}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default CheckoutPage;

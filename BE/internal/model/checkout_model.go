@@ -3,8 +3,7 @@ package model
 type CheckoutPreviewRequest struct {
 	DeliveryMethod string `json:"delivery_method" validate:"required,oneof=instant next_day regular"`
 	AddressID      string `json:"address_id" validate:"required"`
-	VoucherCode    string `json:"voucher_code"`
-	PromoCode      string `json:"promo_code"`
+	DiscountCode   string `json:"discount_code"`
 }
 
 type CheckoutPreviewResponse struct {

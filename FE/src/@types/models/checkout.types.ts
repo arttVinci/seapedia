@@ -1,7 +1,6 @@
 export interface CheckoutPreviewRequest {
   delivery_method: string;
-  voucher_code?: string;
-  promo_code?: string;
+  discount_code?: string;
   address_id: string;
 }
 
@@ -24,8 +23,7 @@ export interface CheckoutPreviewResponse {
 
 export interface CheckoutRequest {
   delivery_method: string;
-  voucher_code?: string;
-  promo_code?: string;
+  discount_code?: string;
   address_id: string;
 }
 

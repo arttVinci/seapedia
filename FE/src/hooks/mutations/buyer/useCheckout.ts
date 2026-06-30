@@ -9,8 +9,9 @@ export const useCheckout = () => {
   return useMutation<CheckoutResponse, ApiError, CheckoutRequest>({
     mutationFn: (payload) => checkoutService.checkout(payload),
     onSuccess: () => {
-      // Invalidate cart queries since checkout will clear the cart
+      // Invalidate cart and wallet queries since checkout will clear cart and deduct balance
       queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({ queryKey: ["wallet"] });
     },
   });
 };

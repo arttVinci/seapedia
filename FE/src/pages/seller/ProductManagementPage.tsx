@@ -351,7 +351,7 @@ export function ProductManagementPage() {
 
       {/* Modal Form */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           {/* Backdrop */}
           <div
             className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
@@ -359,7 +359,7 @@ export function ProductManagementPage() {
           ></div>
 
           {/* Modal Content */}
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-auto relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-auto relative z-10 overflow-hidden flex flex-col max-h-[90vh]">
             {/* Header */}
             <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
               <h2 className="text-xl font-bold text-gray-800">
@@ -385,135 +385,141 @@ export function ProductManagementPage() {
               <form
                 id="product-form"
                 onSubmit={handleSubmit}
-                className="space-y-5"
+                className="grid grid-cols-1 md:grid-cols-2 gap-8"
               >
-                <Input
-                  label="Nama Produk"
-                  name="name"
-                  placeholder="Contoh: Sepatu Sneakers Pria"
-                  value={form.name}
-                  onChange={handleFormChange}
-                  className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  required
-                />
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Kategori
-                  </label>
-                  <CategoryInput
-                    value={form.categories}
-                    onChange={(categories) => setForm((prev) => ({ ...prev, categories }))}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Deskripsi Produk
-                  </label>
-                  <textarea
-                    name="description"
-                    placeholder="Jelaskan detail, bahan, dan keunggulan produk Anda..."
-                    value={form.description}
-                    onChange={handleFormChange}
-                    rows={4}
-                    className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-shadow resize-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
+                {/* Kolom Kiri */}
+                <div className="space-y-5">
                   <Input
-                    label="Harga (Rp)"
-                    name="price"
-                    type="number"
-                    min="0"
-                    step="1"
-                    placeholder="0"
-                    value={form.price}
+                    label="Nama Produk"
+                    name="name"
+                    placeholder="Contoh: Sepatu Sneakers Pria"
+                    value={form.name}
                     onChange={handleFormChange}
                     className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     required
                   />
-                  <Input
-                    label="Stok"
-                    name="stock"
-                    type="number"
-                    min="0"
-                    step="1"
-                    placeholder="0"
-                    value={form.stock}
-                    onChange={handleFormChange}
-                    className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    required
-                  />
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Kategori
+                    </label>
+                    <CategoryInput
+                      value={form.categories}
+                      onChange={(categories) => setForm((prev) => ({ ...prev, categories }))}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Deskripsi Produk
+                    </label>
+                    <textarea
+                      name="description"
+                      placeholder="Jelaskan detail, bahan, dan keunggulan produk Anda..."
+                      value={form.description}
+                      onChange={handleFormChange}
+                      rows={5}
+                      className="w-full rounded-lg border border-gray-300 px-4 py-3 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-shadow resize-none"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Gambar Produk
-                  </label>
-                  <div className="flex items-start gap-6">
-                    {/* Preview Area */}
-                    <div className="relative w-32 h-32 rounded-xl overflow-hidden border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center flex-shrink-0 group hover:border-blue-500 transition-colors">
-                      {form.image_url ? (
-                        <>
-                          <img
-                            src={form.image_url}
-                            alt="Preview"
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              (e.target as HTMLImageElement).style.display = "none";
-                            }}
-                          />
-                          {/* Overlay on hover to change image */}
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                            <Upload className="h-6 w-6 text-white" />
+                {/* Kolom Kanan */}
+                <div className="space-y-5">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input
+                      label="Harga (Rp)"
+                      name="price"
+                      type="number"
+                      min="0"
+                      step="1"
+                      placeholder="0"
+                      value={form.price}
+                      onChange={handleFormChange}
+                      className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      required
+                    />
+                    <Input
+                      label="Stok"
+                      name="stock"
+                      type="number"
+                      min="0"
+                      step="1"
+                      placeholder="0"
+                      value={form.stock}
+                      onChange={handleFormChange}
+                      className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Gambar Produk
+                    </label>
+                    <div className="flex flex-col gap-4">
+                      {/* Preview Area */}
+                      <div className="relative w-full h-40 rounded-xl overflow-hidden border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center group hover:border-blue-500 transition-colors">
+                        {form.image_url ? (
+                          <>
+                            <img
+                              src={form.image_url}
+                              alt="Preview"
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = "none";
+                              }}
+                            />
+                            {/* Overlay on hover to change image */}
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                              <Upload className="h-6 w-6 text-white" />
+                            </div>
+                          </>
+                        ) : (
+                          <div className="text-center p-4">
+                            <Upload className="h-8 w-8 text-gray-400 mx-auto mb-1" />
+                            <span className="text-xs text-gray-500 font-medium">Preview</span>
                           </div>
-                        </>
-                      ) : (
-                        <div className="text-center p-4">
-                          <Upload className="h-8 w-8 text-gray-400 mx-auto mb-1" />
-                          <span className="text-xs text-gray-500 font-medium">Preview</span>
-                        </div>
-                      )}
-                      
-                      {/* Hidden File Input covering the entire preview area */}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
-                        onChange={handleImageUpload}
-                        disabled={uploadMutation.isPending}
-                        title="Klik untuk memilih gambar"
-                      />
-                    </div>
-                    
-                    {/* Action Area */}
-                    <div className="flex flex-col justify-center h-32">
-                      <div className="mb-3">
-                        <h4 className="text-sm font-semibold text-gray-800">Pilih Gambar Baru</h4>
-                        <p className="text-xs text-gray-500 mt-1 max-w-[200px]">
-                          Format yang didukung: JPG, JPEG, PNG. Ukuran maksimal 7MB.
-                        </p>
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="relative overflow-hidden cursor-pointer w-fit shadow-sm hover:shadow"
-                        disabled={uploadMutation.isPending}
-                      >
+                        )}
+                        
+                        {/* Hidden File Input covering the entire preview area */}
                         <input
                           type="file"
                           accept="image/*"
-                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                          className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
                           onChange={handleImageUpload}
                           disabled={uploadMutation.isPending}
+                          title="Klik untuk memilih gambar"
                         />
-                        <Upload className="h-4 w-4 mr-2 text-blue-600" />
-                        <span className="text-gray-700 font-medium">
-                          {uploadMutation.isPending ? "Mengunggah..." : (form.image_url ? "Ganti Gambar" : "Jelajahi Berkas")}
-                        </span>
-                      </Button>
+                      </div>
+                      
+                      {/* Action Area */}
+                      <div className="flex flex-col">
+                        <div className="mb-3">
+                          <h4 className="text-sm font-semibold text-gray-800">Pilih Gambar Baru</h4>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Format yang didukung: JPG, JPEG, PNG. Ukuran maksimal 7MB.
+                          </p>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="relative overflow-hidden cursor-pointer w-fit shadow-sm hover:shadow"
+                          disabled={uploadMutation.isPending}
+                        >
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                            onChange={handleImageUpload}
+                            disabled={uploadMutation.isPending}
+                          />
+                          <Upload className="h-4 w-4 mr-2 text-blue-600" />
+                          <span className="text-gray-700 font-medium">
+                            {uploadMutation.isPending ? "Mengunggah..." : (form.image_url ? "Ganti Gambar" : "Jelajahi Berkas")}
+                          </span>
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
