@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui';
+import { Card, CardContent } from '../components/ui';
 import { useDashboardStats } from '../hooks/queries/admin/useDashboardStats';
 import { useSimulateNextDay } from '../hooks/mutations/admin/useSimulateNextDay';
 import { Users, Store, Package, ShoppingBag, Ticket, Tag, Truck, Clock } from 'lucide-react';

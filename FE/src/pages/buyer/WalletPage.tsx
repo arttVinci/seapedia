@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card } from "../../components/ui/Card";
+
 import { Button } from "../../components/ui/Button";
 import { useWallet } from "../../hooks/queries/buyer/useWallet";
 import { useWalletTopup } from "../../hooks/mutations/buyer/useWalletTopup";
@@ -121,7 +121,7 @@ const WalletPage: React.FC = () => {
           </div>
         ) : (
           <div className="space-y-3">
-            {walletData.transactions.map((trx) => {
+            {walletData.transactions.map((trx: any) => {
               const isPositive = ["topup", "income", "refund"].includes(trx.type.toLowerCase());
               return (
                 <div 

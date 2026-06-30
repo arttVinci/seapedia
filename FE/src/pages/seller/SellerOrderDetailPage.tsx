@@ -80,7 +80,7 @@ const SellerOrderDetailPage = () => {
           {order.status === "Sedang Dikemas" && (
             <div className="mt-4">
               <Button
-                variant="primary"
+                variant="default"
                 className="w-full"
                 onClick={() => processMutation.mutate(id as string)}
                 isLoading={processMutation.isPending}
