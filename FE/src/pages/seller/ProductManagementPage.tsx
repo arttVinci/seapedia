@@ -195,14 +195,17 @@ export function ProductManagementPage() {
           onSubmit={handleSearchSubmit}
           className="flex flex-col sm:flex-row gap-3 w-full max-w-lg"
         >
-          <Input
-            type="text"
-            placeholder="Cari produk berdasarkan nama..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            icon={<Search className="h-5 w-5" />}
-            className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm"
-          />
+            <Input
+              type="text"
+              placeholder="Cari produk berdasarkan nama..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+              icon={<Search className="h-5 w-5" />}
+              className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm"
+            />
         </form>
       </div>
 
