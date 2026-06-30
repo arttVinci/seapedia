@@ -6,7 +6,7 @@ const TABS = [
   "Semua",
   "Pesanan Selesai",
   "Dibatalkan",
-  "Refund",
+  "Dikembalikan",
 ];
 
 const SellerOrderHistoryPage = () => {
@@ -27,7 +27,7 @@ const SellerOrderHistoryPage = () => {
 
   // Filter ONLY finished orders first
   const historyOrders = allOrders?.filter((order) => 
-    ["Pesanan Selesai", "Dibatalkan", "Refund"].includes(order.status)
+    ["Pesanan Selesai", "Dibatalkan", "Dikembalikan"].includes(order.status)
   ) || [];
 
   if (historyOrders.length === 0) return (
@@ -43,7 +43,7 @@ const SellerOrderHistoryPage = () => {
     const lower = status.toLowerCase();
     if (lower === "pesanan selesai") return "bg-green-100 text-green-800";
     if (lower === "dibatalkan") return "bg-red-100 text-red-800";
-    if (lower === "refund") return "bg-purple-100 text-purple-800";
+    if (lower === "dikembalikan") return "bg-purple-100 text-purple-800";
     return "bg-gray-100 text-gray-800";
   };
 
@@ -56,7 +56,7 @@ const SellerOrderHistoryPage = () => {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Riwayat Pesanan</h1>
 
-      <div className="border-b border-gray-200 mb-6 overflow-x-auto hide-scrollbar">
+      <div className="border-b border-gray-200 mb-6 overflow-x-auto overflow-y-hidden hide-scrollbar">
         <nav className="-mb-px flex space-x-6 min-w-max">
           {TABS.map((tab) => (
             <button
