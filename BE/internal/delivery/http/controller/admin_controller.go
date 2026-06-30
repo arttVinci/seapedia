@@ -20,6 +20,14 @@ func NewAdminController(adminUseCase *usecase.AdminUseCase, log *logrus.Logger) 
 	}
 }
 
+// @Summary      Simulate time +1 Day (Admin Only)
+// @Description  Advances system virtual time by 1 day and checks overdue SLAs for active orders.
+// @Tags         Admin
+// @Produce      json
+// @Success      200  {object}  model.WebResponse[model.SimulateNextDayResponse]
+// @Failure      500  {object}  model.ApiErrorResponse
+// @Security     BearerAuth
+// @Router       /api/admin/_simulate-time [post]
 func (c *AdminController) SimulateNextDay(ctx *fiber.Ctx) error {
 	response, err := c.AdminUseCase.SimulateNextDay(ctx.Context())
 	if err != nil {
@@ -37,6 +45,14 @@ func (c *AdminController) SimulateNextDay(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Get Dashboard Stats (Admin Only)
+// @Description  Get statistics for admin dashboard
+// @Tags         Admin
+// @Produce      json
+// @Success      200  {object}  model.WebResponse[model.DashboardStatsResponse]
+// @Failure      500  {object}  model.ApiErrorResponse
+// @Security     BearerAuth
+// @Router       /api/admin/dashboard/stats [get]
 func (c *AdminController) GetDashboardStats(ctx *fiber.Ctx) error {
 	stats, err := c.AdminUseCase.GetDashboardStats(ctx.Context())
 	if err != nil {

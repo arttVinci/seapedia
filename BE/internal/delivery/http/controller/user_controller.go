@@ -22,6 +22,16 @@ func NewUserController(userUseCase *usecase.UserUseCase, log *logrus.Logger) *Us
 	}
 }
 
+// @Summary      Register a new user
+// @Description  Create a new user account with a specific role
+// @Tags         Users
+// @Accept       json
+// @Produce      json
+// @Param        request body model.RegisterUserRequest true "Registration data"
+// @Success      201  {object}  model.WebResponse[model.RegisterUserResponse]
+// @Failure      400  {object}  model.ApiErrorResponse
+// @Failure      409  {object}  model.ApiErrorResponse
+// @Router       /api/users [post]
 func (c *UserController) Register(ctx *fiber.Ctx) error {
 	request := new(model.RegisterUserRequest)
 	if err := ctx.BodyParser(request); err != nil {
@@ -59,6 +69,16 @@ func (c *UserController) Register(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Login user
+// @Description  Authenticate user and return JWT
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        request body model.LoginUserRequest true "Login credentials"
+// @Success      200  {object}  model.WebResponse[model.LoginUserResponse]
+// @Failure      400  {object}  model.ApiErrorResponse
+// @Failure      401  {object}  model.ApiErrorResponse
+// @Router       /api/users/_login [post]
 func (c *UserController) Login(ctx *fiber.Ctx) error {
 	request := new(model.LoginUserRequest)
 	if err := ctx.BodyParser(request); err != nil {
@@ -102,6 +122,14 @@ func (c *UserController) Login(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Logout
+// @Description  Revoke the current JWT session
+// @Tags         Auth
+// @Produce      json
+// @Success      200  {object}  model.WebResponse[model.LogoutUserResponse]
+// @Failure      401  {object}  model.ApiErrorResponse
+// @Security     BearerAuth
+// @Router       /api/users/_logout [post]
 func (c *UserController) Logout(ctx *fiber.Ctx) error {
 	authModel := middleware.GetUser(ctx)
 
@@ -144,6 +172,16 @@ func (c *UserController) Roles(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Select Role
+// @Description  Switch active role and receive a new JWT
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        request body model.SelectRoleRequest true "Role selection"
+// @Success      200  {object}  model.WebResponse[model.SelectRoleResponse]
+// @Failure      401  {object}  model.ApiErrorResponse
+// @Security     BearerAuth
+// @Router       /api/users/_select-role [post]
 func (c *UserController) SelectRole(ctx *fiber.Ctx) error {
 	authModel := middleware.GetUser(ctx)
 
@@ -189,6 +227,14 @@ func (c *UserController) SelectRole(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Get current user
+// @Description  Ambil data user yang sedang login
+// @Tags         Auth
+// @Produce      json
+// @Success      200  {object}  model.WebResponse[model.UserResponse]
+// @Failure      401  {object}  model.ApiErrorResponse
+// @Security     BearerAuth
+// @Router       /api/users/_current [get]
 func (c *UserController) Current(ctx *fiber.Ctx) error {
 	authModel := middleware.GetUser(ctx)
 

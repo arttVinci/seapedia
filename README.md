@@ -4,11 +4,11 @@ Platform e-commerce fullstack yang menghubungkan **Seller**, **Buyer**, dan **Dr
 
 ## Tech Stack
 
-| Layer | Teknologi |
-|-------|-----------|
+| Layer    | Teknologi                                                            |
+| -------- | -------------------------------------------------------------------- |
 | Frontend | React + TypeScript + Vite, TanStack React Query, Tailwind CSS, Axios |
-| Backend | Go + Fiber, GORM, JWT, bcrypt, Wire (DI) |
-| Database | MySQL |
+| Backend  | Go + Fiber, GORM, JWT, bcrypt, Wire (DI)                             |
+| Database | MySQL                                                                |
 
 ## Struktur Proyek
 
@@ -42,11 +42,13 @@ seapedia/
 ## Memulai Development
 
 ### Prasyarat
+
 - Go 1.21+
 - Node.js 18+
 - MySQL 8+
 
 ### Backend
+
 ```bash
 cd BE
 cp .env.example .env   # sesuaikan konfigurasi
@@ -54,6 +56,7 @@ go run cmd/main.go
 ```
 
 ### Frontend
+
 ```bash
 cd FE
 cp .env.example .env   # pastikan VITE_API_BASE_URL + VITE_AUTH_TOKEN

@@ -1,0 +1,610 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API Documentation for SEAPEDIA platform.",
+        "title": "SEAPEDIA API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "email": "support@seapedia.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "basePath": "/api",
+    "paths": {
+        "/api/admin/_simulate-time": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Advances system virtual time by 1 day and checks overdue SLAs for active orders.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Simulate time +1 Day (Admin Only)",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_SimulateNextDayResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/dashboard/stats": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get statistics for admin dashboard",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get Dashboard Stats (Admin Only)",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_DashboardStatsResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users": {
+            "post": {
+                "description": "Create a new user account with a specific role",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "description": "Registration data",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.RegisterUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_RegisterUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/_current": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Ambil data user yang sedang login",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get current user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_UserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/_login": {
+            "post": {
+                "description": "Authenticate user and return JWT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login user",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.LoginUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_LoginUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/_logout": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Revoke the current JWT session",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_LogoutUserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/_select-role": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Switch active role and receive a new JWT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Select Role",
+                "parameters": [
+                    {
+                        "description": "Role selection",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.SelectRoleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_SelectRoleResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_traa_seapedia_server_internal_model.ApiErrorResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "statusCode": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.DashboardStatsResponse": {
+            "type": "object",
+            "properties": {
+                "current_simulated_day": {
+                    "type": "integer"
+                },
+                "overdue_orders": {
+                    "type": "integer"
+                },
+                "total_delivery_jobs": {
+                    "type": "integer"
+                },
+                "total_orders": {
+                    "type": "integer"
+                },
+                "total_products": {
+                    "type": "integer"
+                },
+                "total_promos": {
+                    "type": "integer"
+                },
+                "total_stores": {
+                    "type": "integer"
+                },
+                "total_users": {
+                    "type": "integer"
+                },
+                "total_vouchers": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.LoginUserRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.LoginUserResponse": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.UserResponse"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.LogoutUserResponse": {
+            "type": "object"
+        },
+        "github_com_traa_seapedia_server_internal_model.PageMetadata": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "total_item": {
+                    "type": "integer"
+                },
+                "total_page": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.RegisterUserRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "username"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                },
+                "role": {
+                    "type": "string",
+                    "enum": [
+                        "buyer",
+                        "seller",
+                        "driver"
+                    ]
+                },
+                "username": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 3
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.RegisterUserResponse": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.UserResponse"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.SelectRoleRequest": {
+            "type": "object",
+            "required": [
+                "role"
+            ],
+            "properties": {
+                "role": {
+                    "type": "string",
+                    "enum": [
+                        "buyer",
+                        "seller",
+                        "driver",
+                        "admin"
+                    ]
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.SelectRoleResponse": {
+            "type": "object",
+            "properties": {
+                "active_role": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.SimulateNextDayResponse": {
+            "type": "object",
+            "properties": {
+                "current_simulated_day": {
+                    "type": "integer"
+                },
+                "processed_overdue": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.UserResponse": {
+            "type": "object",
+            "properties": {
+                "auth_provider": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_admin": {
+                    "type": "boolean"
+                },
+                "updated_at": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_DashboardStatsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.DashboardStatsResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "paging": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_LoginUserResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.LoginUserResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "paging": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_LogoutUserResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.LogoutUserResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "paging": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_RegisterUserResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.RegisterUserResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "paging": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_SelectRoleResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.SelectRoleResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "paging": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_SimulateNextDayResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.SimulateNextDayResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "paging": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_UserResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.UserResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "paging": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}
