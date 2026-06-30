@@ -9,14 +9,14 @@ import { useRoles } from "../../hooks/queries/auth/useRoles";
 import { useWallet } from "../../hooks/queries/buyer/useWallet";
 import { OpenShopModal } from "../auth/OpenShopModal";
 import {
-  Anchor,
+  User,
+  LogOut,
+  Settings,
+  ChevronDown,
+  ShoppingBag,
+  Bell,
   Menu,
   X,
-  LogOut,
-  ShoppingBag,
-  ChevronDown,
-  User,
-  Settings,
   Store,
   Users,
   Search,
@@ -203,9 +203,11 @@ export function Navbar() {
             <div className="flex items-center gap-x-4 lg:gap-x-6 flex-1 mr-4 lg:mr-8">
               {/* Logo */}
               <Link to="/" className="flex items-center gap-x-2 group shrink-0">
-                <div className="bg-blue-600 p-2 rounded-lg text-white group-hover:bg-blue-700 transition-colors">
-                  <Anchor className="h-5 w-5" />
-                </div>
+                <img
+                  src="/image/logo.webp"
+                  alt="Seapedia Logo"
+                  className="h-10 w-10 object-contain rounded-lg"
+                />
                 <span className="text-xl font-bold tracking-tight text-gray-900 group-hover:text-blue-600 transition-colors hidden sm:block">
                   SEAPEDIA
                 </span>
