@@ -4,6 +4,6 @@ import type { ApiResponse } from "../@types/base/api.types";
 export const categoryService = {
   getAll: async () => {
     const response = await apiClient.get<ApiResponse<string[]>>("/categories");
-    return response.data.data; // data from axios, data from ApiResponse
+    return response.data.data || []; // Guarantee an array
   },
 };

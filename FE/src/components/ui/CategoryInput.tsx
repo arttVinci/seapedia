@@ -95,7 +95,7 @@ export const CategoryInput: React.FC<CategoryInputProps> = ({ value = [], onChan
 
       {showSuggestions && (inputValue || filteredSuggestions.length > 0) && (
         <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
-          {inputValue && !availableCategories.includes(inputValue.trim()) && !value.includes(inputValue.trim()) && (
+          {inputValue && !safeCategories.includes(inputValue.trim()) && !value.includes(inputValue.trim()) && (
             <div
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-blue-600 font-medium"
               onClick={() => addCategory(inputValue.trim())}
