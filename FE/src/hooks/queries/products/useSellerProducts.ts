@@ -4,7 +4,7 @@ import type { SearchParams } from "../../../@types/base/api.types";
 
 export function useSellerProducts(params: SearchParams) {
   return useQuery({
-    queryKey: ["sellerProducts", params.page, params.size, params.name],
+    queryKey: ["sellerProducts", params.page, params.size, params.name, params.category],
     queryFn: () => sellerProductService.getMyProducts(params),
     placeholderData: keepPreviousData,
   });
