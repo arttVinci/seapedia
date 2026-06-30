@@ -20,6 +20,12 @@ func NewCartController(log *logrus.Logger, usecase *usecase.CartUsecase) *CartCo
 	}
 }
 
+// @Summary      Get Buyer Cart
+// @Description  Get the current user's shopping cart
+// @Tags         Buyer Cart
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/cart [get]
 func (c *CartController) GetCart(ctx *fiber.Ctx) error {
 	user := middleware.GetUser(ctx)
 	response, err := c.Usecase.GetCart(user.ID)
@@ -34,6 +40,13 @@ func (c *CartController) GetCart(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Add Item to Cart
+// @Description  Add a product to the cart
+// @Tags         Buyer Cart
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/cart/items [post]
 func (c *CartController) AddItem(ctx *fiber.Ctx) error {
 	user := middleware.GetUser(ctx)
 	var request model.AddCartItemRequest
@@ -53,6 +66,14 @@ func (c *CartController) AddItem(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Update Cart Item
+// @Description  Update the quantity of a cart item
+// @Tags         Buyer Cart
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Item ID"
+// @Router       /api/cart/items/{id} [put]
 func (c *CartController) UpdateItem(ctx *fiber.Ctx) error {
 	user := middleware.GetUser(ctx)
 	itemID := ctx.Params("id")
@@ -73,6 +94,13 @@ func (c *CartController) UpdateItem(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Delete Cart Item
+// @Description  Remove an item from the cart
+// @Tags         Buyer Cart
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Item ID"
+// @Router       /api/cart/items/{id} [delete]
 func (c *CartController) DeleteItem(ctx *fiber.Ctx) error {
 	user := middleware.GetUser(ctx)
 	itemID := ctx.Params("id")

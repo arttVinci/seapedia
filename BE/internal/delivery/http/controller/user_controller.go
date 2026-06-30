@@ -148,6 +148,12 @@ func (c *UserController) Logout(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Get User Roles
+// @Description  Get available roles for the current user
+// @Tags         Auth
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/users/_roles [get]
 func (c *UserController) Roles(ctx *fiber.Ctx) error {
 	authModel := middleware.GetUser(ctx)
 
@@ -259,6 +265,13 @@ func (c *UserController) Current(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Add User Role
+// @Description  Add a new role to the current user
+// @Tags         Users
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/users/_add-role [post]
 func (c *UserController) AddRole(ctx *fiber.Ctx) error {
 	authModel := middleware.GetUser(ctx)
 
@@ -304,6 +317,13 @@ func (c *UserController) AddRole(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Update User Profile
+// @Description  Update the current user's profile
+// @Tags         Users
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/users/_profile [put]
 func (c *UserController) UpdateProfile(ctx *fiber.Ctx) error {
 	authModel := middleware.GetUser(ctx)
 

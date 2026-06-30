@@ -20,6 +20,12 @@ func NewProductController(useCase *usecase.ProductUseCase, log *logrus.Logger) *
 	return &ProductController{UseCase: useCase, Log: log}
 }
 
+// @Summary      List all products
+// @Description  Get a list of all products with optional filters
+// @Tags         Products
+// @Produce      json
+// @Success      200  {object}  model.WebResponse[[]model.ProductResponse]
+// @Router       /api/products [get]
 func (c *ProductController) List(ctx *fiber.Ctx) error {
 	catStr := ctx.Query("category")
 	var categories []string
@@ -48,6 +54,13 @@ func (c *ProductController) List(ctx *fiber.Ctx) error {
 	return ctx.JSON(model.WebResponse[[]model.ProductResponse]{Data: responses, Paging: paging, Message: "Daftar produk", Success: true})
 }
 
+// @Summary      Get product detail
+// @Description  Get details of a specific product
+// @Tags         Products
+// @Produce      json
+// @Param        id   path      string  true  "Product ID"
+// @Success      200  {object}  model.WebResponse[model.ProductResponse]
+// @Router       /api/products/{id} [get]
 func (c *ProductController) Detail(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 	response, err := c.UseCase.FindById(ctx.UserContext(), id)
@@ -86,6 +99,13 @@ func (c *ProductController) ListMyProducts(ctx *fiber.Ctx) error {
 	return ctx.JSON(model.WebResponse[[]model.ProductResponse]{Data: responses, Paging: paging, Message: "Daftar produk toko", Success: true})
 }
 
+// @Summary      Create a new product
+// @Description  Create a new product for a seller
+// @Tags         Seller Products
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/seller/products [post]
 func (c *ProductController) CreateProduct(ctx *fiber.Ctx) error {
 	userID := middleware.GetUser(ctx).ID
 	request := new(model.CreateProductRequest)
@@ -101,6 +121,14 @@ func (c *ProductController) CreateProduct(ctx *fiber.Ctx) error {
 	return ctx.Status(fiber.StatusCreated).JSON(model.WebResponse[*model.ProductResponse]{Data: response, Message: "Produk berhasil dibuat", Success: true})
 }
 
+// @Summary      Update a product
+// @Description  Update an existing product
+// @Tags         Seller Products
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Product ID"
+// @Router       /api/seller/products/{id} [put]
 func (c *ProductController) UpdateProduct(ctx *fiber.Ctx) error {
 	userID := middleware.GetUser(ctx).ID
 	productID := ctx.Params("id")
@@ -117,6 +145,13 @@ func (c *ProductController) UpdateProduct(ctx *fiber.Ctx) error {
 	return ctx.JSON(model.WebResponse[*model.ProductResponse]{Data: response, Message: "Produk berhasil diperbarui", Success: true})
 }
 
+// @Summary      Delete a product
+// @Description  Delete an existing product
+// @Tags         Seller Products
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Product ID"
+// @Router       /api/seller/products/{id} [delete]
 func (c *ProductController) DeleteProduct(ctx *fiber.Ctx) error {
 	userID := middleware.GetUser(ctx).ID
 	productID := ctx.Params("id")

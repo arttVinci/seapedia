@@ -20,6 +20,12 @@ func NewBuyerReportController(log *logrus.Logger, useCase *usecase.BuyerReportUs
 	}
 }
 
+// @Summary      Get Buyer Expense
+// @Description  Get expense history for the current buyer
+// @Tags         Buyer Reports
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/buyer/reports/expense [get]
 func (c *BuyerReportController) GetExpense(ctx *fiber.Ctx) error {
 	user := middleware.GetUser(ctx)
 

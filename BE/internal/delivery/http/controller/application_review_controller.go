@@ -18,6 +18,11 @@ func NewApplicationReviewController(useCase *usecase.ApplicationReviewUseCase, l
 	return &ApplicationReviewController{UseCase: useCase, Log: log}
 }
 
+// @Summary      List App Reviews
+// @Description  Get all application reviews
+// @Tags         App Reviews
+// @Produce      json
+// @Router       /api/reviews/app [get]
 func (c *ApplicationReviewController) List(ctx *fiber.Ctx) error {
 	request := &model.SearchApplicationReviewRequest{
 		Page: ctx.QueryInt("page", 1),
@@ -37,6 +42,13 @@ func (c *ApplicationReviewController) List(ctx *fiber.Ctx) error {
 	return ctx.JSON(model.WebResponse[[]model.ApplicationReviewResponse]{Data: responses, Paging: paging, Message: "Daftar ulasan", Success: true})
 }
 
+// @Summary      Create App Review
+// @Description  Submit a review for the application
+// @Tags         App Reviews
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/reviews/app [post]
 func (c *ApplicationReviewController) Create(ctx *fiber.Ctx) error {
 	request := new(model.CreateApplicationReviewRequest)
 	if err := ctx.BodyParser(request); err != nil {

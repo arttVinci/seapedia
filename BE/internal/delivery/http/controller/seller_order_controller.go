@@ -13,6 +13,14 @@ type SellerOrderController struct {
 	UseCase *usecase.SellerOrderUseCase
 }
 
+// @Summary      Process Store Order
+// @Description  Process an order for the seller's store (e.g. approve/reject)
+// @Tags         Seller Orders
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Order ID"
+// @Router       /api/seller/orders/{id}/process [post]
 func (c *SellerOrderController) ProcessOrder(ctx *fiber.Ctx) error {
 	user := middleware.GetUser(ctx)
 	orderID := ctx.Params("id")
@@ -35,6 +43,13 @@ func NewSellerOrderController(log *logrus.Logger, useCase *usecase.SellerOrderUs
 	}
 }
 
+// @Summary      Get Store Order Detail
+// @Description  Get details of a specific order for the seller's store
+// @Tags         Seller Orders
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Order ID"
+// @Router       /api/seller/orders/{id} [get]
 func (c *SellerOrderController) GetSellerOrderDetail(ctx *fiber.Ctx) error {
 	user := middleware.GetUser(ctx)
 	orderID := ctx.Params("id")
@@ -51,6 +66,12 @@ func (c *SellerOrderController) GetSellerOrderDetail(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      List Store Orders
+// @Description  Get a list of orders for the seller's store
+// @Tags         Seller Orders
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/seller/orders [get]
 func (c *SellerOrderController) ListSellerOrders(ctx *fiber.Ctx) error {
 	user := middleware.GetUser(ctx)
 

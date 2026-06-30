@@ -64,6 +64,31 @@ definitions:
       total_page:
         type: integer
     type: object
+  github_com_traa_seapedia_server_internal_model.ProductResponse:
+    properties:
+      categories:
+        items:
+          type: string
+        type: array
+      created_at:
+        type: integer
+      description:
+        type: string
+      id:
+        type: string
+      image_url:
+        type: string
+      name:
+        type: string
+      price:
+        type: integer
+      stock:
+        type: integer
+      store_id:
+        type: string
+      updated_at:
+        type: integer
+    type: object
   github_com_traa_seapedia_server_internal_model.RegisterUserRequest:
     properties:
       email:
@@ -134,6 +159,19 @@ definitions:
       username:
         type: string
     type: object
+  github_com_traa_seapedia_server_internal_model.WebResponse-array_github_com_traa_seapedia_server_internal_model_ProductResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.ProductResponse'
+        type: array
+      message:
+        type: string
+      paging:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata'
+      success:
+        type: boolean
+    type: object
   github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_DashboardStatsResponse:
     properties:
       data:
@@ -160,6 +198,17 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.LogoutUserResponse'
+      message:
+        type: string
+      paging:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata'
+      success:
+        type: boolean
+    type: object
+  github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_ProductResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.ProductResponse'
       message:
         type: string
       paging:
@@ -223,6 +272,64 @@ info:
   title: SEAPEDIA API
   version: "1.0"
 paths:
+  /api/addresses:
+    get:
+      description: Get a list of addresses for the current user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get User Addresses
+      tags:
+      - Addresses
+    post:
+      consumes:
+      - application/json
+      description: Add a new address for the current user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Create Address
+      tags:
+      - Addresses
+  /api/addresses/{id}:
+    delete:
+      description: Delete an address
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Delete Address
+      tags:
+      - Addresses
+    put:
+      consumes:
+      - application/json
+      description: Update an existing address
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Update Address
+      tags:
+      - Addresses
   /api/admin/_simulate-time:
     post:
       description: Advances system virtual time by 1 day and checks overdue SLAs for
@@ -262,6 +369,482 @@ paths:
       summary: Get Dashboard Stats (Admin Only)
       tags:
       - Admin
+  /api/buyer/orders:
+    get:
+      description: Get a list of orders for the current buyer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: List Buyer Orders
+      tags:
+      - Buyer Orders
+  /api/buyer/orders/{id}:
+    get:
+      description: Get details of a specific order for the current buyer
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Buyer Order Detail
+      tags:
+      - Buyer Orders
+  /api/buyer/reports/expense:
+    get:
+      description: Get expense history for the current buyer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Buyer Expense
+      tags:
+      - Buyer Reports
+  /api/cart:
+    get:
+      description: Get the current user's shopping cart
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Buyer Cart
+      tags:
+      - Buyer Cart
+  /api/cart/items:
+    post:
+      consumes:
+      - application/json
+      description: Add a product to the cart
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Add Item to Cart
+      tags:
+      - Buyer Cart
+  /api/cart/items/{id}:
+    delete:
+      description: Remove an item from the cart
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Delete Cart Item
+      tags:
+      - Buyer Cart
+    put:
+      consumes:
+      - application/json
+      description: Update the quantity of a cart item
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Update Cart Item
+      tags:
+      - Buyer Cart
+  /api/categories:
+    get:
+      description: Get a list of all product categories
+      produces:
+      - application/json
+      responses: {}
+      summary: Get All Categories
+      tags:
+      - Categories
+  /api/checkout:
+    post:
+      consumes:
+      - application/json
+      description: Create the order and process checkout
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Process Checkout
+      tags:
+      - Checkout
+  /api/checkout/_preview:
+    post:
+      consumes:
+      - application/json
+      description: Calculate total, shipping, and discounts before checking out
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Preview Checkout
+      tags:
+      - Checkout
+  /api/driver/jobs:
+    get:
+      description: Get a list of available delivery jobs for the driver
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: List Driver Jobs
+      tags:
+      - Driver Jobs
+  /api/driver/jobs/{id}/complete:
+    post:
+      description: Mark a delivery job as completed
+      parameters:
+      - description: Job ID (Order ID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Complete a Delivery Job
+      tags:
+      - Driver Jobs
+  /api/driver/jobs/{id}/take:
+    post:
+      description: Accept a delivery job
+      parameters:
+      - description: Job ID (Order ID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Take a Delivery Job
+      tags:
+      - Driver Jobs
+  /api/products:
+    get:
+      description: Get a list of all products with optional filters
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-array_github_com_traa_seapedia_server_internal_model_ProductResponse'
+      summary: List all products
+      tags:
+      - Products
+  /api/products/{id}:
+    get:
+      description: Get details of a specific product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_ProductResponse'
+      summary: Get product detail
+      tags:
+      - Products
+  /api/reviews/app:
+    get:
+      description: Get all application reviews
+      produces:
+      - application/json
+      responses: {}
+      summary: List App Reviews
+      tags:
+      - App Reviews
+    post:
+      consumes:
+      - application/json
+      description: Submit a review for the application
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Create App Review
+      tags:
+      - App Reviews
+  /api/seller/orders:
+    get:
+      description: Get a list of orders for the seller's store
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: List Store Orders
+      tags:
+      - Seller Orders
+  /api/seller/orders/{id}:
+    get:
+      description: Get details of a specific order for the seller's store
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Store Order Detail
+      tags:
+      - Seller Orders
+  /api/seller/orders/{id}/process:
+    post:
+      consumes:
+      - application/json
+      description: Process an order for the seller's store (e.g. approve/reject)
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Process Store Order
+      tags:
+      - Seller Orders
+  /api/seller/products:
+    post:
+      consumes:
+      - application/json
+      description: Create a new product for a seller
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Create a new product
+      tags:
+      - Seller Products
+  /api/seller/products/{id}:
+    delete:
+      description: Delete an existing product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Delete a product
+      tags:
+      - Seller Products
+    put:
+      consumes:
+      - application/json
+      description: Update an existing product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Update a product
+      tags:
+      - Seller Products
+  /api/seller/promos:
+    get:
+      description: Get a list of promos for the current seller's store
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: List Store Promos
+      tags:
+      - Seller Promos
+    post:
+      consumes:
+      - application/json
+      description: Create a new promo for the store
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Create a Promo
+      tags:
+      - Seller Promos
+  /api/seller/promos/{id}:
+    get:
+      description: Get details of a specific promo
+      parameters:
+      - description: Promo ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Promo Detail
+      tags:
+      - Seller Promos
+  /api/seller/reports/income:
+    get:
+      description: Get income history for the current seller
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Seller Income
+      tags:
+      - Seller Reports
+  /api/seller/store:
+    get:
+      description: Get details of the current seller's store
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get My Store
+      tags:
+      - Seller Store
+    post:
+      consumes:
+      - application/json
+      description: Create a store for the current seller
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Create Store
+      tags:
+      - Seller Store
+    put:
+      consumes:
+      - application/json
+      description: Update details of the current seller's store
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Update Store
+      tags:
+      - Seller Store
+  /api/seller/vouchers:
+    get:
+      description: Get a list of vouchers for the current seller's store
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: List Store Vouchers
+      tags:
+      - Seller Vouchers
+    post:
+      consumes:
+      - application/json
+      description: Create a new voucher for the store
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Create a Voucher
+      tags:
+      - Seller Vouchers
+  /api/seller/vouchers/{id}:
+    get:
+      description: Get details of a specific voucher
+      parameters:
+      - description: Voucher ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Voucher Detail
+      tags:
+      - Seller Vouchers
+  /api/stores:
+    get:
+      description: Get a list of all stores
+      produces:
+      - application/json
+      responses: {}
+      summary: List Stores
+      tags:
+      - Stores
+  /api/stores/{id}:
+    get:
+      description: Get details of a specific store
+      parameters:
+      - description: Store ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Get Store Detail
+      tags:
+      - Stores
   /api/users:
     post:
       consumes:
@@ -290,6 +873,19 @@ paths:
           schema:
             $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse'
       summary: Register a new user
+      tags:
+      - Users
+  /api/users/_add-role:
+    post:
+      consumes:
+      - application/json
+      description: Add a new role to the current user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Add User Role
       tags:
       - Users
   /api/users/_current:
@@ -360,6 +956,30 @@ paths:
       summary: Logout
       tags:
       - Auth
+  /api/users/_profile:
+    put:
+      consumes:
+      - application/json
+      description: Update the current user's profile
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Update User Profile
+      tags:
+      - Users
+  /api/users/_roles:
+    get:
+      description: Get available roles for the current user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get User Roles
+      tags:
+      - Auth
   /api/users/_select-role:
     post:
       consumes:
@@ -388,6 +1008,30 @@ paths:
       summary: Select Role
       tags:
       - Auth
+  /api/wallet:
+    get:
+      description: Get current user's wallet balance and history
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Wallet Balance
+      tags:
+      - Wallet
+  /api/wallet/topup:
+    post:
+      consumes:
+      - application/json
+      description: Add funds to the user's wallet
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Topup Wallet
+      tags:
+      - Wallet
 securityDefinitions:
   BearerAuth:
     in: header

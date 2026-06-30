@@ -20,6 +20,12 @@ func NewSellerReportController(log *logrus.Logger, useCase *usecase.SellerReport
 	}
 }
 
+// @Summary      Get Seller Income
+// @Description  Get income history for the current seller
+// @Tags         Seller Reports
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/seller/reports/income [get]
 func (c *SellerReportController) GetIncome(ctx *fiber.Ctx) error {
 	user := middleware.GetUser(ctx)
 

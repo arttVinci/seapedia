@@ -16,6 +16,98 @@
     },
     "basePath": "/api",
     "paths": {
+        "/api/addresses": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a list of addresses for the current user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Addresses"
+                ],
+                "summary": "Get User Addresses",
+                "responses": {}
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Add a new address for the current user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Addresses"
+                ],
+                "summary": "Create Address",
+                "responses": {}
+            }
+        },
+        "/api/addresses/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an existing address",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Addresses"
+                ],
+                "summary": "Update Address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Address ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete an address",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Addresses"
+                ],
+                "summary": "Delete Address",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Address ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/api/admin/_simulate-time": {
             "post": {
                 "security": [
@@ -78,6 +170,759 @@
                 }
             }
         },
+        "/api/buyer/orders": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a list of orders for the current buyer",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyer Orders"
+                ],
+                "summary": "List Buyer Orders",
+                "responses": {}
+            }
+        },
+        "/api/buyer/orders/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get details of a specific order for the current buyer",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyer Orders"
+                ],
+                "summary": "Get Buyer Order Detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/buyer/reports/expense": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get expense history for the current buyer",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyer Reports"
+                ],
+                "summary": "Get Buyer Expense",
+                "responses": {}
+            }
+        },
+        "/api/cart": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get the current user's shopping cart",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyer Cart"
+                ],
+                "summary": "Get Buyer Cart",
+                "responses": {}
+            }
+        },
+        "/api/cart/items": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Add a product to the cart",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyer Cart"
+                ],
+                "summary": "Add Item to Cart",
+                "responses": {}
+            }
+        },
+        "/api/cart/items/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the quantity of a cart item",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyer Cart"
+                ],
+                "summary": "Update Cart Item",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Remove an item from the cart",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Buyer Cart"
+                ],
+                "summary": "Delete Cart Item",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/categories": {
+            "get": {
+                "description": "Get a list of all product categories",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Categories"
+                ],
+                "summary": "Get All Categories",
+                "responses": {}
+            }
+        },
+        "/api/checkout": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create the order and process checkout",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Checkout"
+                ],
+                "summary": "Process Checkout",
+                "responses": {}
+            }
+        },
+        "/api/checkout/_preview": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Calculate total, shipping, and discounts before checking out",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Checkout"
+                ],
+                "summary": "Preview Checkout",
+                "responses": {}
+            }
+        },
+        "/api/driver/jobs": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a list of available delivery jobs for the driver",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Driver Jobs"
+                ],
+                "summary": "List Driver Jobs",
+                "responses": {}
+            }
+        },
+        "/api/driver/jobs/{id}/complete": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Mark a delivery job as completed",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Driver Jobs"
+                ],
+                "summary": "Complete a Delivery Job",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Job ID (Order ID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/driver/jobs/{id}/take": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Accept a delivery job",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Driver Jobs"
+                ],
+                "summary": "Take a Delivery Job",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Job ID (Order ID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/products": {
+            "get": {
+                "description": "Get a list of all products with optional filters",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "List all products",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-array_github_com_traa_seapedia_server_internal_model_ProductResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/products/{id}": {
+            "get": {
+                "description": "Get details of a specific product",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get product detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_ProductResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/reviews/app": {
+            "get": {
+                "description": "Get all application reviews",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "App Reviews"
+                ],
+                "summary": "List App Reviews",
+                "responses": {}
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Submit a review for the application",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "App Reviews"
+                ],
+                "summary": "Create App Review",
+                "responses": {}
+            }
+        },
+        "/api/seller/orders": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a list of orders for the seller's store",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Orders"
+                ],
+                "summary": "List Store Orders",
+                "responses": {}
+            }
+        },
+        "/api/seller/orders/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get details of a specific order for the seller's store",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Orders"
+                ],
+                "summary": "Get Store Order Detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/seller/orders/{id}/process": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Process an order for the seller's store (e.g. approve/reject)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Orders"
+                ],
+                "summary": "Process Store Order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Order ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/seller/products": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new product for a seller",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Products"
+                ],
+                "summary": "Create a new product",
+                "responses": {}
+            }
+        },
+        "/api/seller/products/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update an existing product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Products"
+                ],
+                "summary": "Update a product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete an existing product",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Products"
+                ],
+                "summary": "Delete a product",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/seller/promos": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a list of promos for the current seller's store",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Promos"
+                ],
+                "summary": "List Store Promos",
+                "responses": {}
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new promo for the store",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Promos"
+                ],
+                "summary": "Create a Promo",
+                "responses": {}
+            }
+        },
+        "/api/seller/promos/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get details of a specific promo",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Promos"
+                ],
+                "summary": "Get Promo Detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Promo ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/seller/reports/income": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get income history for the current seller",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Reports"
+                ],
+                "summary": "Get Seller Income",
+                "responses": {}
+            }
+        },
+        "/api/seller/store": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get details of the current seller's store",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Store"
+                ],
+                "summary": "Get My Store",
+                "responses": {}
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update details of the current seller's store",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Store"
+                ],
+                "summary": "Update Store",
+                "responses": {}
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a store for the current seller",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Store"
+                ],
+                "summary": "Create Store",
+                "responses": {}
+            }
+        },
+        "/api/seller/vouchers": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a list of vouchers for the current seller's store",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Vouchers"
+                ],
+                "summary": "List Store Vouchers",
+                "responses": {}
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create a new voucher for the store",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Vouchers"
+                ],
+                "summary": "Create a Voucher",
+                "responses": {}
+            }
+        },
+        "/api/seller/vouchers/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get details of a specific voucher",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Seller Vouchers"
+                ],
+                "summary": "Get Voucher Detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Voucher ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/api/stores": {
+            "get": {
+                "description": "Get a list of all stores",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stores"
+                ],
+                "summary": "List Stores",
+                "responses": {}
+            }
+        },
+        "/api/stores/{id}": {
+            "get": {
+                "description": "Get details of a specific store",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stores"
+                ],
+                "summary": "Get Store Detail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Store ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/api/users": {
             "post": {
                 "description": "Create a new user account with a specific role",
@@ -122,6 +967,27 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/users/_add-role": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Add a new role to the current user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Add User Role",
+                "responses": {}
             }
         },
         "/api/users/_current": {
@@ -232,6 +1098,45 @@
                 }
             }
         },
+        "/api/users/_profile": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update the current user's profile",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update User Profile",
+                "responses": {}
+            }
+        },
+        "/api/users/_roles": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get available roles for the current user",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get User Roles",
+                "responses": {}
+            }
+        },
         "/api/users/_select-role": {
             "post": {
                 "security": [
@@ -275,6 +1180,45 @@
                         }
                     }
                 }
+            }
+        },
+        "/api/wallet": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get current user's wallet balance and history",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Wallet"
+                ],
+                "summary": "Get Wallet Balance",
+                "responses": {}
+            }
+        },
+        "/api/wallet/topup": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Add funds to the user's wallet",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Wallet"
+                ],
+                "summary": "Topup Wallet",
+                "responses": {}
             }
         }
     },
@@ -373,6 +1317,44 @@
                     "type": "integer"
                 },
                 "total_page": {
+                    "type": "integer"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.ProductResponse": {
+            "type": "object",
+            "properties": {
+                "categories": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "created_at": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "stock": {
+                    "type": "integer"
+                },
+                "store_id": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "integer"
                 }
             }
@@ -480,6 +1462,26 @@
                 }
             }
         },
+        "github_com_traa_seapedia_server_internal_model.WebResponse-array_github_com_traa_seapedia_server_internal_model_ProductResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.ProductResponse"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "paging": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_DashboardStatsResponse": {
             "type": "object",
             "properties": {
@@ -519,6 +1521,23 @@
             "properties": {
                 "data": {
                     "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.LogoutUserResponse"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "paging": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_ProductResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_traa_seapedia_server_internal_model.ProductResponse"
                 },
                 "message": {
                     "type": "string"

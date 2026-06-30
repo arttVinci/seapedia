@@ -20,6 +20,12 @@ func NewDriverController(log *logrus.Logger, useCase *usecase.DriverUseCase) *Dr
 	}
 }
 
+// @Summary      List Driver Jobs
+// @Description  Get a list of available delivery jobs for the driver
+// @Tags         Driver Jobs
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/driver/jobs [get]
 func (c *DriverController) ListJobs(ctx *fiber.Ctx) error {
 	responses, err := c.UseCase.ListJobs(ctx.UserContext())
 	if err != nil {
@@ -47,6 +53,13 @@ func (c *DriverController) JobDetail(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Take a Delivery Job
+// @Description  Accept a delivery job
+// @Tags         Driver Jobs
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Job ID (Order ID)"
+// @Router       /api/driver/jobs/{id}/take [post]
 func (c *DriverController) TakeJob(ctx *fiber.Ctx) error {
 	orderID := ctx.Params("id")
 	userID := middleware.GetUser(ctx).ID
@@ -65,6 +78,13 @@ func (c *DriverController) TakeJob(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Complete a Delivery Job
+// @Description  Mark a delivery job as completed
+// @Tags         Driver Jobs
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Job ID (Order ID)"
+// @Router       /api/driver/jobs/{id}/complete [post]
 func (c *DriverController) CompleteJob(ctx *fiber.Ctx) error {
 	orderID := ctx.Params("id")
 	userID := middleware.GetUser(ctx).ID

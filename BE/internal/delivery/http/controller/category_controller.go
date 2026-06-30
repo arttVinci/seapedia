@@ -16,6 +16,11 @@ func NewCategoryController(log *logrus.Logger, categoryUseCase *usecase.Category
 	return &CategoryController{Log: log, CategoryUseCase: categoryUseCase}
 }
 
+// @Summary      Get All Categories
+// @Description  Get a list of all product categories
+// @Tags         Categories
+// @Produce      json
+// @Router       /api/categories [get]
 func (c *CategoryController) GetAll(ctx *fiber.Ctx) error {
 	categories, err := c.CategoryUseCase.GetAll(ctx.Context())
 	if err != nil {
