@@ -88,14 +88,14 @@ func main() {
 
 	// 1. Categories
 	cats := []string{
+		"Handphone",
+		"Laptop",
+		"Apple",
+		"Gaming",
 		"Fashion",
-		"Elektronik",
-		"Rumah Tangga",
-		"Kecantikan",
-		"Sepatu",
-		"Ibu & Anak",
 		"Olahraga",
-		"Hobi",
+		"Sepatu",
+		"Rumah Tangga",
 	}
 
 	categoryIDs := make(map[string]string)
@@ -142,12 +142,12 @@ func main() {
 	createUser("driver", "driver", 2)
 
 	// 3. Sellers & Stores
-	createStore := func(num int, storeName, catName string, products []Product) {
+	createStore := func(username, storeName, catName string, products []Product) {
 		sellerID := uuid.NewString()
 		db.Create(&User{
 			ID:           sellerID,
-			Username:     fmt.Sprintf("seller%d", num),
-			Email:        fmt.Sprintf("seller%d@seapedia.com", num),
+			Username:     username,
+			Email:        fmt.Sprintf("%s@seapedia.com", username),
 			Password:     hash,
 			AuthProvider: "local",
 			IsAdmin:      false,
@@ -207,7 +207,7 @@ func main() {
 		{Name: "Tecno Pova 6 Pro", Price: 3299000, Stock: 60, ImageUrl: "https://picsum.photos/400/400?random=13", Description: "Tecno Pova 6 Pro 5G. HP Gaming dengan desain mecha dan Dynamic Light Effect di bodi belakang. Baterai badak 6000mAh dengan pengecasan cepat 70W. Chipset Dimensity 6080 5G, Layar AMOLED 120Hz, dan By-pass Charging untuk main sambil dicas tanpa panas."},
 		{Name: "Asus Zenfone 10", Price: 8999000, Stock: 10, ImageUrl: "https://picsum.photos/400/400?random=14", Description: "Asus Zenfone 10 Compact Flagship. Ukuran layar mungil 5.9 inch yang pas digenggam satu tangan, namun dibekali otak monster Snapdragon 8 Gen 2. Kamera 50MP dilengkapi 6-Axis Hybrid Gimbal Stabilizer 2.0 untuk video yang super mulus. Tahan air IP68."},
 	}
-	createStore(1, "Android Central", "Elektronik", androids)
+	createStore("seller_handphone", "Android Central", "Handphone", androids)
 
 	// Windows Laptops
 	winLaptops := []Product{
@@ -216,7 +216,7 @@ func main() {
 		{Name: "Advan Workplus", Price: 5999000, Stock: 50, ImageUrl: "https://picsum.photos/400/400?random=17", Description: "Advan Workplus. Laptop lokal dengan value terbaik untuk pekerja dan mahasiswa. Ditenagai prosesor AMD Ryzen 5 6600H (seri performa tinggi) yang kencang, RAM 16GB, dan SSD 512GB. Bodi metal elegan, keyboard backlight, sensor sidik jari, dan layar IPS Full HD 14 inch. Kuat untuk editing tipis dan game esports."},
 		{Name: "Acer Nitro V 15", Price: 10999000, Stock: 30, ImageUrl: "https://picsum.photos/400/400?random=18", Description: "Acer Nitro V 15. Pintu masuk ke dunia laptop gaming bertenaga RTX 40 series. Spesifikasi: Intel Core i5-13420H, NVIDIA GeForce RTX 4050 6GB. RAM 8GB DDR5 (bisa diupgrade), SSD 512GB Gen4. Layar 15.6 inch FHD 144Hz IPS. Sistem pendingin dual-fan dengan sirkulasi udara yang baik."},
 	}
-	createStore(2, "WinLaptop Store", "Elektronik", winLaptops)
+	createStore("seller_laptop", "WinLaptop Store", "Laptop", winLaptops)
 
 	// Gaming Gear
 	gamingGears := []Product{
@@ -225,7 +225,7 @@ func main() {
 		{Name: "SteelSeries Apex Pro TKL", Price: 3199000, Stock: 15, ImageUrl: "https://picsum.photos/400/400?random=21", Description: "SteelSeries Apex Pro TKL (2023). Keyboard gaming tercepat di dunia dengan switch mekanis OmniPoint 2.0 yang dapat disesuaikan aktuasinya (dari 0.2mm hingga 3.8mm). Format Tenkeyless (TKL) memberi ruang ekstra untuk mouse. Layar OLED cerdas tertanam di pojok kanan atas."},
 		{Name: "HyperX Cloud III", Price: 1599000, Stock: 25, ImageUrl: "https://picsum.photos/400/400?random=22", Description: "HyperX Cloud III. Headset gaming yang berevolusi dari seri Cloud II yang ikonik. Dilengkapi driver miring 53mm untuk audio presisi. Bantalan telinga memory foam khas HyperX dan headband empuk untuk kenyamanan maraton gaming. Mikrofon 10mm yang diperbarui dengan peredam bising internal."},
 	}
-	createStore(3, "Gamer Paradise", "Elektronik", gamingGears)
+	createStore("seller_gaming", "Gamer Paradise", "Gaming", gamingGears)
 
 	// Apple Gear
 	appleGears := []Product{
@@ -234,7 +234,7 @@ func main() {
 		{Name: "iPad Air 5 M1", Price: 9999000, Stock: 30, ImageUrl: "https://picsum.photos/400/400?random=25", Description: "Apple iPad Air (Generasi 5). Kekuatan besar dari Apple M1 chip dalam desain tipis dan ringan. Layar Liquid Retina 10.9 inci dengan True Tone, warna luas P3. Kamera depan ultra wide 12MP dengan fitur Center Stage. Kompatibel dengan Apple Pencil (Generasi 2) dan Magic Keyboard."},
 		{Name: "AirPods Pro Gen 2", Price: 3999000, Stock: 50, ImageUrl: "https://picsum.photos/400/400?random=26", Description: "Apple AirPods Pro (Generasi ke-2) dengan MagSafe Charging Case (USB-C). Didukung chip H2 untuk peredam kebisingan aktif (ANC) yang 2x lebih cerdas. Mode Transparansi Adaptif secara otomatis meredam suara keras yang menyilaukan telinga. Audio Spasial yang dipersonalisasi."},
 	}
-	createStore(4, "iBox KW", "Elektronik", appleGears)
+	createStore("seller_apple", "iBox KW", "Apple", appleGears)
 
 	// Fashion
 	fashions := []Product{
@@ -246,7 +246,7 @@ func main() {
 		{Name: "Jaket Bomber Pilot", Price: 210000, Stock: 100, ImageUrl: "https://picsum.photos/400/400?random=32", Description: "Jaket Bomber bergaya penerbang (Pilot/Aviator) berbahan taslan waterproof anti air. Bagian dalam dilapisi dakron tebal yang menahan angin (windproof) dan menghangatkan tubuh. Ada saku di lengan kiri khas jaket bomber."},
 		{Name: "Hoodie Jumper Polos", Price: 135000, Stock: 300, ImageUrl: "https://picsum.photos/400/400?random=33", Description: "Jaket Hoodie Jumper (tanpa resleting) berbahan Cotton Fleece tebal namun lembut di kulit. Bagian dalam berbulu halus yang hangat. Potongan oversized kekinian dengan tali serut di kupluk dan saku kangguru di depan."},
 	}
-	createStore(5, "Style OOTD", "Fashion", fashions)
+	createStore("seller_fashion", "Style OOTD", "Fashion", fashions)
 
 	// Sports
 	sports := []Product{
@@ -254,7 +254,7 @@ func main() {
 		{Name: "Matras Yoga Anti Slip", Price: 120000, Stock: 200, ImageUrl: "https://picsum.photos/400/400?random=35", Description: "Matras Yoga/Pilates bahan TPE (Thermoplastic Elastomer) ramah lingkungan. Ketebalan 8mm memberikan kenyamanan ekstra untuk tulang belakang dan lutut Anda. Tekstur permukaan double-sided anti-slip menjamin kestabilan pose tersulit sekalipun. Mudah digulung dan termasuk tas jaring."},
 		{Name: "Dumbbell Set 10kg", Price: 250000, Stock: 30, ImageUrl: "https://picsum.photos/400/400?random=36", Description: "Set Dumbbell / Barbel multifungsi berat total 10kg. Piringan beban (plate) berlapis lapisan karet (rubber-coated) untuk mencegah kerusakan lantai saat diletakkan. Batang as dilapisi busa anti licin. Beban dapat dibongkar pasang sesuai kebutuhan repetisi otot."},
 	}
-	createStore(6, "Sportivo", "Olahraga", sports)
+	createStore("seller_olahraga", "Sportivo", "Olahraga", sports)
 
 	// Sepatu (Replacing Food)
 	shoes := []Product{
@@ -266,7 +266,7 @@ func main() {
 		{Name: "Sepatu Oxford Klasik Coklat", Price: 450000, Stock: 70, ImageUrl: "https://picsum.photos/400/400?random=42", Description: "Sepatu Oxford pantofel pria bertali dengan warna coklat tua elegan. Motif brogue berlubang artistik pada bagian depan. Memberikan kesan dapper dan gentleman. Outsole fiber berkualitas tinggi yang berbunyi ketika berjalan."},
 		{Name: "Sandal Gunung Outdoor", Price: 180000, Stock: 300, ImageUrl: "https://picsum.photos/400/400?random=43", Description: "Sandal gunung pria tangguh untuk kegiatan outdoor, hiking ringan, atau sehari-hari. Strap webbing kuat yang bisa diatur kelonggarannya. Sol bertekstur kasar (lugs) mencengkram medan tanah basah maupun bebatuan dengan aman."},
 	}
-	createStore(7, "Shoe Center", "Sepatu", shoes)
+	createStore("seller_sepatu", "Shoe Center", "Sepatu", shoes)
 
 	// Home
 	homes := []Product{
@@ -274,7 +274,7 @@ func main() {
 		{Name: "Panci Set Stainless 5 in 1", Price: 250000, Stock: 40, ImageUrl: "https://picsum.photos/400/400?random=45", Description: "Set peralatan masak 5-piece terbuat dari Food Grade Stainless Steel 304 tebal antikarat. Dilengkapi tutup kaca tempered transparan dengan lubang uap. Set terdiri dari: Wajan (Wok), Panci Kuah, Panci Susu (Saucepan), dan Spatula set. Gagang ergonomis tahan panas, cocok untuk kompor induksi."},
 		{Name: "Sapu Elektrik Otomatis", Price: 180000, Stock: 60, ImageUrl: "https://picsum.photos/400/400?random=46", Description: "Sapu otomatis nirkabel 2 in 1: sapu dan pengepel. Bekerja tanpa listrik colok, cukup ditekan (push sweeper) roda memutar sikat untuk menyapu debu dan rambut langsung ke tangki sampah. Tersedia bantalan pel mikrofiber di bagian bawah untuk sekalian mengepel. Praktis dan hemat energi."},
 	}
-	createStore(8, "Homey Living", "Rumah Tangga", homes)
+	createStore("seller_rumah", "Homey Living", "Rumah Tangga", homes)
 
 	fmt.Println("Seeding complete!")
 }

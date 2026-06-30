@@ -11,9 +11,11 @@ import {
   Sparkles,
   Shirt,
   Smartphone,
-  Home,
+  Laptop,
   Apple,
-  Baby,
+  Gamepad2,
+  Home,
+  Footprints,
   Dumbbell,
   Gift,
   Truck,
@@ -83,7 +85,7 @@ export function HomePage() {
             kebutuhan harian. Gratis ongkir & harga terbaik setiap hari!
           </p>
           <div className="mt-8 flex justify-center gap-4">
-            <button 
+            <button
               onClick={() => {
                 navigator.clipboard.writeText("DISKON20");
                 toast.success("Kode Promo DISKON20 disalin!");
@@ -93,7 +95,7 @@ export function HomePage() {
               <Sparkles className="w-5 h-5" />
               Copy Promo (20%)
             </button>
-            <button 
+            <button
               onClick={() => {
                 navigator.clipboard.writeText("VOUCHER70");
                 toast.success("Kode Voucher VOUCHER70 disalin!");
@@ -112,18 +114,18 @@ export function HomePage() {
         <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 p-6">
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-8 gap-4">
             {[
+              { icon: Smartphone, label: "Handphone" },
+              { icon: Laptop, label: "Laptop" },
+              { icon: Apple, label: "Apple" },
+              { icon: Gamepad2, label: "Gaming" },
               { icon: Shirt, label: "Fashion" },
-              { icon: Smartphone, label: "Elektronik" },
-              { icon: Home, label: "Rumah Tangga" },
-              { icon: Sparkles, label: "Kecantikan" },
-              { icon: Apple, label: "Makanan" },
-              { icon: Baby, label: "Ibu & Anak" },
               { icon: Dumbbell, label: "Olahraga" },
-              { icon: Gift, label: "Hobi" },
+              { icon: Footprints, label: "Sepatu" },
+              { icon: Home, label: "Rumah Tangga" },
             ].map((cat) => (
               <Link
                 key={cat.label}
-                to={`/catalog?category=${cat.label.toLowerCase()}`}
+                to={`/catalog?category=${encodeURIComponent(cat.label)}`}
                 className="group flex flex-col items-center gap-2 rounded-xl p-3 hover:bg-blue-50 transition-colors"
               >
                 <div className="bg-slate-50 p-3 rounded-full group-hover:bg-blue-100 transition-colors">
@@ -238,7 +240,7 @@ export function HomePage() {
             <p className="text-blue-50 mt-2 text-sm">
               Gunakan kode <strong>DISKON20</strong> saat checkout!
             </p>
-            <Button 
+            <Button
               className="mt-5 bg-white text-slate-900 hover:bg-blue-50 font-semibold rounded-xl"
               onClick={() => {
                 navigator.clipboard.writeText("DISKON20");
@@ -251,13 +253,11 @@ export function HomePage() {
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-700 to-blue-900 p-8 text-white">
             <div className="absolute -right-8 -bottom-8 w-40 h-40 rounded-full bg-white/10 blur-2xl"></div>
             <p className="text-sm font-semibold text-blue-200">VOUCHER BARU</p>
-            <h3 className="text-2xl font-extrabold mt-1">
-              Voucher Rp 70.000
-            </h3>
+            <h3 className="text-2xl font-extrabold mt-1">Voucher Rp 70.000</h3>
             <p className="text-blue-100 mt-2 text-sm">
               Klaim dengan kode <strong>VOUCHER70</strong> sekarang.
             </p>
-            <Button 
+            <Button
               className="mt-5 bg-white text-blue-700 hover:bg-blue-50 font-semibold rounded-xl"
               onClick={() => {
                 navigator.clipboard.writeText("VOUCHER70");

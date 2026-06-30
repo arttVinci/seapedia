@@ -42,6 +42,14 @@ export function CatalogPage() {
   useEffect(() => {
     const q = searchParams.get("q") || "";
     setSearch(q);
+    
+    const cat = searchParams.get("category");
+    if (cat) {
+      setSelectedCategories([cat]);
+    } else {
+      setSelectedCategories([]);
+    }
+    
     setPage(1);
   }, [searchParams]);
 
