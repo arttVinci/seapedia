@@ -96,14 +96,20 @@ export function ProductManagementPage() {
     if (!file) return;
 
     try {
-      const url = await uploadMutation.mutateAsync({ 
-        file, 
-        id: editingProductId || undefined 
-      });
+      const formData = new FormData();
+      formData.append("image", file);
+      if (editingProductId) {
+        formData.append("id", editingProductId);
+      }
+
+      const url = await uploadMutation.mutateAsync(formData);
+
       setForm((prev) => ({ ...prev, image_url: url }));
       toast.success("Gambar berhasil diunggah");
     } catch (err: any) {
-      toast.error(err instanceof Error ? err.message : "Gagal mengunggah gambar");
+      toast.error(
+        err instanceof Error ? err.message : "Gagal mengunggah gambar",
+      );
     }
   };
 
@@ -425,15 +431,57 @@ export function ProductManagementPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Gambar Produk
                   </label>
-                  <div className="flex flex-col gap-3">
-                    <div className="flex items-center gap-3">
+                  <div className="flex items-start gap-6">
+                    {/* Preview Area */}
+                    <div className="relative w-32 h-32 rounded-xl overflow-hidden border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center flex-shrink-0 group hover:border-blue-500 transition-colors">
+                      {form.image_url ? (
+                        <>
+                          <img
+                            src={form.image_url}
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = "none";
+                            }}
+                          />
+                          {/* Overlay on hover to change image */}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                            <Upload className="h-6 w-6 text-white" />
+                          </div>
+                        </>
+                      ) : (
+                        <div className="text-center p-4">
+                          <Upload className="h-8 w-8 text-gray-400 mx-auto mb-1" />
+                          <span className="text-xs text-gray-500 font-medium">Preview</span>
+                        </div>
+                      )}
+                      
+                      {/* Hidden File Input covering the entire preview area */}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
+                        onChange={handleImageUpload}
+                        disabled={uploadMutation.isPending}
+                        title="Klik untuk memilih gambar"
+                      />
+                    </div>
+                    
+                    {/* Action Area */}
+                    <div className="flex flex-col justify-center h-32">
+                      <div className="mb-3">
+                        <h4 className="text-sm font-semibold text-gray-800">Pilih Gambar Baru</h4>
+                        <p className="text-xs text-gray-500 mt-1 max-w-[200px]">
+                          Format yang didukung: JPG, JPEG, PNG. Ukuran maksimal 7MB.
+                        </p>
+                      </div>
                       <Button
                         type="button"
                         variant="outline"
-                        className="relative overflow-hidden cursor-pointer"
+                        className="relative overflow-hidden cursor-pointer w-fit shadow-sm hover:shadow"
                         disabled={uploadMutation.isPending}
                       >
                         <input
@@ -443,34 +491,12 @@ export function ProductManagementPage() {
                           onChange={handleImageUpload}
                           disabled={uploadMutation.isPending}
                         />
-                        <Upload className="h-4 w-4 mr-2" />
-                        {uploadMutation.isPending ? "Mengunggah..." : "Pilih Gambar"}
+                        <Upload className="h-4 w-4 mr-2 text-blue-600" />
+                        <span className="text-gray-700 font-medium">
+                          {uploadMutation.isPending ? "Mengunggah..." : (form.image_url ? "Ganti Gambar" : "Jelajahi Berkas")}
+                        </span>
                       </Button>
-                      <span className="text-xs text-gray-500">
-                        Format: JPG, PNG (Maks 7MB)
-                      </span>
                     </div>
-                    
-                    <Input
-                      name="image_url"
-                      placeholder="Atau masukkan URL gambar..."
-                      value={form.image_url}
-                      onChange={handleFormChange}
-                      className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    />
-
-                    {form.image_url && (
-                      <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 shadow-sm mt-2">
-                        <img
-                          src={form.image_url}
-                          alt="Preview"
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = "none";
-                          }}
-                        />
-                      </div>
-                    )}
                   </div>
                 </div>
               </form>

@@ -82,7 +82,7 @@ func (c *RouteConfig) SetupSellerRoute() {
 
 	sellerGroup.Get("/products", c.ProductController.ListMyProducts)
 	sellerGroup.Post("/products", c.ProductController.CreateProduct)
-	sellerGroup.Post("/products/upload-image", c.ProductController.UploadImage)
+	sellerGroup.Post("/products/_image", c.ProductController.UploadImage)
 	sellerGroup.Put("/products/:id", c.ProductController.UpdateProduct)
 	sellerGroup.Delete("/products/:id", c.ProductController.DeleteProduct)
 

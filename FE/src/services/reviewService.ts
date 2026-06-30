@@ -14,7 +14,7 @@ class ReviewService {
   async createReview(payload: CreateReviewPayload): Promise<Review> {
     const response = await apiClient.post<ApiResponse<Review>>(
       this.BASE_PATH,
-      payload
+      payload,
     );
     return response.data.data;
   }

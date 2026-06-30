@@ -110,3 +110,34 @@ func (c *ProductController) DeleteProduct(ctx *fiber.Ctx) error {
 	}
 	return ctx.JSON(model.WebResponse[any]{Data: nil, Message: "Produk berhasil dihapus", Success: true})
 }
+
+func (c *ProductController) UploadImage(ctx *fiber.Ctx) error {
+	auth := middleware.GetUser(ctx)
+
+	request := new(model.UploadImageRequest)
+	if err := ctx.BodyParser(request); err != nil {
+		c.Log.WithError(err).Error("error parsing request body")
+		return fiber.NewError(fiber.StatusBadRequest, "Format data request tidak valid")
+	}
+
+	file, err := ctx.FormFile("image")
+	if err != nil {
+		c.Log.WithError(err).Error("error parsing request body")
+		return fiber.NewError(fiber.StatusBadRequest, "Format data request tidak valid")
+	}
+
+	if file.Size > 7*1024*1024 {
+		c.Log.Warn("Upload failed: file size exceeds 7MB limit")
+		return fiber.NewError(fiber.StatusBadRequest, "Ukuran file melebihi 7MB")
+	}
+
+	request.Image = file
+	request.UserID = auth.ID
+
+	response, err := c.UseCase.UploadImage(ctx.UserContext(), request)
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(model.WebResponse[string]{Data: response})
+}

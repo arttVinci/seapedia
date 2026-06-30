@@ -1,12 +1,20 @@
-import { useMutation } from '@tanstack/react-query';
-import { sellerProductService } from '../../../services/sellerProductService';
+import { useMutation } from "@tanstack/react-query";
+import { sellerProductService } from "@/services/sellerProductService";
+import { ApiError } from "@/api/apiError";
 
-export function useUploadProductImage(options?: { onSuccess?: (url: string) => void; onError?: (error: any) => void }) {
-  return useMutation({
-    mutationFn: ({ file, id }: { file: File; id?: string }) => sellerProductService.uploadProductImage(file, id),
-    onSuccess: (url) => {
-      options?.onSuccess?.(url);
-    },
-    onError: options?.onError,
-  });
+interface UseUploadImageOptions {
+  onSuccess?: (imageUrl: string) => void;
+  onError?: (error: ApiError) => void;
 }
+
+export const useUploadProductImage = (options?: UseUploadImageOptions) => {
+  return useMutation<string, ApiError, FormData>({
+    mutationFn: (formData) => sellerProductService.uploadImage(formData),
+    onSuccess: (data) => {
+      options?.onSuccess?.(data);
+    },
+    onError: (error) => {
+      options?.onError?.(error);
+    },
+  });
+};
