@@ -13,7 +13,12 @@ export function CatalogPage() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [sort, setSort] = useState("newest");
   const perPage = 8;
-  const { data, isLoading } = useProducts({ page, size: perPage, name: search, category: selectedCategories.length > 0 ? selectedCategories : undefined });
+  const { data, isLoading } = useProducts({ 
+    page, 
+    size: perPage, 
+    name: search, 
+    category: selectedCategories.length > 0 ? (selectedCategories.join(",") as any) : undefined 
+  });
   const { data: availableCategories = [] } = useCategories();
 
   // Update local search state when URL changes

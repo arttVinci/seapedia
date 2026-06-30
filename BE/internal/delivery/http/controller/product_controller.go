@@ -2,6 +2,7 @@ package controller
 
 import (
 	"math"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
@@ -20,10 +21,17 @@ func NewProductController(useCase *usecase.ProductUseCase, log *logrus.Logger) *
 }
 
 func (c *ProductController) List(ctx *fiber.Ctx) error {
+	catStr := ctx.Query("category")
+	var categories []string
+	if catStr != "" {
+		categories = strings.Split(catStr, ",")
+	}
+
 	request := &model.SearchProductRequest{
-		Name: ctx.Query("name"),
-		Page: ctx.QueryInt("page", 1),
-		Size: ctx.QueryInt("size", 10),
+		Name:     ctx.Query("name"),
+		Page:     ctx.QueryInt("page", 1),
+		Size:     ctx.QueryInt("size", 10),
+		Category: categories,
 	}
 	responses, total, err := c.UseCase.Search(ctx.UserContext(), request)
 	if err != nil {
@@ -51,10 +59,17 @@ func (c *ProductController) Detail(ctx *fiber.Ctx) error {
 
 func (c *ProductController) ListMyProducts(ctx *fiber.Ctx) error {
 	userID := middleware.GetUser(ctx).ID
+	catStr := ctx.Query("category")
+	var categories []string
+	if catStr != "" {
+		categories = strings.Split(catStr, ",")
+	}
+
 	request := &model.SellerProductSearchRequest{
-		Name: ctx.Query("name"),
-		Page: ctx.QueryInt("page", 1),
-		Size: ctx.QueryInt("size", 10),
+		Name:     ctx.Query("name"),
+		Page:     ctx.QueryInt("page", 1),
+		Size:     ctx.QueryInt("size", 10),
+		Category: categories,
 	}
 	responses, total, err := c.UseCase.ListByStore(ctx.UserContext(), userID, request)
 	if err != nil {

@@ -14,7 +14,8 @@ export const CategoryInput: React.FC<CategoryInputProps> = ({ value = [], onChan
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const filteredSuggestions = availableCategories.filter(
+  const safeCategories = Array.isArray(availableCategories) ? availableCategories : [];
+  const filteredSuggestions = safeCategories.filter(
     (cat) =>
       cat.toLowerCase().includes(inputValue.toLowerCase()) &&
       !value.includes(cat)
