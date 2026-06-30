@@ -14,7 +14,6 @@ import {
   Settings,
   ChevronDown,
   ShoppingBag,
-  Bell,
   Menu,
   X,
   Store,
@@ -164,12 +163,14 @@ export function Navbar() {
     try {
       await addRoleMutation.mutateAsync({ role: "driver" });
       await selectRoleMutation.mutateAsync({ role: "driver" });
-      
+
       setRoleDropdownOpen(false);
       navigate("/driver");
     } catch (err) {
       console.error(err);
-      toast.error("Gagal bergabung menjadi mitra pengantar. Silakan coba lagi.");
+      toast.error(
+        "Gagal bergabung menjadi mitra pengantar. Silakan coba lagi.",
+      );
     } finally {
       setIsJoiningDriver(false);
     }
@@ -232,8 +233,8 @@ export function Navbar() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    disabled={location.pathname === '/catalog'}
-                    className={`w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm ${location.pathname === '/catalog' ? 'bg-gray-100 cursor-not-allowed opacity-70' : 'bg-gray-50'}`}
+                    disabled={location.pathname === "/catalog"}
+                    className={`w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm ${location.pathname === "/catalog" ? "bg-gray-100 cursor-not-allowed opacity-70" : "bg-gray-50"}`}
                     placeholder="Cari di Seapedia..."
                   />
                 </form>
@@ -622,8 +623,8 @@ export function Navbar() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  disabled={location.pathname === '/catalog'}
-                  className={`w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm ${location.pathname === '/catalog' ? 'bg-gray-100 cursor-not-allowed opacity-70' : 'bg-gray-50'}`}
+                  disabled={location.pathname === "/catalog"}
+                  className={`w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm ${location.pathname === "/catalog" ? "bg-gray-100 cursor-not-allowed opacity-70" : "bg-gray-50"}`}
                   placeholder="Cari di Seapedia..."
                 />
               </form>
