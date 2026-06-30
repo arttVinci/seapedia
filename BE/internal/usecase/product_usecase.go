@@ -28,6 +28,40 @@ func NewProductUseCase(db *gorm.DB, log *logrus.Logger, validate *validator.Vali
 	return &ProductUseCase{DB: db, Log: log, Validate: validate, ProductRepository: productRepo, StoreRepository: storeRepo, UploadImageRepository: uploadRepo}
 }
 
+func (u *ProductUseCase) processCategories(tx *gorm.DB, categoryNames []string) ([]entity.Category, error) {
+	var categories []entity.Category
+	
+	// Deduplicate names to avoid unique constraint errors in the same request
+	seen := make(map[string]bool)
+	var uniqueNames []string
+	for _, name := range categoryNames {
+		if name != "" && !seen[name] {
+			seen[name] = true
+			uniqueNames = append(uniqueNames, name)
+		}
+	}
+
+	for _, name := range uniqueNames {
+		var cat entity.Category
+		err := tx.Where("name = ?", name).First(&cat).Error
+		if err != nil {
+			if err == gorm.ErrRecordNotFound {
+				cat = entity.Category{
+					ID:   uuid.NewString(),
+					Name: name,
+				}
+				if err := tx.Create(&cat).Error; err != nil {
+					return nil, err
+				}
+			} else {
+				return nil, err
+			}
+		}
+		categories = append(categories, cat)
+	}
+	return categories, nil
+}
+
 func (u *ProductUseCase) Search(ctx context.Context, request *model.SearchProductRequest) ([]model.ProductResponse, int64, error) {
 	if err := u.Validate.Struct(request); err != nil {
 		u.Log.Warnf("Invalid request body : %+v", err)
@@ -107,6 +141,13 @@ func (u *ProductUseCase) Create(ctx context.Context, userID string, request *mod
 	tx := db.Begin()
 	defer tx.Rollback()
 
+	categories, err := u.processCategories(tx, request.Categories)
+	if err != nil {
+		u.Log.Warnf("Failed to process categories : %+v", err)
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal memproses kategori")
+	}
+	product.Categories = categories
+
 	if err := u.ProductRepository.Create(tx, product); err != nil {
 		u.Log.Warnf("Failed to create product : %+v", err)
 		return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal membuat produk")
@@ -146,6 +187,19 @@ func (u *ProductUseCase) Update(ctx context.Context, userID string, productID st
 
 	tx := db.Begin()
 	defer tx.Rollback()
+
+	categories, err := u.processCategories(tx, request.Categories)
+	if err != nil {
+		u.Log.Warnf("Failed to process categories : %+v", err)
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal memproses kategori")
+	}
+	
+	if err := tx.Model(product).Association("Categories").Replace(categories); err != nil {
+		u.Log.Warnf("Failed to update categories : %+v", err)
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal memproses kategori")
+	}
+
+
 
 	if err := u.ProductRepository.Update(tx, product); err != nil {
 		u.Log.Warnf("Failed to update product : %+v", err)

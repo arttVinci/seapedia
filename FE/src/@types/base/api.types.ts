@@ -29,4 +29,5 @@ export interface SearchParams {
   page: number;
   size: number;
   name?: string;
+  category?: string[];
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useProducts } from "../hooks/queries/products/useProducts";
+import { useCategories } from "../hooks/queries/categories/useCategories";
 import { Store } from "lucide-react";
 
 export function CatalogPage() {
@@ -9,9 +10,11 @@ export function CatalogPage() {
   
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState(initialQuery);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [sort, setSort] = useState("newest");
   const perPage = 8;
-  const { data, isLoading } = useProducts({ page, size: perPage, name: search });
+  const { data, isLoading } = useProducts({ page, size: perPage, name: search, category: selectedCategories.length > 0 ? selectedCategories : undefined });
+  const { data: availableCategories = [] } = useCategories();
 
   // Update local search state when URL changes
   useEffect(() => {
@@ -29,8 +32,15 @@ export function CatalogPage() {
 
   const handleResetFilter = () => {
     setSearch("");
+    setSelectedCategories([]);
     setSort("newest");
     setPage(1);
+  };
+
+  const toggleCategory = (cat: string) => {
+    setSelectedCategories((prev) => 
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
   };
 
   return (
@@ -75,6 +85,30 @@ export function CatalogPage() {
                 <option value="price_desc">Harga Tertinggi</option>
               </select>
             </div>
+
+            {/* Categories */}
+            {availableCategories.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-3">
+                  Kategori
+                </label>
+                <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
+                  {availableCategories.map((cat) => (
+                    <label key={cat} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedCategories.includes(cat)}
+                        onChange={() => toggleCategory(cat)}
+                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <span className="ml-2 text-sm text-gray-600">
+                        {cat}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Filter Buttons */}
             <div className="flex gap-2 pt-2">

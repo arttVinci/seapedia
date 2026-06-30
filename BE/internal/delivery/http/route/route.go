@@ -25,6 +25,7 @@ type RouteConfig struct {
 	BuyerReportController       *controller.BuyerReportController
 	SellerReportController      *controller.SellerReportController
 	DriverController            *controller.DriverController
+	CategoryController          *controller.CategoryController
 	RoleMiddleware              func(allowedRoles ...string) fiber.Handler
 }
 
@@ -55,6 +56,7 @@ func (c *RouteConfig) SetupPublicRoute() {
 	c.App.Get("/api/products/:id", c.ProductController.Detail)
 	c.App.Get("/api/stores", c.StoreController.List)
 	c.App.Get("/api/stores/:id", c.StoreController.Detail)
+	c.App.Get("/api/categories", c.CategoryController.GetAll)
 
 	// Reviews
 	c.App.Get("/api/reviews", c.ApplicationReviewController.List)

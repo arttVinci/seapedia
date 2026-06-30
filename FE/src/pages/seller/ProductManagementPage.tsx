@@ -10,6 +10,7 @@ import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { ConfirmModal } from "../../components/ui/ConfirmModal";
 import { X, Search, Upload } from "lucide-react";
+import { CategoryInput } from "../../components/ui/CategoryInput";
 import type { CreateProductPayload } from "../../@types/models";
 
 interface ProductFormData {
@@ -18,6 +19,7 @@ interface ProductFormData {
   price: string;
   stock: string;
   image_url: string;
+  categories: string[];
 }
 
 function emptyForm(): ProductFormData {
@@ -27,6 +29,7 @@ function emptyForm(): ProductFormData {
     price: "",
     stock: "",
     image_url: "",
+    categories: [],
   };
 }
 
@@ -74,6 +77,7 @@ export function ProductManagementPage() {
       price: String(product.price),
       stock: String(product.stock),
       image_url: product.image_url || "",
+      categories: product.categories || [],
     });
     setFormError("");
     setIsModalOpen(true);
@@ -141,6 +145,7 @@ export function ProductManagementPage() {
         price,
         stock,
         image_url: form.image_url,
+        categories: form.categories,
       };
 
       if (editingProductId) {
@@ -391,6 +396,16 @@ export function ProductManagementPage() {
                   className="border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                   required
                 />
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Kategori
+                  </label>
+                  <CategoryInput
+                    value={form.categories}
+                    onChange={(categories) => setForm((prev) => ({ ...prev, categories }))}
+                  />
+                </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
