@@ -19,8 +19,18 @@ func NewProductRepository(log *logrus.Logger) *ProductRepository {
 
 func (r *ProductRepository) Search(db *gorm.DB, request *model.SearchProductRequest) ([]entity.Product, int64, error) {
 	var products []entity.Product
-	err := db.Scopes(r.FilterProduct(request)).
-		Preload("Categories").
+	query := db.Scopes(r.FilterProduct(request)).Preload("Categories")
+	
+	switch request.Sort {
+	case "price_desc":
+		query = query.Order("price desc")
+	case "price_asc":
+		query = query.Order("price asc")
+	default:
+		query = query.Order("created_at desc")
+	}
+
+	err := query.
 		Offset((request.Page - 1) * request.Size).
 		Limit(request.Size).
 		Find(&products).Error
@@ -67,9 +77,20 @@ func (r *ProductRepository) FilterSellerProduct(request *model.SellerProductSear
 func (r *ProductRepository) ListByStore(db *gorm.DB, storeID string, request *model.SellerProductSearchRequest) ([]entity.Product, int64, error) {
 	var products []entity.Product
 
-	err := db.Scopes(r.FilterSellerProduct(request)).
+	query := db.Scopes(r.FilterSellerProduct(request)).
 		Preload("Categories").
-		Where("store_id = ?", storeID).
+		Where("store_id = ?", storeID)
+		
+	switch request.Sort {
+	case "price_desc":
+		query = query.Order("price desc")
+	case "price_asc":
+		query = query.Order("price asc")
+	default:
+		query = query.Order("created_at desc")
+	}
+
+	err := query.
 		Offset((request.Page - 1) * request.Size).
 		Limit(request.Size).
 		Find(&products).Error

@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useProducts } from "../hooks/queries/products/useProducts";
 import { useCategories } from "../hooks/queries/categories/useCategories";
 import { ChevronDown, ChevronUp, Star, Store } from "lucide-react";
+import { getDummyProductStats } from "../lib/utils";
 
 const FilterAccordion = ({ title, children, defaultOpen = true }: any) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -33,7 +34,8 @@ export function CatalogPage() {
     page, 
     size: perPage, 
     name: search, 
-    category: selectedCategories.length > 0 ? (selectedCategories.join(",") as any) : undefined 
+    category: selectedCategories.length > 0 ? (selectedCategories.join(",") as any) : undefined,
+    sort
   });
   const { data: availableCategories = [] } = useCategories();
 
@@ -238,9 +240,9 @@ export function CatalogPage() {
                         )}
                         <div className="flex items-center text-[11px] text-gray-500 mt-auto pt-1">
                           <Star className="text-yellow-400 w-3 h-3 mr-0.5 fill-yellow-400 shrink-0" />
-                          <span>4.8</span>
+                          <span>{getDummyProductStats(product.id).rating}</span>
                           <span className="mx-1 text-gray-300">•</span>
-                          <span>100+ terjual</span>
+                          <span>{getDummyProductStats(product.id).sold} terjual</span>
                         </div>
                       </div>
                     </Link>

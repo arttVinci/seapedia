@@ -2,6 +2,7 @@ import { ShoppingCart, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { Product } from "@/@types";
 import { useAuth } from "../../contexts/AuthContext";
+import { getDummyProductStats } from "../../lib/utils";
 
 interface ProductCardProps {
   product: Product;
@@ -53,22 +54,12 @@ export function ProductCard({
 
         {/* Rating bintang */}
         <div className="flex items-center gap-1.5 mb-2">
-          <div className="flex items-center">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Star
-                key={i}
-                className={`h-3.5 w-3.5 ${
-                  i < Math.round(4)
-                    ? "fill-amber-400 text-amber-400"
-                    : "fill-slate-200 text-slate-200"
-                }`}
-              />
-            ))}
+          <div className="flex items-center text-[11px] text-gray-500">
+            <Star className="text-yellow-400 w-3.5 h-3.5 mr-0.5 fill-yellow-400 shrink-0" />
+            <span className="font-medium text-slate-600">{getDummyProductStats(product.id).rating}</span>
+            <span className="mx-1.5 text-gray-300">•</span>
+            <span>{getDummyProductStats(product.id).sold} terjual</span>
           </div>
-          <span className="text-[11px] font-medium text-slate-500">
-            {(4).toFixed(1)}
-            <span className="text-slate-400 ml-0.5">(21)</span>
-          </span>
         </div>
 
         {/* Spacer: dorong harga + tombol ke bawah */}

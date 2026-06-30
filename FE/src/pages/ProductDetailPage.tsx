@@ -3,8 +3,9 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useProductDetail } from "../hooks/queries/products/useProductDetail";
 import { useAddToCart } from "../hooks/mutations/buyer/useAddToCart";
-import { Store, ChevronRight } from "lucide-react";
+import { Store, ChevronRight, Star } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
+import { getDummyProductStats } from "../lib/utils";
 import { AxiosError } from "axios";
 import type { ApiErrorResponse } from "../@types/api/response.types";
 
@@ -110,7 +111,16 @@ export function ProductDetailPage() {
             {product.name}
           </h1>
           
-          <div className="mt-3">
+          <div className="flex items-center text-sm text-gray-600 mt-2">
+            <span className="font-semibold text-gray-900 mr-1">Terjual</span>
+            <span>{getDummyProductStats(product.id).sold}</span>
+            <span className="mx-2 text-gray-300">•</span>
+            <Star className="text-yellow-400 w-4 h-4 mr-1 fill-yellow-400" />
+            <span className="font-semibold text-gray-900 mr-1">{getDummyProductStats(product.id).rating}</span>
+            <span>(Banyak Ulasan)</span>
+          </div>
+
+          <div className="mt-4">
             <p className="text-3xl font-bold text-gray-900">
               Rp{product.price?.toLocaleString("id-ID")}
             </p>

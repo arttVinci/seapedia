@@ -30,4 +30,5 @@ export interface SearchParams {
   size: number;
   name?: string;
   category?: string[];
+  sort?: string;
 }

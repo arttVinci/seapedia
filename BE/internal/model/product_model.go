@@ -5,6 +5,7 @@ type SearchProductRequest struct {
 	Category []string `json:"category" validate:"omitempty"` // Filter by categories
 	Page     int      `json:"page" validate:"min=1"`
 	Size     int      `json:"size" validate:"min=1,max=100"`
+	Sort     string   `json:"sort" validate:"omitempty"`
 }
 
 type ProductResponse struct {
@@ -57,4 +58,5 @@ type SellerProductSearchRequest struct {
 	Category []string `json:"category" validate:"omitempty"`
 	Page     int      `json:"page" validate:"required,min=1"`
 	Size     int      `json:"size" validate:"required,min=1,max=100"`
+	Sort     string   `json:"sort" validate:"omitempty"`
 }

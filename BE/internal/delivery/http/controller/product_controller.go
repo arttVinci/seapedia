@@ -32,6 +32,7 @@ func (c *ProductController) List(ctx *fiber.Ctx) error {
 		Page:     ctx.QueryInt("page", 1),
 		Size:     ctx.QueryInt("size", 10),
 		Category: categories,
+		Sort:     ctx.Query("sort"),
 	}
 	responses, total, err := c.UseCase.Search(ctx.UserContext(), request)
 	if err != nil {
@@ -70,6 +71,7 @@ func (c *ProductController) ListMyProducts(ctx *fiber.Ctx) error {
 		Page:     ctx.QueryInt("page", 1),
 		Size:     ctx.QueryInt("size", 10),
 		Category: categories,
+		Sort:     ctx.Query("sort"),
 	}
 	responses, total, err := c.UseCase.ListByStore(ctx.UserContext(), userID, request)
 	if err != nil {
