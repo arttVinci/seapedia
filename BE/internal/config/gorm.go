@@ -43,7 +43,7 @@ func NewDatabase(viper *viper.Viper, log *logrus.Logger) *gorm.DB {
 	maxConnection := viper.GetInt("database.pool.max")
 	maxLifeTimeConnection := viper.GetInt("database.pool.lifetime")
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", username, password, host, port, databaseName)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local&tls=true&tidb_skip_isolation_level_check=1", username, password, host, port, databaseName)
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.New(&logrusWriter{Logger: log}, logger.Config{
