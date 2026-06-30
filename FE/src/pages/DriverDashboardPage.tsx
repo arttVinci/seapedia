@@ -60,7 +60,7 @@ export function DriverDashboardPage() {
       
       <div className="space-y-4 mt-8">
          <h2 className="text-xl font-semibold">Pekerjaan Terbaru</h2>
-         {dashboard.recent_jobs.length > 0 ? (
+         {dashboard?.recent_jobs?.length > 0 ? (
             <div className="grid gap-4">
                {dashboard.recent_jobs.map((job: any) => (
                   <Card key={job.id}>

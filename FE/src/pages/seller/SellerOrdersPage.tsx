@@ -19,7 +19,7 @@ export default function SellerOrdersPage() {
         )}
         {orders
           ?.filter((order) => !['Pesanan Selesai', 'Dibatalkan', 'Refund'].includes(order.status))
-          .map(order => (
+          ?.map(order => (
           <Card key={order.id} className="p-4">
             <div className="flex justify-between items-center">
               <div>

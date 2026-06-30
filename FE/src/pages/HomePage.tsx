@@ -216,7 +216,7 @@ export function HomePage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-6">
-            {data?.data.map((product) => (
+            {data?.data?.map((product) => (
               <ProductCard
                 key={product.id}
                 product={product}
