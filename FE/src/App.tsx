@@ -36,6 +36,7 @@ import { AdminDashboardPage } from "./pages/AdminDashboardPage";
 import VoucherPage from "./pages/admin/VoucherPage";
 import PromoPage from "./pages/admin/PromoPage";
 import BuyerExpensePage from "./pages/buyer/BuyerExpensePage";
+import { SettingsPage } from "./pages/SettingsPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 
 import { ScrollToTop } from "./components/ui/ScrollToTop";
@@ -78,6 +79,7 @@ function App() {
             {/* Seller, Driver, Admin Routes (With Sidebar) */}
             <Route element={<DashboardShell />}>
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
               
               {/* Seller Routes */}
               <Route path="/seller" element={<SellerDashboardPage />} />

@@ -26,6 +26,7 @@ type RouteConfig struct {
 	SellerReportController      *controller.SellerReportController
 	DriverController            *controller.DriverController
 	CategoryController          *controller.CategoryController
+	AdminController             *controller.AdminController
 	RoleMiddleware              func(allowedRoles ...string) fiber.Handler
 }
 
@@ -74,6 +75,7 @@ func (c *RouteConfig) SetupAuthRoute() {
 	authGroup.Post("/_select-role", c.UserController.SelectRole)
 	authGroup.Post("/_add-role", c.UserController.AddRole)
 	authGroup.Get("/_current", c.UserController.Current)
+	authGroup.Put("/_current", c.UserController.UpdateProfile)
 }
 
 func (c *RouteConfig) SetupSellerRoute() {
@@ -156,4 +158,10 @@ func (c *RouteConfig) SetupAdminRoute() {
 	adminGroup.Get("/promos", c.PromoController.List)
 	adminGroup.Post("/promos", c.PromoController.Create)
 	adminGroup.Get("/promos/:id", c.PromoController.Detail)
+
+	// Dashboard & System
+	if c.AdminController != nil {
+		adminGroup.Get("/dashboard", c.AdminController.GetDashboardStats)
+		adminGroup.Post("/system/clock/forward", c.AdminController.SimulateNextDay)
+	}
 }

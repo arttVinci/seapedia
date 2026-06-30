@@ -97,7 +97,7 @@ export function Sidebar({ role }: SidebarProps) {
             title: "Akun Saya",
             icon: User,
             links: [
-              { name: "Dashboard", href: "/dashboard" },
+              { name: "Pengaturan", href: "/settings" },
             ]
           }
         ];
@@ -138,17 +138,6 @@ export function Sidebar({ role }: SidebarProps) {
             </ul>
           </div>
         ))}
-      </div>
-      
-      {/* Settings at the bottom */}
-      <div className="mt-8 pt-6 border-t border-gray-100">
-        <Link
-          to="/dashboard/settings"
-          className="flex items-center gap-3 px-1 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          <Settings className="h-5 w-5 text-gray-500" strokeWidth={1.5} />
-          Pengaturan
-        </Link>
       </div>
     </div>
   );

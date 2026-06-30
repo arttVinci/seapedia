@@ -64,6 +64,14 @@ class AuthService {
     );
     return response.data.data;
   }
+
+  async updateProfile(payload: { username: string; email: string; password?: string }): Promise<User> {
+    const response = await apiClient.put<ApiResponse<User>>(
+      `${this.BASE_PATH}/_current`,
+      payload
+    );
+    return response.data.data;
+  }
 }
 
 export default new AuthService();

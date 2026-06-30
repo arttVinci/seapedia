@@ -312,6 +312,11 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 		return "", 0, fiber.NewError(fiber.StatusInternalServerError, "Gagal mendapatkan data toko")
 	}
 	orderID := uuid.NewString()
+	var systemState entity.SystemState
+	if err := tx.First(&systemState, 1).Error; err != nil {
+		systemState.CurrentSimulatedDay = 1
+	}
+
 	order := &entity.Order{
 		ID:                  orderID,
 		BuyerID:             userID,
@@ -326,8 +331,8 @@ func (u *CheckoutUseCase) Checkout(ctx context.Context, userID string, request *
 		VoucherID:           voucherID,
 		PromoID:             promoID,
 		AddressID:           request.AddressID,
-		CreatedSimulatedDay: 1, // dummy for now, should read from sim_clock
-		DueSimulatedDay:     1 + dueSimulatedDay,
+		CreatedSimulatedDay: systemState.CurrentSimulatedDay,
+		DueSimulatedDay:     systemState.CurrentSimulatedDay + dueSimulatedDay,
 	}
 
 	if err := u.OrderRepository.Create(tx, order); err != nil {

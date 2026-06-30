@@ -83,6 +83,7 @@ func Bootstrap(config *BootstrapConfig) {
 	sellerReportUseCase := usecase.NewSellerReportUseCase(config.DB, config.Log, orderRepository, storeRepository)
 	driverUseCase := usecase.NewDriverUseCase(config.DB, config.Log, orderRepository, deliveryRepository, orderStatusHistoryRepository, walletRepository, walletTransactionRepository, storeRepository)
 	categoryUseCase := usecase.NewCategoryUseCase(config.DB, config.Log, categoryRepository)
+	adminUseCase := usecase.NewAdminUseCase(config.DB, config.Log, orderRepository, orderItemRepository, walletRepository, walletTransactionRepository, productRepository, orderStatusHistoryRepository, userRepository, storeRepository, voucherRepository, promoRepository, deliveryRepository)
 
 	// Setup Controller
 	userController := controller.NewUserController(userUseCase, config.Log)
@@ -101,6 +102,7 @@ func Bootstrap(config *BootstrapConfig) {
 	sellerReportController := controller.NewSellerReportController(config.Log, sellerReportUseCase)
 	driverController := controller.NewDriverController(config.Log, driverUseCase)
 	categoryController := controller.NewCategoryController(config.Log, categoryUseCase)
+	adminController := controller.NewAdminController(adminUseCase, config.Log)
 
 	// Setup Middleware
 	authMiddleware := middleware.AuthMiddleware(config.Config, config.DB, revokedTokenRepository, config.Log)
@@ -125,6 +127,7 @@ func Bootstrap(config *BootstrapConfig) {
 		SellerReportController:      sellerReportController,
 		DriverController:            driverController,
 		CategoryController:          categoryController,
+		AdminController:             adminController,
 		RoleMiddleware:              roleMiddleware,
 	}
 	routeConfig.Setup()
