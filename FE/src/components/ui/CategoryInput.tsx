@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { X } from "lucide-react";
 import { useCategories } from "../../hooks/queries/categories/useCategories";
 
@@ -10,29 +10,8 @@ interface CategoryInputProps {
 export const CategoryInput: React.FC<CategoryInputProps> = ({ value = [], onChange }) => {
   const { data: availableCategories = [] } = useCategories();
   const [inputValue, setInputValue] = useState("");
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   const safeCategories = Array.isArray(availableCategories) ? availableCategories : [];
-  const filteredSuggestions = safeCategories.filter(
-    (cat) =>
-      cat.toLowerCase().includes(inputValue.toLowerCase()) &&
-      !value.includes(cat)
-  );
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setShowSuggestions(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -41,7 +20,6 @@ export const CategoryInput: React.FC<CategoryInputProps> = ({ value = [], onChan
       if (val && !value.includes(val)) {
         onChange([...value, val]);
         setInputValue("");
-        setShowSuggestions(false);
       }
     } else if (e.key === "Backspace" && inputValue === "" && value.length > 0) {
       onChange(value.slice(0, -1));
@@ -55,63 +33,60 @@ export const CategoryInput: React.FC<CategoryInputProps> = ({ value = [], onChan
   const addCategory = (cat: string) => {
     if (!value.includes(cat)) {
       onChange([...value, cat]);
-      setInputValue("");
-      inputRef.current?.focus();
     }
   };
 
-  return (
-    <div className="relative" ref={containerRef}>
-      <div className="flex flex-wrap items-center gap-2 p-2 border border-gray-300 rounded-lg bg-white focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
-        {value.map((cat) => (
-          <span
-            key={cat}
-            className="flex items-center gap-1 bg-blue-100 text-blue-800 px-2.5 py-1 rounded-md text-sm font-medium"
-          >
-            {cat}
-            <button
-              type="button"
-              onClick={() => removeCategory(cat)}
-              className="text-blue-600 hover:text-blue-900 focus:outline-none"
-            >
-              <X size={14} />
-            </button>
-          </span>
-        ))}
-        <input
-          ref={inputRef}
-          type="text"
-          value={inputValue}
-          onChange={(e) => {
-            setInputValue(e.target.value);
-            setShowSuggestions(true);
-          }}
-          onKeyDown={handleKeyDown}
-          onFocus={() => setShowSuggestions(true)}
-          placeholder={value.length === 0 ? "Ketik lalu Enter..." : ""}
-          className="flex-1 outline-none min-w-[120px] text-sm bg-transparent"
-        />
-      </div>
+  const unselectedCategories = safeCategories.filter((cat) => !value.includes(cat));
 
-      {showSuggestions && (inputValue || filteredSuggestions.length > 0) && (
-        <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
-          {inputValue && !safeCategories.includes(inputValue.trim()) && !value.includes(inputValue.trim()) && (
-            <div
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm text-blue-600 font-medium"
-              onClick={() => addCategory(inputValue.trim())}
-            >
-              + Tambah "{inputValue.trim()}"
-            </div>
-          )}
-          {filteredSuggestions.map((cat) => (
-            <div
+  return (
+    <div className="flex flex-col gap-3">
+      {/* Selected Categories */}
+      {value.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {value.map((cat) => (
+            <span
               key={cat}
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-              onClick={() => addCategory(cat)}
+              className="flex items-center gap-1 bg-blue-100 text-blue-800 px-2.5 py-1 rounded-md text-sm font-medium"
             >
               {cat}
-            </div>
+              <button
+                type="button"
+                onClick={() => removeCategory(cat)}
+                className="text-blue-600 hover:text-blue-900 focus:outline-none"
+              >
+                <X size={14} />
+              </button>
+            </span>
           ))}
+        </div>
+      )}
+
+      {/* Input */}
+      <input
+        type="text"
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Ketik kategori baru lalu Enter..."
+        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+      />
+
+      {/* Available Categories */}
+      {unselectedCategories.length > 0 && (
+        <div>
+          <p className="text-xs text-gray-500 mb-2 font-medium">Kategori Tersedia:</p>
+          <div className="flex flex-wrap gap-2">
+            {unselectedCategories.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => addCategory(cat)}
+                className="px-3 py-1.5 rounded-full border border-gray-200 bg-gray-50 text-gray-600 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors text-xs font-medium"
+              >
+                + {cat}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>

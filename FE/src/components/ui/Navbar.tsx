@@ -125,6 +125,7 @@ export function Navbar() {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/catalog?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
     }
   };
 
@@ -213,13 +214,13 @@ export function Navbar() {
                 </span>
               </Link>
 
-              {/* Kategori (disabled) */}
-              <button
-                disabled
-                className="hidden lg:flex text-gray-500 hover:text-gray-500 font-medium cursor-not-allowed items-center text-sm shrink-0"
+              {/* Catalog Link */}
+              <Link
+                to="/catalog"
+                className="hidden lg:flex text-gray-700 hover:text-blue-600 font-medium items-center text-sm shrink-0 transition-colors"
               >
-                Kategori
-              </button>
+                Catalog
+              </Link>
 
               {/* Search Bar */}
               <div className="flex-1 hidden md:block max-w-3xl">
@@ -231,7 +232,8 @@ export function Navbar() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm bg-gray-50"
+                    disabled={location.pathname === '/catalog'}
+                    className={`w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm ${location.pathname === '/catalog' ? 'bg-gray-100 cursor-not-allowed opacity-70' : 'bg-gray-50'}`}
                     placeholder="Cari di Seapedia..."
                   />
                 </form>
@@ -620,7 +622,8 @@ export function Navbar() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm bg-gray-50"
+                  disabled={location.pathname === '/catalog'}
+                  className={`w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm ${location.pathname === '/catalog' ? 'bg-gray-100 cursor-not-allowed opacity-70' : 'bg-gray-50'}`}
                   placeholder="Cari di Seapedia..."
                 />
               </form>

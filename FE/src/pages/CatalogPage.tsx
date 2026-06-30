@@ -2,7 +2,23 @@ import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useProducts } from "../hooks/queries/products/useProducts";
 import { useCategories } from "../hooks/queries/categories/useCategories";
-import { Store } from "lucide-react";
+import { ChevronDown, ChevronUp, Star, Store } from "lucide-react";
+
+const FilterAccordion = ({ title, children, defaultOpen = true }: any) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  return (
+    <div className="border-b border-gray-200 py-4">
+      <button 
+        className="flex w-full items-center justify-between font-bold text-gray-800 text-sm"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {title}
+        {isOpen ? <ChevronUp size={16} className="text-gray-500" /> : <ChevronDown size={16} className="text-gray-500" />}
+      </button>
+      {isOpen && <div className="mt-4 space-y-2">{children}</div>}
+    </div>
+  );
+};
 
 export function CatalogPage() {
   const [searchParams] = useSearchParams();
@@ -12,7 +28,7 @@ export function CatalogPage() {
   const [search, setSearch] = useState(initialQuery);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [sort, setSort] = useState("newest");
-  const perPage = 8;
+  const perPage = 15;
   const { data, isLoading } = useProducts({ 
     page, 
     size: perPage, 
@@ -21,11 +37,10 @@ export function CatalogPage() {
   });
   const { data: availableCategories = [] } = useCategories();
 
-  // Update local search state when URL changes
   useEffect(() => {
     const q = searchParams.get("q") || "";
     setSearch(q);
-    setPage(1); // Reset page on new search
+    setPage(1);
   }, [searchParams]);
 
   const totalPages = data ? Math.ceil(data.total / perPage) : 1;
@@ -49,83 +64,101 @@ export function CatalogPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-[85rem] w-full px-4 sm:px-6 lg:px-8 py-10">
-      <h1 className="text-xl font-bold md:text-2xl md:leading-tight text-gray-900 mb-8">
-        Katalog Produk
-      </h1>
-
-      <div className="grid grid-cols-1 gap-10 md:grid-cols-10">
+    <div className="container mx-auto max-w-[85rem] w-full px-4 sm:px-6 lg:px-8 py-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-5">
+        
         {/* Sidebar Filter */}
-        <div className="grid grid-cols-1 gap-10 pr-6 border-r border-gray-200 md:col-span-3">
-          <div className="space-y-5">
-            {/* Search Input */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="hidden md:block col-span-1 pr-4">
+          <h2 className="font-bold text-gray-900 mb-4 text-base">Filter</h2>
+          
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
+            {/* Functional Search */}
+            <div className="mb-4">
+              <label className="block text-sm font-bold text-gray-800 mb-2">
                 Cari Produk
               </label>
               <input
                 type="text"
-                placeholder="Cari produk..."
+                placeholder="Cari..."
                 value={search}
                 onChange={(e) => {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="py-2.5 sm:py-3 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500"
+                className="py-2 px-3 block w-full border border-gray-300 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500"
               />
             </div>
 
-            {/* Sort */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Urutkan
+            <FilterAccordion title="Harga" defaultOpen={true}>
+              <label className="flex items-center text-sm text-gray-600 cursor-pointer mb-2">
+                <input 
+                  type="radio" 
+                  name="price_sort"
+                  checked={sort === "newest"}
+                  onChange={() => {
+                    setSort("newest");
+                    setPage(1);
+                  }}
+                  className="mr-2 h-4 w-4 rounded-full border-gray-300 text-blue-600 focus:ring-blue-500" 
+                /> Paling Sesuai
               </label>
-              <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value)}
-                className="py-2.5 px-4 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500"
-              >
-                <option value="newest">Terbaru</option>
-                <option value="price_asc">Harga Terendah</option>
-                <option value="price_desc">Harga Tertinggi</option>
-              </select>
-            </div>
+              <label className="flex items-center text-sm text-gray-600 cursor-pointer mb-2">
+                <input 
+                  type="radio" 
+                  name="price_sort"
+                  checked={sort === "price_desc"}
+                  onChange={() => {
+                    setSort("price_desc");
+                    setPage(1);
+                  }}
+                  className="mr-2 h-4 w-4 rounded-full border-gray-300 text-blue-600 focus:ring-blue-500" 
+                /> Tertinggi ke Terendah
+              </label>
+              <label className="flex items-center text-sm text-gray-600 cursor-pointer">
+                <input 
+                  type="radio" 
+                  name="price_sort"
+                  checked={sort === "price_asc"}
+                  onChange={() => {
+                    setSort("price_asc");
+                    setPage(1);
+                  }}
+                  className="mr-2 h-4 w-4 rounded-full border-gray-300 text-blue-600 focus:ring-blue-500" 
+                /> Terendah ke Tertinggi
+              </label>
+            </FilterAccordion>
 
-            {/* Categories */}
+            {/* Functional Categories */}
             {availableCategories.length > 0 && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Kategori
-                </label>
-                <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
+              <FilterAccordion title="Kategori" defaultOpen={true}>
+                <div className="max-h-48 overflow-y-auto custom-scrollbar space-y-2 pr-1">
                   {availableCategories.map((cat) => (
-                    <label key={cat} className="flex items-center">
+                    <label key={cat} className="flex items-center cursor-pointer">
                       <input
                         type="checkbox"
                         checked={selectedCategories.includes(cat)}
                         onChange={() => toggleCategory(cat)}
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="mr-2 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="ml-2 text-sm text-gray-600">
+                      <span className="text-sm text-gray-600">
                         {cat}
                       </span>
                     </label>
                   ))}
                 </div>
-              </div>
+              </FilterAccordion>
             )}
 
-            {/* Filter Buttons */}
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-4">
               <button
                 onClick={handleApplyFilter}
-                className="flex-1 py-2.5 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700"
+                className="flex-1 py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700"
               >
                 Terapkan
               </button>
               <button
                 onClick={handleResetFilter}
-                className="flex-1 py-2.5 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
+                className="flex-1 py-2 px-3 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50"
               >
                 Reset
               </button>
@@ -134,87 +167,104 @@ export function CatalogPage() {
         </div>
 
         {/* Main Content */}
-        <div className="col-span-1 md:col-span-7">
-          {/* Header */}
-          <div className="flex items-center justify-between gap-5 mb-5">
-            <div className="font-light text-gray-800">
-              Results: {filteredProducts.length} Items
+        <div className="col-span-1 md:col-span-3 lg:col-span-4">
+          
+          {/* Tabs & Header */}
+          <div className="border-b border-gray-200 mb-4 pb-2">
+            <div className="flex gap-6">
+              <button className="text-blue-600 font-bold border-b-2 border-blue-600 pb-2 px-1 -mb-[9px]">
+                Produk
+              </button>
+              
             </div>
           </div>
 
+          <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+            <div className="text-sm text-gray-700">
+              Menampilkan {filteredProducts.length} barang dari total untuk <strong>"{search || selectedCategories.join(", ") || "Semua"}"</strong>
+            </div>
+            
+          </div>
+
           {isLoading ? (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="animate-pulse rounded-lg border border-gray-200 bg-white shadow-sm">
-                  <div className="bg-gray-200 h-48 rounded-t-lg w-full"></div>
-                  <div className="space-y-3 p-4">
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                  </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+              {[...Array(10)].map((_, i) => (
+                <div key={i} className="animate-pulse rounded-lg border border-gray-200 bg-white shadow-sm p-2">
+                  <div className="bg-gray-200 h-32 w-full rounded-md mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-1"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2 mb-3"></div>
+                  <div className="h-3 bg-gray-200 rounded w-full"></div>
                 </div>
               ))}
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredProducts.map((product) => (
-                  <div
-                    key={product.id}
-                    className="rounded-lg border border-gray-200 bg-white shadow-sm"
-                  >
-                    <div className="h-48 w-full">
-                      <img
-                        src={product.image_url}
-                        alt={product.name}
-                        className="mx-auto h-full w-full object-cover rounded-t-lg"
-                      />
-                    </div>
-                    <div className="p-4">
-                      <Link
-                        to={`/products/${product.id}`}
-                        className="text-lg font-semibold leading-tight text-gray-900 hover:underline line-clamp-2"
-                      >
-                        {product.name}
-                      </Link>
-                      {product.store && (
-                        <div className="flex items-center text-sm text-gray-500 mt-1">
-                          <Store size={14} className="mr-1" />
-                          {product.store.name}
-                        </div>
-                      )}
-                      <div className="mt-3 flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-900">
-                          Rp{product.price?.toLocaleString("id-ID")}
-                        </span>
-                        <Link
-                          to={`/products/${product.id}`}
-                          className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 text-xs font-medium text-white hover:bg-blue-700"
-                        >
-                          Lihat
-                        </Link>
+              {filteredProducts.length === 0 ? (
+                <div className="py-20 text-center flex flex-col items-center">
+                   <div className="w-48 h-48 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                      <span className="text-gray-400 text-6xl">😕</span>
+                   </div>
+                   <h3 className="text-lg font-bold text-gray-900">Oops, produk nggak ditemukan</h3>
+                   <p className="text-gray-500 mt-2 max-w-md">Coba kata kunci lain atau ubah filter untuk menemukan produk yang kamu cari.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                  {filteredProducts.map((product) => (
+                    <Link
+                      to={`/products/${product.id}`}
+                      key={product.id}
+                      className="group rounded-lg border border-gray-200 bg-white hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col h-full"
+                    >
+                      <div className="relative aspect-square w-full bg-white overflow-hidden">
+                        <img
+                          src={product.image_url}
+                          alt={product.name}
+                          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+
                       </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                      <div className="p-2.5 flex flex-col flex-grow">
+                        <h3 className="text-[13px] text-gray-800 leading-tight line-clamp-2 mb-1 group-hover:text-blue-600">
+                          {product.name}
+                        </h3>
+                        <div className="font-bold text-gray-900 text-[15px] mb-1">
+                          Rp{product.price?.toLocaleString("id-ID")}
+                        </div>
+                        {product.store && (
+                          <div className="flex items-center text-[11px] text-gray-500 mb-1 truncate">
+                            <Store size={11} className="mr-1 shrink-0" />
+                            <span className="truncate">{product.store.name}</span>
+                          </div>
+                        )}
+                        <div className="flex items-center text-[11px] text-gray-500 mt-auto pt-1">
+                          <Star className="text-yellow-400 w-3 h-3 mr-0.5 fill-yellow-400 shrink-0" />
+                          <span>4.8</span>
+                          <span className="mx-1 text-gray-300">•</span>
+                          <span>100+ terjual</span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="mt-10 flex items-center justify-center gap-2">
+                <div className="mt-8 flex items-center justify-center gap-2">
                   <button
                     disabled={page <= 1}
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    className="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
+                    className="py-1.5 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
                   >
                     Previous
                   </button>
-                  <span className="text-sm text-gray-600 mx-2">
-                    Page {page} of {totalPages}
+                  <span className="text-sm text-gray-600 mx-2 font-medium">
+                    {page} <span className="text-gray-400 mx-1">/</span> {totalPages}
                   </span>
                   <button
                     disabled={page >= totalPages}
                     onClick={() => setPage((p) => p + 1)}
-                    className="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
+                    className="py-1.5 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
                   >
                     Next
                   </button>

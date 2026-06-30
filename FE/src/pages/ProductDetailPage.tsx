@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useProductDetail } from "../hooks/queries/products/useProductDetail";
 import { useAddToCart } from "../hooks/mutations/buyer/useAddToCart";
-import { ShoppingCart, Store } from "lucide-react";
+import { Store, ChevronRight } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { AxiosError } from "axios";
 import type { ApiErrorResponse } from "../@types/api/response.types";
@@ -52,14 +52,15 @@ export function ProductDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto max-w-[85rem] px-4 sm:px-6 lg:px-8 py-10">
-        <div className="animate-pulse grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          <div className="w-full h-96 bg-gray-200 rounded-xl"></div>
-          <div className="space-y-4">
+      <div className="container mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 py-10">
+        <div className="animate-pulse grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="lg:col-span-4 w-full aspect-square bg-gray-200 rounded-xl"></div>
+          <div className="lg:col-span-5 space-y-4">
             <div className="h-8 bg-gray-200 rounded w-3/4"></div>
             <div className="h-6 bg-gray-200 rounded w-1/4"></div>
-            <div className="h-32 bg-gray-200 rounded w-full"></div>
+            <div className="h-32 bg-gray-200 rounded w-full mt-8"></div>
           </div>
+          <div className="lg:col-span-3 w-full h-64 bg-gray-200 rounded-xl"></div>
         </div>
       </div>
     );
@@ -67,7 +68,7 @@ export function ProductDetailPage() {
 
   if (isError || !product) {
     return (
-      <div className="container mx-auto max-w-[85rem] px-4 sm:px-6 lg:px-8 py-16 text-center">
+      <div className="container mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 py-16 text-center">
         <h2 className="text-xl font-bold md:text-2xl text-gray-900">
           Produk tidak ditemukan
         </h2>
@@ -81,73 +82,120 @@ export function ProductDetailPage() {
   }
 
   return (
-    <div className="container mx-auto max-w-[85rem] px-4 sm:px-6 lg:px-8 py-10">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto items-start">
+    <div className="container mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 py-8">
+      {/* Breadcrumb */}
+      <nav className="text-sm text-gray-500 mb-6 flex items-center gap-2">
+        <Link to="/" className="text-blue-600 hover:underline">Home</Link>
+        <ChevronRight className="h-4 w-4" />
+        <Link to="/catalog" className="text-blue-600 hover:underline">Katalog</Link>
+        <ChevronRight className="h-4 w-4" />
+        <span className="text-gray-900 truncate font-medium">{product.name}</span>
+      </nav>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left: Product Image */}
-        <div>
-          <img
-            src={product.image_url}
-            alt={product.name}
-            className="w-full h-96 object-cover rounded-xl border border-gray-200"
-          />
+        <div className="lg:col-span-4">
+          <div className="sticky top-24">
+            <img
+              src={product.image_url}
+              alt={product.name}
+              className="w-full aspect-square object-cover rounded-xl border border-gray-200 bg-white"
+            />
+          </div>
         </div>
 
-        {/* Right: Product Info */}
-        <div className="space-y-6 rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold leading-tight text-gray-900">
+        {/* Center: Product Info */}
+        <div className="lg:col-span-5">
+          <h1 className="text-xl font-bold text-gray-900 leading-tight">
             {product.name}
-          </h2>
-          <p className="text-2xl font-semibold text-gray-900">
-            Rp{product.price?.toLocaleString("id-ID")}
-          </p>
-          <p className="text-gray-600">{product.description}</p>
-          <p className="text-sm text-gray-500">Stok: {product.stock}</p>
+          </h1>
+          
+          <div className="mt-3">
+            <p className="text-3xl font-bold text-gray-900">
+              Rp{product.price?.toLocaleString("id-ID")}
+            </p>
+          </div>
+          
+          {/* Tabs for Detail / Info */}
+          <div className="mt-6 border-b border-gray-200">
+            <nav className="-mb-px flex gap-6">
+              <button
+                onClick={() => setActiveTab("desc")}
+                className={`whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm ${
+                  activeTab === "desc"
+                    ? "border-blue-600 text-blue-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                Detail Produk
+              </button>
+            </nav>
+          </div>
+          
+          <div className="mt-6">
+            {activeTab === "desc" && (
+              <>
+                <div className="text-sm text-gray-600 mb-5 space-y-2">
+                  <p>Kondisi: <span className="text-gray-900 font-medium">Baru</span></p>
+                  <p>Min. Beli: <span className="text-gray-900 font-medium">1 Buah</span></p>
+                  {product.categories && product.categories.length > 0 && (
+                    <p>Kategori: <span className="text-blue-600 font-bold cursor-pointer hover:underline">{product.categories.join(', ')}</span></p>
+                  )}
+                </div>
+                <p className="text-gray-800 whitespace-pre-wrap leading-relaxed text-sm">
+                  {product.description}
+                </p>
+              </>
+            )}
+          </div>
 
-          {/* Seller Info */}
+          {/* Store Info */}
           {product.store && (
-            <div className="flex items-center gap-3 border-t border-gray-200 pt-4">
-              <Store className="h-8 w-8 text-gray-400" />
-              <div>
-                <Link
-                  to={`/stores/${product.store.id}`}
-                  className="text-blue-600 hover:text-blue-500 font-medium"
-                >
-                  {product.store.name}
-                </Link>
+            <div className="mt-10 border-t border-gray-200 pt-6 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
+                   <Store className="h-6 w-6 text-gray-400" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-1">
+                    <span className="w-4 h-4 bg-blue-600 text-white rounded-full flex items-center justify-center text-[10px] font-bold">✓</span>
+                    <Link
+                      to={`/stores/${product.store.id}`}
+                      className="text-base font-bold text-gray-900 hover:underline"
+                    >
+                      {product.store.name}
+                    </Link>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Online</p>
+                </div>
               </div>
             </div>
           )}
+        </div>
 
-          {errorMsg && (
-            <div className="p-4 bg-red-50 text-red-700 border border-red-200 rounded-lg flex justify-between items-center">
-              <span>{errorMsg}</span>
-              <button
-                onClick={() => navigate("/buyer/cart")}
-                className="py-1.5 px-3 inline-flex items-center rounded-lg bg-red-600 text-xs font-medium text-white hover:bg-red-700"
-              >
-                Lihat Keranjang
-              </button>
-            </div>
-          )}
-
-          {token && activeRole === "buyer" && (
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex items-center border border-gray-300 rounded-lg">
+        {/* Right: Actions */}
+        <div className="lg:col-span-3">
+          <div className="border border-gray-200 rounded-xl p-4 sticky top-24 shadow-sm bg-white">
+            <h3 className="font-bold text-gray-900 mb-4">Atur jumlah dan catatan</h3>
+            
+            <div className="flex items-center gap-3 mb-5">
+              {/* Quantity Selector */}
+              <div className="flex items-center border border-gray-300 rounded-lg h-8">
                 <button
-                  className="px-4 py-2.5 text-gray-600 hover:bg-gray-100 disabled:opacity-50 rounded-l-lg"
+                  className="px-2.5 h-full text-gray-500 hover:bg-gray-100 disabled:opacity-50 flex items-center justify-center rounded-l-lg"
                   onClick={() => {
                     const q = typeof quantity === 'string' ? parseInt(quantity) : quantity;
                     setQuantity(Math.max(1, (isNaN(q) ? 1 : q) - 1));
                   }}
                   disabled={Number(quantity) <= 1}
                 >
-                  -
+                  <span className="text-lg leading-none mt-[-2px]">-</span>
                 </button>
                 <input
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  className="w-16 text-center py-2.5 border-x border-gray-300 focus:outline-none focus:ring-0"
+                  className="w-12 h-full text-center text-sm border-0 focus:ring-0 p-0"
                   value={quantity}
                   onChange={(e) => {
                     const val = e.target.value;
@@ -162,66 +210,62 @@ export function ProductDetailPage() {
                   }}
                 />
                 <button
-                  className="px-4 py-2.5 text-gray-600 hover:bg-gray-100 disabled:opacity-50 rounded-r-lg"
+                  className="px-2.5 h-full text-blue-600 hover:bg-gray-100 disabled:opacity-50 flex items-center justify-center rounded-r-lg"
                   onClick={() => {
                     const q = typeof quantity === 'string' ? parseInt(quantity) : quantity;
                     setQuantity(Math.min(product.stock, (isNaN(q) ? 0 : q) + 1));
                   }}
                   disabled={Number(quantity) >= product.stock}
                 >
-                  +
+                  <span className="text-lg leading-none mt-[-2px]">+</span>
                 </button>
               </div>
-              <button
-                onClick={handleAddToCart}
-                disabled={addToCartMutation.isPending || product.stock < 1}
-                className="w-full inline-flex items-center justify-center px-5 py-3 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
-              >
-                <ShoppingCart className="mr-2 h-5 w-5" />
-                {addToCartMutation.isPending ? "Menambahkan..." : "+ Keranjang"}
-              </button>
+              <div className="text-sm text-gray-600">
+                Stok Total: <span className="font-bold text-gray-900">{product.stock}</span>
+              </div>
             </div>
-          )}
-        </div>
-      </div>
+            
+            <div className="flex items-center justify-between mb-5">
+              <span className="text-gray-500 text-sm">Subtotal</span>
+              <span className="font-bold text-lg text-gray-900">
+                Rp{((product.price || 0) * (typeof quantity === 'number' ? quantity : parseInt(quantity) || 1)).toLocaleString("id-ID")}
+              </span>
+            </div>
 
-      {/* Tabs: Deskripsi | Info Penting */}
-      <div className="max-w-6xl mx-auto mt-10">
-        <nav className="flex border border-gray-200 rounded-xl overflow-hidden">
-          <button
-            className={`flex-1 py-4 px-4 text-sm font-medium ${
-              activeTab === "desc"
-                ? "text-gray-900 border-b-2 border-b-blue-600 bg-white"
-                : "text-gray-500 hover:text-gray-700 bg-gray-50"
-            }`}
-            onClick={() => setActiveTab("desc")}
-          >
-            Deskripsi
-          </button>
-          <button
-            className={`flex-1 py-4 px-4 text-sm font-medium ${
-              activeTab === "info"
-                ? "text-gray-900 border-b-2 border-b-blue-600 bg-white"
-                : "text-gray-500 hover:text-gray-700 bg-gray-50"
-            }`}
-            onClick={() => setActiveTab("info")}
-          >
-            Info Penting
-          </button>
-        </nav>
-        <div className="mt-5">
-          {activeTab === "desc" && (
-            <p className="text-gray-600 whitespace-pre-wrap">
-              {product.description}
-            </p>
-          )}
-          {activeTab === "info" && (
-            <p className="text-gray-600">
-              Produk hasil laut segar berkualitas. Dipanen dan dikirim langsung
-              dari nelayan. Pastikan untuk menyimpan produk di freezer setelah
-              diterima.
-            </p>
-          )}
+            {errorMsg && (
+              <div className="mb-4 p-3 bg-red-50 text-red-700 border border-red-200 rounded-lg text-xs">
+                <p className="mb-2">{errorMsg}</p>
+                <button
+                  onClick={() => navigate("/buyer/cart")}
+                  className="underline font-medium"
+                >
+                  Lihat Keranjang
+                </button>
+              </div>
+            )}
+
+            {token && activeRole === "buyer" ? (
+              <div className="flex flex-col gap-2.5">
+                <button
+                  onClick={handleAddToCart}
+                  disabled={addToCartMutation.isPending || product.stock < 1}
+                  className="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {addToCartMutation.isPending ? "Menambahkan..." : "+ Keranjang"}
+                </button>
+                <button
+                  disabled={product.stock < 1}
+                  className="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-bold text-blue-600 bg-white border border-blue-600 rounded-lg hover:bg-blue-50 disabled:opacity-50"
+                >
+                  Beli Langsung
+                </button>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500 text-center bg-gray-50 p-2 rounded-lg border border-gray-100">
+                Masuk sebagai pembeli untuk memesan.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>
