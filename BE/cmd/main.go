@@ -7,6 +7,23 @@ import (
 	"github.com/traa/seapedia/server/internal/config"
 )
 
+// @title           SEAPEDIA API
+// @version         1.0
+// @description     API Documentation for SEAPEDIA platform.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.email  support@seapedia.com
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @BasePath  /api
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+
 func main() {
 	viperConfig := config.NewViper()
 	log := config.NewLogger(viperConfig)

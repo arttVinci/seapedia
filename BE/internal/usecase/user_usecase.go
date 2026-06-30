@@ -226,13 +226,18 @@ func (c *UserUseCase) Roles(ctx context.Context, authModel *model.Auth) (*model.
 		return nil, err
 	}
 
-	var roles []string
+	roleMap := make(map[string]bool)
 	for _, userRole := range userRoles {
-		roles = append(roles, userRole.Role)
+		roleMap[userRole.Role] = true
 	}
 
 	if user.IsAdmin {
-		roles = append(roles, "admin")
+		roleMap["admin"] = true
+	}
+
+	var roles []string
+	for role := range roleMap {
+		roles = append(roles, role)
 	}
 
 	if err := tx.Commit().Error; err != nil {
@@ -381,5 +386,58 @@ func (c *UserUseCase) AddRole(ctx context.Context, authModel *model.Auth, reques
 	return &model.AddRoleResponse{
 		Role: request.Role,
 	}, nil
+}
+
+func (c *UserUseCase) UpdateProfile(ctx context.Context, authModel *model.Auth, request *model.UpdateUserRequest) (*model.UserResponse, error) {
+	tx := c.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	err := c.Validate.Struct(request)
+	if err != nil {
+		c.Log.Warnf("Invalid request body : %+v", err)
+		return nil, model.ErrValidation
+	}
+
+	user := new(entity.User)
+	if err := c.UserRepository.FindById(tx, user, authModel.ID); err != nil {
+		c.Log.Warnf("Failed find user by id : %+v", err)
+		return nil, model.ErrNotFound
+	}
+
+	// Check if username/email already taken by someone else
+	if request.Username != user.Username {
+		var existingUser entity.User
+		if err := c.UserRepository.FindByUsername(tx, &existingUser, request.Username); err == nil {
+			return nil, model.ErrConflict
+		}
+		user.Username = request.Username
+	}
+
+	if request.Email != user.Email {
+		var existingUser entity.User
+		if err := c.UserRepository.FindByEmail(tx, &existingUser, request.Email); err == nil {
+			return nil, model.ErrConflict
+		}
+		user.Email = request.Email
+	}
+
+	if request.Password != "" {
+		password, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, err
+		}
+		user.Password = string(password)
+	}
+
+	if err := c.UserRepository.Update(tx, user); err != nil {
+		c.Log.Warnf("Failed update user : %+v", err)
+		return nil, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return nil, err
+	}
+
+	return converter.UserToResponse(user), nil
 }
 

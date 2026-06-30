@@ -9,14 +9,13 @@ import { useRoles } from "../../hooks/queries/auth/useRoles";
 import { useWallet } from "../../hooks/queries/buyer/useWallet";
 import { OpenShopModal } from "../auth/OpenShopModal";
 import {
-  Anchor,
+  User,
+  LogOut,
+  Settings,
+  ChevronDown,
+  ShoppingBag,
   Menu,
   X,
-  LogOut,
-  ShoppingBag,
-  ChevronDown,
-  User,
-  Settings,
   Store,
   Users,
   Search,
@@ -125,6 +124,7 @@ export function Navbar() {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/catalog?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
     }
   };
 
@@ -163,12 +163,14 @@ export function Navbar() {
     try {
       await addRoleMutation.mutateAsync({ role: "driver" });
       await selectRoleMutation.mutateAsync({ role: "driver" });
-      
+
       setRoleDropdownOpen(false);
       navigate("/driver");
     } catch (err) {
       console.error(err);
-      toast.error("Gagal bergabung menjadi mitra pengantar. Silakan coba lagi.");
+      toast.error(
+        "Gagal bergabung menjadi mitra pengantar. Silakan coba lagi.",
+      );
     } finally {
       setIsJoiningDriver(false);
     }
@@ -203,21 +205,23 @@ export function Navbar() {
             <div className="flex items-center gap-x-4 lg:gap-x-6 flex-1 mr-4 lg:mr-8">
               {/* Logo */}
               <Link to="/" className="flex items-center gap-x-2 group shrink-0">
-                <div className="bg-blue-600 p-2 rounded-lg text-white group-hover:bg-blue-700 transition-colors">
-                  <Anchor className="h-5 w-5" />
-                </div>
+                <img
+                  src="/image/logo.webp"
+                  alt="Seapedia Logo"
+                  className="h-10 w-10 object-contain rounded-lg"
+                />
                 <span className="text-xl font-bold tracking-tight text-gray-900 group-hover:text-blue-600 transition-colors hidden sm:block">
                   SEAPEDIA
                 </span>
               </Link>
 
-              {/* Kategori (disabled) */}
-              <button
-                disabled
-                className="hidden lg:flex text-gray-500 hover:text-gray-500 font-medium cursor-not-allowed items-center text-sm shrink-0"
+              {/* Catalog Link */}
+              <Link
+                to="/catalog"
+                className="hidden lg:flex text-gray-700 hover:text-blue-600 font-medium items-center text-sm shrink-0 transition-colors"
               >
-                Kategori
-              </button>
+                Catalog
+              </Link>
 
               {/* Search Bar */}
               <div className="flex-1 hidden md:block max-w-3xl">
@@ -229,7 +233,8 @@ export function Navbar() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm bg-gray-50"
+                    disabled={location.pathname === "/catalog"}
+                    className={`w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm ${location.pathname === "/catalog" ? "bg-gray-100 cursor-not-allowed opacity-70" : "bg-gray-50"}`}
                     placeholder="Cari di Seapedia..."
                   />
                 </form>
@@ -303,7 +308,7 @@ export function Navbar() {
                   )}
 
                   {/* Role Switcher or Buka Toko button */}
-                  {activeRole && (
+                  {activeRole ? (
                     <div className="flex items-center">
                       {availableRoles.length > 1 ? (
                         <div className="relative" ref={roleDropdownRef}>
@@ -386,9 +391,19 @@ export function Navbar() {
                         )
                       )}
                     </div>
+                  ) : (
+                    user && (
+                      <Link
+                        to="/select-role"
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors text-sm font-semibold"
+                      >
+                        <Users className="h-4 w-4" />
+                        Pilih Peran
+                      </Link>
+                    )
                   )}
 
-                  {activeRole && user && (
+                  {user && (
                     <div className="relative" ref={dropdownRef}>
                       <button
                         onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -618,7 +633,8 @@ export function Navbar() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm bg-gray-50"
+                  disabled={location.pathname === "/catalog"}
+                  className={`w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-sm ${location.pathname === "/catalog" ? "bg-gray-100 cursor-not-allowed opacity-70" : "bg-gray-50"}`}
                   placeholder="Cari di Seapedia..."
                 />
               </form>

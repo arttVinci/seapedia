@@ -6,7 +6,6 @@ import { useSelectRole } from "../hooks/mutations/auth/useSelectRole";
 import { useLogin } from "../hooks/mutations/auth/useLogin";
 import { useCreateStore } from "../hooks/mutations/stores/useCreateStore";
 import {
-  Anchor,
   Mail,
   Lock,
   User,
@@ -118,9 +117,11 @@ export function RegisterPage() {
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-400 opacity-20 rounded-full translate-x-1/3 translate-y-1/3"></div>
 
         <div className="relative z-10 flex items-center gap-3">
-          <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-            <Anchor className="h-8 w-8 text-white" />
-          </div>
+          <img
+            src="/image/logo.webp"
+            alt="Seapedia Logo"
+            className="h-12 w-12 object-contain rounded-lg"
+          />
           <span className="text-2xl font-bold text-white tracking-tight">
             SEAPEDIA
           </span>
@@ -145,9 +146,11 @@ export function RegisterPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-8 lg:p-16 bg-white relative ml-auto">
         {/* Mobile Header (only visible on small screens) */}
         <div className="absolute top-6 left-6 flex items-center gap-2 lg:hidden">
-          <div className="p-1.5 bg-blue-600 rounded-md">
-            <Anchor className="h-4 w-4 text-white" />
-          </div>
+          <img
+            src="/image/logo.webp"
+            alt="Seapedia Logo"
+            className="h-8 w-8 object-contain rounded-md"
+          />
           <span className="text-base font-bold text-gray-900">SEAPEDIA</span>
         </div>
 

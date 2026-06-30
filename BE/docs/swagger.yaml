@@ -1,0 +1,1040 @@
+basePath: /api
+definitions:
+  github_com_traa_seapedia_server_internal_model.ApiErrorResponse:
+    properties:
+      errors:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+      message:
+        type: string
+      statusCode:
+        type: integer
+    type: object
+  github_com_traa_seapedia_server_internal_model.DashboardStatsResponse:
+    properties:
+      current_simulated_day:
+        type: integer
+      overdue_orders:
+        type: integer
+      total_delivery_jobs:
+        type: integer
+      total_orders:
+        type: integer
+      total_products:
+        type: integer
+      total_promos:
+        type: integer
+      total_stores:
+        type: integer
+      total_users:
+        type: integer
+      total_vouchers:
+        type: integer
+    type: object
+  github_com_traa_seapedia_server_internal_model.LoginUserRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  github_com_traa_seapedia_server_internal_model.LoginUserResponse:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.UserResponse'
+    type: object
+  github_com_traa_seapedia_server_internal_model.LogoutUserResponse:
+    type: object
+  github_com_traa_seapedia_server_internal_model.PageMetadata:
+    properties:
+      page:
+        type: integer
+      size:
+        type: integer
+      total_item:
+        type: integer
+      total_page:
+        type: integer
+    type: object
+  github_com_traa_seapedia_server_internal_model.ProductResponse:
+    properties:
+      categories:
+        items:
+          type: string
+        type: array
+      created_at:
+        type: integer
+      description:
+        type: string
+      id:
+        type: string
+      image_url:
+        type: string
+      name:
+        type: string
+      price:
+        type: integer
+      stock:
+        type: integer
+      store_id:
+        type: string
+      updated_at:
+        type: integer
+    type: object
+  github_com_traa_seapedia_server_internal_model.RegisterUserRequest:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 6
+        type: string
+      role:
+        enum:
+        - buyer
+        - seller
+        - driver
+        type: string
+      username:
+        maxLength: 50
+        minLength: 3
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  github_com_traa_seapedia_server_internal_model.RegisterUserResponse:
+    properties:
+      user:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.UserResponse'
+    type: object
+  github_com_traa_seapedia_server_internal_model.SelectRoleRequest:
+    properties:
+      role:
+        enum:
+        - buyer
+        - seller
+        - driver
+        - admin
+        type: string
+    required:
+    - role
+    type: object
+  github_com_traa_seapedia_server_internal_model.SelectRoleResponse:
+    properties:
+      active_role:
+        type: string
+      token:
+        type: string
+    type: object
+  github_com_traa_seapedia_server_internal_model.SimulateNextDayResponse:
+    properties:
+      current_simulated_day:
+        type: integer
+      processed_overdue:
+        type: integer
+    type: object
+  github_com_traa_seapedia_server_internal_model.UserResponse:
+    properties:
+      auth_provider:
+        type: string
+      created_at:
+        type: integer
+      email:
+        type: string
+      id:
+        type: string
+      is_admin:
+        type: boolean
+      updated_at:
+        type: integer
+      username:
+        type: string
+    type: object
+  github_com_traa_seapedia_server_internal_model.WebResponse-array_github_com_traa_seapedia_server_internal_model_ProductResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.ProductResponse'
+        type: array
+      message:
+        type: string
+      paging:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata'
+      success:
+        type: boolean
+    type: object
+  github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_DashboardStatsResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.DashboardStatsResponse'
+      message:
+        type: string
+      paging:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata'
+      success:
+        type: boolean
+    type: object
+  github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_LoginUserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.LoginUserResponse'
+      message:
+        type: string
+      paging:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata'
+      success:
+        type: boolean
+    type: object
+  github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_LogoutUserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.LogoutUserResponse'
+      message:
+        type: string
+      paging:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata'
+      success:
+        type: boolean
+    type: object
+  github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_ProductResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.ProductResponse'
+      message:
+        type: string
+      paging:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata'
+      success:
+        type: boolean
+    type: object
+  github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_RegisterUserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.RegisterUserResponse'
+      message:
+        type: string
+      paging:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata'
+      success:
+        type: boolean
+    type: object
+  github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_SelectRoleResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.SelectRoleResponse'
+      message:
+        type: string
+      paging:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata'
+      success:
+        type: boolean
+    type: object
+  ? github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_SimulateNextDayResponse
+  : properties:
+      data:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.SimulateNextDayResponse'
+      message:
+        type: string
+      paging:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata'
+      success:
+        type: boolean
+    type: object
+  github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_UserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.UserResponse'
+      message:
+        type: string
+      paging:
+        $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.PageMetadata'
+      success:
+        type: boolean
+    type: object
+info:
+  contact:
+    email: support@seapedia.com
+    name: API Support
+  description: API Documentation for SEAPEDIA platform.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: SEAPEDIA API
+  version: "1.0"
+paths:
+  /api/addresses:
+    get:
+      description: Get a list of addresses for the current user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get User Addresses
+      tags:
+      - Addresses
+    post:
+      consumes:
+      - application/json
+      description: Add a new address for the current user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Create Address
+      tags:
+      - Addresses
+  /api/addresses/{id}:
+    delete:
+      description: Delete an address
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Delete Address
+      tags:
+      - Addresses
+    put:
+      consumes:
+      - application/json
+      description: Update an existing address
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Update Address
+      tags:
+      - Addresses
+  /api/admin/_simulate-time:
+    post:
+      description: Advances system virtual time by 1 day and checks overdue SLAs for
+        active orders.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_SimulateNextDayResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Simulate time +1 Day (Admin Only)
+      tags:
+      - Admin
+  /api/admin/dashboard/stats:
+    get:
+      description: Get statistics for admin dashboard
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_DashboardStatsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get Dashboard Stats (Admin Only)
+      tags:
+      - Admin
+  /api/buyer/orders:
+    get:
+      description: Get a list of orders for the current buyer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: List Buyer Orders
+      tags:
+      - Buyer Orders
+  /api/buyer/orders/{id}:
+    get:
+      description: Get details of a specific order for the current buyer
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Buyer Order Detail
+      tags:
+      - Buyer Orders
+  /api/buyer/reports/expense:
+    get:
+      description: Get expense history for the current buyer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Buyer Expense
+      tags:
+      - Buyer Reports
+  /api/cart:
+    get:
+      description: Get the current user's shopping cart
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Buyer Cart
+      tags:
+      - Buyer Cart
+  /api/cart/items:
+    post:
+      consumes:
+      - application/json
+      description: Add a product to the cart
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Add Item to Cart
+      tags:
+      - Buyer Cart
+  /api/cart/items/{id}:
+    delete:
+      description: Remove an item from the cart
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Delete Cart Item
+      tags:
+      - Buyer Cart
+    put:
+      consumes:
+      - application/json
+      description: Update the quantity of a cart item
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Update Cart Item
+      tags:
+      - Buyer Cart
+  /api/categories:
+    get:
+      description: Get a list of all product categories
+      produces:
+      - application/json
+      responses: {}
+      summary: Get All Categories
+      tags:
+      - Categories
+  /api/checkout:
+    post:
+      consumes:
+      - application/json
+      description: Create the order and process checkout
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Process Checkout
+      tags:
+      - Checkout
+  /api/checkout/_preview:
+    post:
+      consumes:
+      - application/json
+      description: Calculate total, shipping, and discounts before checking out
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Preview Checkout
+      tags:
+      - Checkout
+  /api/driver/jobs:
+    get:
+      description: Get a list of available delivery jobs for the driver
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: List Driver Jobs
+      tags:
+      - Driver Jobs
+  /api/driver/jobs/{id}/complete:
+    post:
+      description: Mark a delivery job as completed
+      parameters:
+      - description: Job ID (Order ID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Complete a Delivery Job
+      tags:
+      - Driver Jobs
+  /api/driver/jobs/{id}/take:
+    post:
+      description: Accept a delivery job
+      parameters:
+      - description: Job ID (Order ID)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Take a Delivery Job
+      tags:
+      - Driver Jobs
+  /api/products:
+    get:
+      description: Get a list of all products with optional filters
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-array_github_com_traa_seapedia_server_internal_model_ProductResponse'
+      summary: List all products
+      tags:
+      - Products
+  /api/products/{id}:
+    get:
+      description: Get details of a specific product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_ProductResponse'
+      summary: Get product detail
+      tags:
+      - Products
+  /api/reviews/app:
+    get:
+      description: Get all application reviews
+      produces:
+      - application/json
+      responses: {}
+      summary: List App Reviews
+      tags:
+      - App Reviews
+    post:
+      consumes:
+      - application/json
+      description: Submit a review for the application
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Create App Review
+      tags:
+      - App Reviews
+  /api/seller/orders:
+    get:
+      description: Get a list of orders for the seller's store
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: List Store Orders
+      tags:
+      - Seller Orders
+  /api/seller/orders/{id}:
+    get:
+      description: Get details of a specific order for the seller's store
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Store Order Detail
+      tags:
+      - Seller Orders
+  /api/seller/orders/{id}/process:
+    post:
+      consumes:
+      - application/json
+      description: Process an order for the seller's store (e.g. approve/reject)
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Process Store Order
+      tags:
+      - Seller Orders
+  /api/seller/products:
+    post:
+      consumes:
+      - application/json
+      description: Create a new product for a seller
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Create a new product
+      tags:
+      - Seller Products
+  /api/seller/products/{id}:
+    delete:
+      description: Delete an existing product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Delete a product
+      tags:
+      - Seller Products
+    put:
+      consumes:
+      - application/json
+      description: Update an existing product
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Update a product
+      tags:
+      - Seller Products
+  /api/seller/promos:
+    get:
+      description: Get a list of promos for the current seller's store
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: List Store Promos
+      tags:
+      - Seller Promos
+    post:
+      consumes:
+      - application/json
+      description: Create a new promo for the store
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Create a Promo
+      tags:
+      - Seller Promos
+  /api/seller/promos/{id}:
+    get:
+      description: Get details of a specific promo
+      parameters:
+      - description: Promo ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Promo Detail
+      tags:
+      - Seller Promos
+  /api/seller/reports/income:
+    get:
+      description: Get income history for the current seller
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Seller Income
+      tags:
+      - Seller Reports
+  /api/seller/store:
+    get:
+      description: Get details of the current seller's store
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get My Store
+      tags:
+      - Seller Store
+    post:
+      consumes:
+      - application/json
+      description: Create a store for the current seller
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Create Store
+      tags:
+      - Seller Store
+    put:
+      consumes:
+      - application/json
+      description: Update details of the current seller's store
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Update Store
+      tags:
+      - Seller Store
+  /api/seller/vouchers:
+    get:
+      description: Get a list of vouchers for the current seller's store
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: List Store Vouchers
+      tags:
+      - Seller Vouchers
+    post:
+      consumes:
+      - application/json
+      description: Create a new voucher for the store
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Create a Voucher
+      tags:
+      - Seller Vouchers
+  /api/seller/vouchers/{id}:
+    get:
+      description: Get details of a specific voucher
+      parameters:
+      - description: Voucher ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Voucher Detail
+      tags:
+      - Seller Vouchers
+  /api/stores:
+    get:
+      description: Get a list of all stores
+      produces:
+      - application/json
+      responses: {}
+      summary: List Stores
+      tags:
+      - Stores
+  /api/stores/{id}:
+    get:
+      description: Get details of a specific store
+      parameters:
+      - description: Store ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Get Store Detail
+      tags:
+      - Stores
+  /api/users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account with a specific role
+      parameters:
+      - description: Registration data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.RegisterUserRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_RegisterUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse'
+      summary: Register a new user
+      tags:
+      - Users
+  /api/users/_add-role:
+    post:
+      consumes:
+      - application/json
+      description: Add a new role to the current user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Add User Role
+      tags:
+      - Users
+  /api/users/_current:
+    get:
+      description: Ambil data user yang sedang login
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_UserResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get current user
+      tags:
+      - Auth
+  /api/users/_login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.LoginUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_LoginUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse'
+      summary: Login user
+      tags:
+      - Auth
+  /api/users/_logout:
+    post:
+      description: Revoke the current JWT session
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_LogoutUserResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Logout
+      tags:
+      - Auth
+  /api/users/_profile:
+    put:
+      consumes:
+      - application/json
+      description: Update the current user's profile
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Update User Profile
+      tags:
+      - Users
+  /api/users/_roles:
+    get:
+      description: Get available roles for the current user
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get User Roles
+      tags:
+      - Auth
+  /api/users/_select-role:
+    post:
+      consumes:
+      - application/json
+      description: Switch active role and receive a new JWT
+      parameters:
+      - description: Role selection
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.SelectRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.WebResponse-github_com_traa_seapedia_server_internal_model_SelectRoleResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_traa_seapedia_server_internal_model.ApiErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Select Role
+      tags:
+      - Auth
+  /api/wallet:
+    get:
+      description: Get current user's wallet balance and history
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Get Wallet Balance
+      tags:
+      - Wallet
+  /api/wallet/topup:
+    post:
+      consumes:
+      - application/json
+      description: Add funds to the user's wallet
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - BearerAuth: []
+      summary: Topup Wallet
+      tags:
+      - Wallet
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

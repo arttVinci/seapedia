@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLogin } from "../hooks/mutations/auth/useLogin";
-import { Anchor, Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { useSelectRole } from "../hooks/mutations/auth/useSelectRole";
+import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { Button, Input } from "../components/ui";
+import authService from "../services/authService";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,7 +15,9 @@ export function LoginPage() {
   const [error, setError] = useState("");
 
   const loginMutation = useLogin();
+  const selectRoleMutation = useSelectRole();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,8 +26,28 @@ export function LoginPage() {
     loginMutation.mutate(
       { email, password },
       {
-        onSuccess: () => {
-          navigate("/select-role", { state: { fromLogin: true } });
+        onSuccess: async () => {
+          try {
+            const data = await authService.getRoles();
+            const roles = data.roles || [];
+            
+            if (roles.length > 0) {
+              const defaultRole = roles.includes("buyer") ? "buyer" : roles[0];
+              await selectRoleMutation.mutateAsync({ role: defaultRole as any });
+              await queryClient.invalidateQueries({ queryKey: ["roles"] });
+              
+              toast.success(`Berhasil masuk sebagai ${defaultRole}!`);
+              if (defaultRole === "buyer") {
+                navigate("/");
+              } else {
+                navigate(`/${defaultRole}`);
+              }
+            } else {
+              navigate("/select-role");
+            }
+          } catch (err) {
+             navigate("/select-role");
+          }
         },
         onError: (err: any) => {
           const errMsg =
@@ -42,9 +68,11 @@ export function LoginPage() {
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-400 opacity-20 rounded-full translate-x-1/3 translate-y-1/3"></div>
 
         <div className="relative z-10 flex items-center gap-3">
-          <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
-            <Anchor className="h-8 w-8 text-white" />
-          </div>
+          <img
+            src="/image/logo.webp"
+            alt="Seapedia Logo"
+            className="h-12 w-12 object-contain rounded-lg"
+          />
           <span className="text-2xl font-bold text-white tracking-tight">
             SEAPEDIA
           </span>
@@ -68,9 +96,11 @@ export function LoginPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 lg:p-24 bg-white relative">
         {/* Mobile Header (only visible on small screens) */}
         <div className="absolute top-8 left-8 flex items-center gap-2 lg:hidden">
-          <div className="p-1.5 bg-blue-600 rounded-md">
-            <Anchor className="h-5 w-5 text-white" />
-          </div>
+          <img
+            src="/image/logo.webp"
+            alt="Seapedia Logo"
+            className="h-8 w-8 object-contain rounded-md"
+          />
           <span className="text-lg font-bold text-gray-900">SEAPEDIA</span>
         </div>
 

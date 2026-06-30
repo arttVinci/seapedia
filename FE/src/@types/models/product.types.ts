@@ -8,6 +8,7 @@ export interface Product {
   price: number;
   stock: number;
   image_url: string;
+  categories?: string[];
   store?: Store;
   created_at?: number;
   updated_at?: number;
@@ -23,6 +24,7 @@ export interface CreateProductPayload {
   price: number;
   stock: number;
   image_url?: string;
+  categories?: string[];
 }
 
 export interface UpdateProductPayload {
@@ -31,4 +33,5 @@ export interface UpdateProductPayload {
   price?: number;
   stock?: number;
   image_url?: string;
+  categories?: string[];
 }

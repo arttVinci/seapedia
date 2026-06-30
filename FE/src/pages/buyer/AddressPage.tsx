@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { useAddresses } from "../../hooks/queries/buyer/useAddresses";
@@ -8,6 +7,7 @@ import { useUpdateAddress } from "../../hooks/mutations/buyer/useUpdateAddress";
 import { useDeleteAddress } from "../../hooks/mutations/buyer/useDeleteAddress";
 import type { Address } from "../../@types/models";
 import { ConfirmModal } from "../../components/ui/ConfirmModal";
+import { MapPin, Plus, X, Edit2, Trash2, Home, Briefcase, Map } from "lucide-react";
 
 const AddressPage: React.FC = () => {
   const { data: addresses, isLoading, isError } = useAddresses();
@@ -84,112 +84,203 @@ const AddressPage: React.FC = () => {
     deleteAddress(id);
   };
 
-  if (isLoading) return <div className="p-4">Loading addresses...</div>;
-  if (isError) return <div className="p-4 text-red-500">Failed to load addresses.</div>;
+  const getLabelIcon = (label: string) => {
+    const l = label.toLowerCase();
+    if (l.includes("rumah")) return <Home className="w-4 h-4" />;
+    if (l.includes("kantor") || l.includes("kerja")) return <Briefcase className="w-4 h-4" />;
+    return <MapPin className="w-4 h-4" />;
+  };
+
+  if (isLoading) return (
+    <div className="flex items-center justify-center min-h-[400px]">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+    </div>
+  );
+
+  if (isError) return (
+    <div className="flex flex-col items-center justify-center min-h-[400px] text-center px-4">
+      <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mb-4">
+        <X className="w-8 h-8" />
+      </div>
+      <h2 className="text-lg font-bold text-gray-900 mb-2">Gagal Memuat Alamat</h2>
+      <p className="text-gray-500">Terjadi kesalahan saat memuat daftar alamat Anda.</p>
+    </div>
+  );
 
   const isSubmitting = isCreating || isUpdating;
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Buku Alamat</h1>
-        <Button onClick={() => handleOpenModal()}>Tambah Alamat</Button>
+    <div className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Buku Alamat</h1>
+          <p className="text-sm text-gray-500 mt-1">Kelola alamat pengiriman untuk pesanan Anda</p>
+        </div>
+        <Button onClick={() => handleOpenModal()} className="flex items-center gap-2 rounded-full px-6">
+          <Plus className="w-4 h-4" />
+          Tambah Alamat Baru
+        </Button>
       </div>
 
+      {/* Empty State */}
       {(!addresses || addresses.length === 0) ? (
-        <p className="text-gray-500">Belum ada alamat yang tersimpan.</p>
+        <div className="bg-white rounded-2xl border border-gray-200 p-12 flex flex-col items-center justify-center text-center shadow-sm">
+          <div className="w-20 h-20 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-6">
+            <Map className="w-10 h-10" />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Belum Ada Alamat</h2>
+          <p className="text-gray-500 mb-6 max-w-md">
+            Anda belum menambahkan alamat pengiriman. Tambahkan alamat sekarang untuk mempermudah proses checkout.
+          </p>
+          <Button onClick={() => handleOpenModal()} className="flex items-center gap-2 rounded-full">
+            <Plus className="w-4 h-4" />
+            Tambah Alamat
+          </Button>
+        </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        /* Address List */
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {addresses.map((address) => (
-            <Card key={address.id} className="p-4 flex flex-col justify-between">
-              <div>
-                <h3 className="font-bold text-lg mb-1">{address.label}</h3>
-                <p className="font-semibold">{address.recipient}</p>
-                <p className="text-sm text-gray-600">{address.phone}</p>
-                <p className="text-sm text-gray-700 mt-2 line-clamp-3">
-                  {address.full_address}
-                </p>
+            <div 
+              key={address.id} 
+              className="bg-white rounded-2xl border border-gray-200 p-6 flex flex-col hover:border-blue-500 hover:shadow-md transition-all duration-200 relative group"
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <div className="bg-blue-50 text-blue-600 p-2 rounded-lg">
+                  {getLabelIcon(address.label)}
+                </div>
+                <h3 className="font-bold text-gray-900 line-clamp-1">{address.label}</h3>
               </div>
-              <div className="flex space-x-3 mt-4 pt-4 border-t">
+              
+              <div className="flex-1 space-y-3">
+                <div>
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Penerima</p>
+                  <p className="font-semibold text-gray-900">{address.recipient}</p>
+                  <p className="text-sm text-gray-600">{address.phone}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Alamat</p>
+                  <p className="text-sm text-gray-700 line-clamp-3 leading-relaxed">
+                    {address.full_address}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 mt-6 pt-4 border-t border-gray-100">
                 <Button
                   variant="outline"
                   size="sm"
+                  className="flex-1 text-gray-700 bg-gray-50 hover:bg-gray-100 border-transparent hover:border-gray-200"
                   onClick={() => handleOpenModal(address)}
                 >
+                  <Edit2 className="w-3.5 h-3.5 mr-1.5" />
                   Ubah
                 </Button>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="text-red-600 hover:bg-red-50 hover:text-red-700 border-red-200"
+                  className="flex-1 text-red-600 bg-red-50 hover:bg-red-100 border-transparent hover:border-red-200"
                   onClick={() => setDeleteConfirm({ isOpen: true, addressId: address.id })}
                   disabled={isDeleting}
                 >
+                  <Trash2 className="w-3.5 h-3.5 mr-1.5" />
                   Hapus
                 </Button>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}
 
+      {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-bold mb-4">
-              {editingAddress ? "Ubah Alamat" : "Tambah Alamat Baru"}
-            </h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <Input
-                name="label"
-                label="Label Alamat (Contoh: Rumah, Kantor)"
-                value={formData.label}
-                onChange={handleChange}
-                required
-                placeholder="Rumah"
-              />
-              <Input
-                name="recipient"
-                label="Nama Penerima"
-                value={formData.recipient}
-                onChange={handleChange}
-                required
-                placeholder="Nama Lengkap"
-              />
-              <Input
-                name="phone"
-                label="Nomor Telepon"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-                type="tel"
-                placeholder="08123456789"
-              />
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Alamat Lengkap
-                </label>
-                <textarea
-                  name="full_address"
-                  value={formData.full_address}
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+          <div 
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" 
+            onClick={handleCloseModal}
+          ></div>
+          <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl relative z-10 animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between p-6 border-b border-gray-100">
+              <h3 className="text-xl font-bold text-gray-900">
+                {editingAddress ? "Ubah Alamat" : "Tambah Alamat Baru"}
+              </h3>
+              <button 
+                onClick={handleCloseModal}
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-5">
+              <div className="space-y-5">
+                <Input
+                  name="label"
+                  label="Label Alamat"
+                  value={formData.label}
                   onChange={handleChange}
                   required
-                  rows={3}
-                  className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Jalan, RT/RW, Kecamatan, Kota, Kode Pos"
+                  placeholder="Contoh: Rumah, Kantor, Apartemen"
                 />
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <Input
+                    name="recipient"
+                    label="Nama Penerima"
+                    value={formData.recipient}
+                    onChange={handleChange}
+                    required
+                    placeholder="Nama Lengkap"
+                  />
+                  <Input
+                    name="phone"
+                    label="Nomor Telepon"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    type="tel"
+                    placeholder="08123456789"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                    Alamat Lengkap
+                  </label>
+                  <textarea
+                    name="full_address"
+                    value={formData.full_address}
+                    onChange={handleChange}
+                    required
+                    rows={4}
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow resize-none"
+                    placeholder="Tuliskan nama jalan, nomor rumah, RT/RW, kelurahan, kecamatan, kota, dan kode pos secara lengkap"
+                  />
+                </div>
               </div>
-              <div className="flex justify-end space-x-3 pt-4 border-t">
+
+              <div className="flex items-center justify-end gap-3 pt-4">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={handleCloseModal}
                   disabled={isSubmitting}
+                  className="rounded-full px-6"
                 >
                   Batal
                 </Button>
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Menyimpan..." : "Simpan"}
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="rounded-full px-8"
+                >
+                  {isSubmitting ? (
+                    <span className="flex items-center gap-2">
+                      <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
+                      Menyimpan...
+                    </span>
+                  ) : "Simpan Alamat"}
                 </Button>
               </div>
             </form>
@@ -204,8 +295,8 @@ const AddressPage: React.FC = () => {
           if (deleteConfirm.addressId) handleDelete(deleteConfirm.addressId);
         }}
         title="Hapus Alamat"
-        message="Apakah Anda yakin ingin menghapus alamat ini?"
-        confirmText="Hapus Alamat"
+        message="Apakah Anda yakin ingin menghapus alamat ini? Data yang sudah dihapus tidak dapat dikembalikan."
+        confirmText="Ya, Hapus"
       />
     </div>
   );

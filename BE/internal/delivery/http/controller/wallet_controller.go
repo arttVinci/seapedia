@@ -17,6 +17,12 @@ func NewWalletController(useCase *usecase.WalletUseCase, log *logrus.Logger) *Wa
 	return &WalletController{UseCase: useCase, Log: log}
 }
 
+// @Summary      Get Wallet Balance
+// @Description  Get current user's wallet balance and history
+// @Tags         Wallet
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/wallet [get]
 func (c *WalletController) GetWallet(ctx *fiber.Ctx) error {
 	userID := middleware.GetUser(ctx).ID
 	response, err := c.UseCase.GetWallet(ctx.UserContext(), userID)
@@ -30,6 +36,13 @@ func (c *WalletController) GetWallet(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Topup Wallet
+// @Description  Add funds to the user's wallet
+// @Tags         Wallet
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/wallet/topup [post]
 func (c *WalletController) Topup(ctx *fiber.Ctx) error {
 	userID := middleware.GetUser(ctx).ID
 	request := new(model.TopupRequest)

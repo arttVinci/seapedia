@@ -6,31 +6,47 @@ import (
 )
 
 func ProductToResponse(product *entity.Product) *model.ProductResponse {
+	var categoryNames []string
+	if product.Categories != nil {
+		for _, cat := range product.Categories {
+			categoryNames = append(categoryNames, cat.Name)
+		}
+	}
+
 	return &model.ProductResponse{
 		ID:          product.ID,
-		StoreID:     product.StoreID,
-		Name:        product.Name,
-		Description: product.Description,
-		Price:       product.Price,
-		Stock:       product.Stock,
-		ImageURL:    product.ImageURL,
-		CreatedAt:   product.CreatedAt,
-		UpdatedAt:   product.UpdatedAt,
+		StoreID     : product.StoreID,
+		Name        : product.Name,
+		Description : product.Description,
+		Price       : product.Price,
+		Stock       : product.Stock,
+		ImageURL    : product.ImageURL,
+		Categories  : categoryNames,
+		CreatedAt   : product.CreatedAt,
+		UpdatedAt   : product.UpdatedAt,
 	}
 }
 
 func ProductToDetailResponse(product *entity.Product) *model.ProductDetailResponse {
+	var categoryNames []string
+	if product.Categories != nil {
+		for _, cat := range product.Categories {
+			categoryNames = append(categoryNames, cat.Name)
+		}
+	}
+
 	return &model.ProductDetailResponse{
 		ID:          product.ID,
-		StoreID:     product.StoreID,
-		Name:        product.Name,
-		Description: product.Description,
-		Price:       product.Price,
-		Stock:       product.Stock,
-		ImageURL:    product.ImageURL,
-		CreatedAt:   product.CreatedAt,
-		UpdatedAt:   product.UpdatedAt,
-		Store:       StoreToResponse(product.Store),
+		StoreID     : product.StoreID,
+		Name        : product.Name,
+		Description : product.Description,
+		Price       : product.Price,
+		Stock       : product.Stock,
+		ImageURL    : product.ImageURL,
+		Categories  : categoryNames,
+		CreatedAt   : product.CreatedAt,
+		UpdatedAt   : product.UpdatedAt,
+		Store       : StoreToResponse(product.Store),
 	}
 }
 

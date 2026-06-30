@@ -20,6 +20,12 @@ func NewOrderController(log *logrus.Logger, useCase *usecase.OrderUseCase) *Orde
 	}
 }
 
+// @Summary      List Buyer Orders
+// @Description  Get a list of orders for the current buyer
+// @Tags         Buyer Orders
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/buyer/orders [get]
 func (c *OrderController) ListBuyerOrders(ctx *fiber.Ctx) error {
 	user := middleware.GetUser(ctx)
 
@@ -35,6 +41,13 @@ func (c *OrderController) ListBuyerOrders(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Get Buyer Order Detail
+// @Description  Get details of a specific order for the current buyer
+// @Tags         Buyer Orders
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Order ID"
+// @Router       /api/buyer/orders/{id} [get]
 func (c *OrderController) GetBuyerOrderDetail(ctx *fiber.Ctx) error {
 	user := middleware.GetUser(ctx)
 	orderID := ctx.Params("id")

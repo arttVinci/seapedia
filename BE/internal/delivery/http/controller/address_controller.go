@@ -17,6 +17,12 @@ func NewAddressController(useCase *usecase.AddressUseCase, log *logrus.Logger) *
 	return &AddressController{UseCase: useCase, Log: log}
 }
 
+// @Summary      Get User Addresses
+// @Description  Get a list of addresses for the current user
+// @Tags         Addresses
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/addresses [get]
 func (c *AddressController) List(ctx *fiber.Ctx) error {
 	userID := middleware.GetUser(ctx).ID
 	response, err := c.UseCase.List(ctx.UserContext(), userID)
@@ -30,6 +36,13 @@ func (c *AddressController) List(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Create Address
+// @Description  Add a new address for the current user
+// @Tags         Addresses
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/addresses [post]
 func (c *AddressController) Create(ctx *fiber.Ctx) error {
 	userID := middleware.GetUser(ctx).ID
 	request := new(model.CreateAddressRequest)
@@ -49,6 +62,14 @@ func (c *AddressController) Create(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Update Address
+// @Description  Update an existing address
+// @Tags         Addresses
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Address ID"
+// @Router       /api/addresses/{id} [put]
 func (c *AddressController) Update(ctx *fiber.Ctx) error {
 	userID := middleware.GetUser(ctx).ID
 	addressID := ctx.Params("id")
@@ -69,6 +90,13 @@ func (c *AddressController) Update(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Delete Address
+// @Description  Delete an address
+// @Tags         Addresses
+// @Produce      json
+// @Security     BearerAuth
+// @Param        id   path      string  true  "Address ID"
+// @Router       /api/addresses/{id} [delete]
 func (c *AddressController) Delete(ctx *fiber.Ctx) error {
 	userID := middleware.GetUser(ctx).ID
 	addressID := ctx.Params("id")

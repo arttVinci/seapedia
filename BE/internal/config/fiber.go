@@ -3,7 +3,9 @@ package config
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/viper"
+	fiberSwagger "github.com/swaggo/fiber-swagger"
 
+	_ "github.com/traa/seapedia/server/docs"
 	"github.com/traa/seapedia/server/internal/model"
 )
 
@@ -16,6 +18,8 @@ func NewFiber(config *viper.Viper) *fiber.App {
 	})
 
 	app.Static("/public", "./public")
+
+	app.Get("/swagger/*", fiberSwagger.WrapHandler)
 
 
 	return app

@@ -25,6 +25,8 @@ type RouteConfig struct {
 	BuyerReportController       *controller.BuyerReportController
 	SellerReportController      *controller.SellerReportController
 	DriverController            *controller.DriverController
+	CategoryController          *controller.CategoryController
+	AdminController             *controller.AdminController
 	RoleMiddleware              func(allowedRoles ...string) fiber.Handler
 }
 
@@ -55,6 +57,7 @@ func (c *RouteConfig) SetupPublicRoute() {
 	c.App.Get("/api/products/:id", c.ProductController.Detail)
 	c.App.Get("/api/stores", c.StoreController.List)
 	c.App.Get("/api/stores/:id", c.StoreController.Detail)
+	c.App.Get("/api/categories", c.CategoryController.GetAll)
 
 	// Reviews
 	c.App.Get("/api/reviews", c.ApplicationReviewController.List)
@@ -72,6 +75,7 @@ func (c *RouteConfig) SetupAuthRoute() {
 	authGroup.Post("/_select-role", c.UserController.SelectRole)
 	authGroup.Post("/_add-role", c.UserController.AddRole)
 	authGroup.Get("/_current", c.UserController.Current)
+	authGroup.Put("/_current", c.UserController.UpdateProfile)
 }
 
 func (c *RouteConfig) SetupSellerRoute() {
@@ -82,7 +86,7 @@ func (c *RouteConfig) SetupSellerRoute() {
 
 	sellerGroup.Get("/products", c.ProductController.ListMyProducts)
 	sellerGroup.Post("/products", c.ProductController.CreateProduct)
-	sellerGroup.Post("/products/upload-image", c.ProductController.UploadImage)
+	sellerGroup.Post("/products/_image", c.ProductController.UploadImage)
 	sellerGroup.Put("/products/:id", c.ProductController.UpdateProduct)
 	sellerGroup.Delete("/products/:id", c.ProductController.DeleteProduct)
 
@@ -154,4 +158,10 @@ func (c *RouteConfig) SetupAdminRoute() {
 	adminGroup.Get("/promos", c.PromoController.List)
 	adminGroup.Post("/promos", c.PromoController.Create)
 	adminGroup.Get("/promos/:id", c.PromoController.Detail)
+
+	// Dashboard & System
+	if c.AdminController != nil {
+		adminGroup.Get("/dashboard", c.AdminController.GetDashboardStats)
+		adminGroup.Post("/system/clock/forward", c.AdminController.SimulateNextDay)
+	}
 }

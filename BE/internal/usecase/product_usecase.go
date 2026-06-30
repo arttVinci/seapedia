@@ -11,6 +11,7 @@ import (
 	"github.com/traa/seapedia/server/internal/model"
 	"github.com/traa/seapedia/server/internal/model/converter"
 	"github.com/traa/seapedia/server/internal/repository"
+	"github.com/traa/seapedia/server/internal/utils"
 	"gorm.io/gorm"
 )
 
@@ -25,6 +26,40 @@ type ProductUseCase struct {
 
 func NewProductUseCase(db *gorm.DB, log *logrus.Logger, validate *validator.Validate, productRepo *repository.ProductRepository, storeRepo *repository.StoreRepository, uploadRepo *repository.UploadImageRepository) *ProductUseCase {
 	return &ProductUseCase{DB: db, Log: log, Validate: validate, ProductRepository: productRepo, StoreRepository: storeRepo, UploadImageRepository: uploadRepo}
+}
+
+func (u *ProductUseCase) processCategories(tx *gorm.DB, categoryNames []string) ([]entity.Category, error) {
+	var categories []entity.Category
+	
+	// Deduplicate names to avoid unique constraint errors in the same request
+	seen := make(map[string]bool)
+	var uniqueNames []string
+	for _, name := range categoryNames {
+		if name != "" && !seen[name] {
+			seen[name] = true
+			uniqueNames = append(uniqueNames, name)
+		}
+	}
+
+	for _, name := range uniqueNames {
+		var cat entity.Category
+		err := tx.Where("name = ?", name).First(&cat).Error
+		if err != nil {
+			if err == gorm.ErrRecordNotFound {
+				cat = entity.Category{
+					ID:   uuid.NewString(),
+					Name: name,
+				}
+				if err := tx.Create(&cat).Error; err != nil {
+					return nil, err
+				}
+			} else {
+				return nil, err
+			}
+		}
+		categories = append(categories, cat)
+	}
+	return categories, nil
 }
 
 func (u *ProductUseCase) Search(ctx context.Context, request *model.SearchProductRequest) ([]model.ProductResponse, int64, error) {
@@ -106,6 +141,13 @@ func (u *ProductUseCase) Create(ctx context.Context, userID string, request *mod
 	tx := db.Begin()
 	defer tx.Rollback()
 
+	categories, err := u.processCategories(tx, request.Categories)
+	if err != nil {
+		u.Log.Warnf("Failed to process categories : %+v", err)
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal memproses kategori")
+	}
+	product.Categories = categories
+
 	if err := u.ProductRepository.Create(tx, product); err != nil {
 		u.Log.Warnf("Failed to create product : %+v", err)
 		return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal membuat produk")
@@ -145,6 +187,19 @@ func (u *ProductUseCase) Update(ctx context.Context, userID string, productID st
 
 	tx := db.Begin()
 	defer tx.Rollback()
+
+	categories, err := u.processCategories(tx, request.Categories)
+	if err != nil {
+		u.Log.Warnf("Failed to process categories : %+v", err)
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal memproses kategori")
+	}
+	
+	if err := tx.Model(product).Association("Categories").Replace(categories); err != nil {
+		u.Log.Warnf("Failed to update categories : %+v", err)
+		return nil, fiber.NewError(fiber.StatusInternalServerError, "Gagal memproses kategori")
+	}
+
+
 
 	if err := u.ProductRepository.Update(tx, product); err != nil {
 		u.Log.Warnf("Failed to update product : %+v", err)
@@ -187,3 +242,40 @@ func (u *ProductUseCase) Delete(ctx context.Context, userID string, productID st
 
 	return nil
 }
+
+func (u *ProductUseCase) UploadImage(ctx context.Context, request *model.UploadImageRequest) (string, error) {
+	tx := u.DB.WithContext(ctx).Begin()
+	defer tx.Rollback()
+
+	if request.ID != "" {
+		product := new(entity.Product)
+		// Fetch product to ensure ownership via store
+		store := new(entity.Store)
+		if err := u.StoreRepository.FindByUserID(tx, store, request.UserID); err != nil {
+			return "", fiber.NewError(fiber.StatusNotFound, "Anda belum memiliki toko")
+		}
+
+		if err := u.ProductRepository.FindByIdWithStore(tx, product, request.ID); err != nil {
+			u.Log.WithError(err).Error("error getting product")
+		} else if product.StoreID == store.ID && product.ImageURL != "" {
+			publicId := utils.ExtractPublicID(product.ImageURL)
+			if err := u.UploadImageRepository.DeleteImage(ctx, publicId); err != nil {
+				u.Log.WithError(err).Error("error delete old image")
+			}
+		}
+	}
+
+	imageUrl, err := u.UploadImageRepository.UploadImage(ctx, request.Image, "seapedia-assets/public/products")
+	if err != nil {
+		u.Log.WithError(err).Error("error uploading image")
+		return "", fiber.NewError(fiber.StatusInternalServerError, "Failed to upload image")
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		u.Log.WithError(err).Error("error committing upload image")
+		return "", fiber.NewError(fiber.StatusInternalServerError, "Failed to save image")
+	}
+
+	return imageUrl, nil
+}
+

@@ -10,3 +10,4 @@ export * from './report.types';
 export * from './cart.types';
 export * from './wallet.types';
 export * from './address.types';
+export * from './admin.types';

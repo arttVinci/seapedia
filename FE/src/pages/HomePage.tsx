@@ -11,9 +11,11 @@ import {
   Sparkles,
   Shirt,
   Smartphone,
-  Home,
+  Laptop,
   Apple,
-  Baby,
+  Gamepad2,
+  Home,
+  Footprints,
   Dumbbell,
   Gift,
   Truck,
@@ -82,6 +84,28 @@ export function HomePage() {
             Jutaan produk dari fashion, rumah tangga, kecantikan, hingga
             kebutuhan harian. Gratis ongkir & harga terbaik setiap hari!
           </p>
+          <div className="mt-8 flex justify-center gap-4">
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText("DISKON20");
+                toast.success("Kode Promo DISKON20 disalin!");
+              }}
+              className="px-6 py-3 bg-white/20 hover:bg-white/30 backdrop-blur-md text-white rounded-xl font-medium border border-white/30 transition-all shadow-sm flex items-center gap-2"
+            >
+              <Sparkles className="w-5 h-5" />
+              Copy Promo (20%)
+            </button>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText("VOUCHER70");
+                toast.success("Kode Voucher VOUCHER70 disalin!");
+              }}
+              className="px-6 py-3 bg-white text-blue-600 hover:bg-blue-50 rounded-xl font-bold transition-all shadow-lg flex items-center gap-2"
+            >
+              <Gift className="w-5 h-5" />
+              Copy Voucher (70k)
+            </button>
+          </div>
         </div>
       </div>
 
@@ -90,18 +114,18 @@ export function HomePage() {
         <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 p-6">
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-8 gap-4">
             {[
+              { icon: Smartphone, label: "Handphone" },
+              { icon: Laptop, label: "Laptop" },
+              { icon: Apple, label: "Apple" },
+              { icon: Gamepad2, label: "Gaming" },
               { icon: Shirt, label: "Fashion" },
-              { icon: Smartphone, label: "Elektronik" },
-              { icon: Home, label: "Rumah Tangga" },
-              { icon: Sparkles, label: "Kecantikan" },
-              { icon: Apple, label: "Makanan" },
-              { icon: Baby, label: "Ibu & Anak" },
               { icon: Dumbbell, label: "Olahraga" },
-              { icon: Gift, label: "Hobi" },
+              { icon: Footprints, label: "Sepatu" },
+              { icon: Home, label: "Rumah Tangga" },
             ].map((cat) => (
               <Link
                 key={cat.label}
-                to={`/catalog?category=${cat.label.toLowerCase()}`}
+                to={`/catalog?category=${encodeURIComponent(cat.label)}`}
                 className="group flex flex-col items-center gap-2 rounded-xl p-3 hover:bg-blue-50 transition-colors"
               >
                 <div className="bg-slate-50 p-3 rounded-full group-hover:bg-blue-100 transition-colors">
@@ -212,30 +236,36 @@ export function HomePage() {
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-800 to-slate-900 p-8 text-white">
             <div className="absolute -right-8 -bottom-8 w-40 h-40 rounded-full bg-white/10 blur-2xl"></div>
             <p className="text-sm font-semibold text-slate-300">FLASH SALE</p>
-            <h3 className="text-2xl font-extrabold mt-1">Diskon Hingga 70%</h3>
+            <h3 className="text-2xl font-extrabold mt-1">Diskon Hingga 20%</h3>
             <p className="text-blue-50 mt-2 text-sm">
-              Buruan sebelum kehabisan!
+              Gunakan kode <strong>DISKON20</strong> saat checkout!
             </p>
-            <Link to="/catalog">
-              <Button className="mt-5 bg-white text-slate-900 hover:bg-blue-50 font-semibold rounded-xl">
-                Belanja Sekarang
-              </Button>
-            </Link>
+            <Button
+              className="mt-5 bg-white text-slate-900 hover:bg-blue-50 font-semibold rounded-xl"
+              onClick={() => {
+                navigator.clipboard.writeText("DISKON20");
+                toast.success("Kode promo DISKON20 disalin!");
+              }}
+            >
+              Salin Kode Promo
+            </Button>
           </div>
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-700 to-blue-900 p-8 text-white">
             <div className="absolute -right-8 -bottom-8 w-40 h-40 rounded-full bg-white/10 blur-2xl"></div>
             <p className="text-sm font-semibold text-blue-200">VOUCHER BARU</p>
-            <h3 className="text-2xl font-extrabold mt-1">
-              Cashback s/d Rp50.000
-            </h3>
+            <h3 className="text-2xl font-extrabold mt-1">Voucher Rp 70.000</h3>
             <p className="text-blue-100 mt-2 text-sm">
-              Klaim voucher untuk pengguna baru.
+              Klaim dengan kode <strong>VOUCHER70</strong> sekarang.
             </p>
-            <Link to="/register">
-              <Button className="mt-5 bg-white text-blue-700 hover:bg-blue-50 font-semibold rounded-xl">
-                Klaim Voucher
-              </Button>
-            </Link>
+            <Button
+              className="mt-5 bg-white text-blue-700 hover:bg-blue-50 font-semibold rounded-xl"
+              onClick={() => {
+                navigator.clipboard.writeText("VOUCHER70");
+                toast.success("Kode voucher VOUCHER70 disalin!");
+              }}
+            >
+              Salin Kode Voucher
+            </Button>
           </div>
         </div>
       </div>

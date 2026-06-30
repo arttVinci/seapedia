@@ -3,7 +3,6 @@ import {
   Package,
   ShoppingCart,
   Truck,
-  Settings,
   Store,
   User,
   Wallet,
@@ -35,14 +34,12 @@ export function Sidebar({ role }: SidebarProps) {
             links: [
               { name: "Dashboard Utama", href: "/seller" },
               { name: "Pengaturan Toko", href: "/seller/store" },
-            ]
+            ],
           },
           {
             title: "Produk",
             icon: Package,
-            links: [
-              { name: "Daftar Produk", href: "/seller/products" },
-            ]
+            links: [{ name: "Daftar Produk", href: "/seller/products" }],
           },
           {
             title: "Pesanan",
@@ -50,15 +47,15 @@ export function Sidebar({ role }: SidebarProps) {
             links: [
               { name: "Pesanan Masuk", href: "/seller/orders" },
               { name: "Riwayat Pesanan", href: "/seller/orders/history" },
-            ]
+            ],
           },
           {
             title: "Keuangan",
             icon: Wallet,
             links: [
               { name: "Laporan Pendapatan", href: "/seller/reports/income" },
-            ]
-          }
+            ],
+          },
         ];
       case "driver":
         return [
@@ -69,17 +66,15 @@ export function Sidebar({ role }: SidebarProps) {
               { name: "Dashboard", href: "/driver" },
               { name: "Cari Pekerjaan", href: "/driver/jobs" },
               { name: "Pekerjaan Aktif", href: "/driver/active-job" },
-            ]
-          }
+            ],
+          },
         ];
       case "admin":
         return [
           {
             title: "Manajemen",
             icon: Activity,
-            links: [
-              { name: "Dashboard", href: "/admin" },
-            ]
+            links: [{ name: "Dashboard", href: "/admin" }],
           },
           {
             title: "Promosi",
@@ -87,8 +82,8 @@ export function Sidebar({ role }: SidebarProps) {
             links: [
               { name: "Vouchers", href: "/admin/vouchers" },
               { name: "Promos", href: "/admin/promos" },
-            ]
-          }
+            ],
+          },
         ];
       default:
         // Fallback
@@ -96,10 +91,8 @@ export function Sidebar({ role }: SidebarProps) {
           {
             title: "Akun Saya",
             icon: User,
-            links: [
-              { name: "Dashboard", href: "/dashboard" },
-            ]
-          }
+            links: [{ name: "Pengaturan", href: "/settings" }],
+          },
         ];
     }
   };
@@ -113,7 +106,9 @@ export function Sidebar({ role }: SidebarProps) {
           <div key={index}>
             <div className="flex items-center gap-3 px-1 mb-4">
               <group.icon className="h-6 w-6 text-gray-900" strokeWidth={1.5} />
-              <h3 className="text-base font-bold text-gray-900">{group.title}</h3>
+              <h3 className="text-base font-bold text-gray-900">
+                {group.title}
+              </h3>
             </div>
             <ul className="space-y-1">
               {group.links.map((link) => {
@@ -127,7 +122,7 @@ export function Sidebar({ role }: SidebarProps) {
                         "block rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                         isExactActive
                           ? "bg-blue-50 text-blue-700 font-semibold"
-                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
                       )}
                     >
                       {link.name}
@@ -138,17 +133,6 @@ export function Sidebar({ role }: SidebarProps) {
             </ul>
           </div>
         ))}
-      </div>
-      
-      {/* Settings at the bottom */}
-      <div className="mt-8 pt-6 border-t border-gray-100">
-        <Link
-          to="/dashboard/settings"
-          className="flex items-center gap-3 px-1 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          <Settings className="h-5 w-5 text-gray-500" strokeWidth={1.5} />
-          Pengaturan
-        </Link>
       </div>
     </div>
   );

@@ -64,3 +64,9 @@ type AddRoleRequest struct {
 type AddRoleResponse struct {
 	Role string `json:"role"`
 }
+
+type UpdateUserRequest struct {
+	Username string `json:"username" validate:"required,min=3,max=50"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"omitempty,min=6"`
+}

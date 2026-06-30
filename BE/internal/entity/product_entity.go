@@ -12,6 +12,7 @@ type Product struct {
 	UpdatedAt   int64  `gorm:"column:updated_at;autoUpdateTime:milli"`
 
 	Store *Store `gorm:"foreignKey:StoreID"`
+	Categories []Category `gorm:"many2many:product_categories;"`
 }
 
 func (Product) TableName() string {

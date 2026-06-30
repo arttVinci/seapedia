@@ -20,6 +20,13 @@ func NewCheckoutController(log *logrus.Logger, useCase *usecase.CheckoutUseCase)
 	}
 }
 
+// @Summary      Preview Checkout
+// @Description  Calculate total, shipping, and discounts before checking out
+// @Tags         Checkout
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/checkout/_preview [post]
 func (c *CheckoutController) Preview(ctx *fiber.Ctx) error {
 	user := middleware.GetUser(ctx)
 
@@ -41,6 +48,13 @@ func (c *CheckoutController) Preview(ctx *fiber.Ctx) error {
 	})
 }
 
+// @Summary      Process Checkout
+// @Description  Create the order and process checkout
+// @Tags         Checkout
+// @Accept       json
+// @Produce      json
+// @Security     BearerAuth
+// @Router       /api/checkout [post]
 func (c *CheckoutController) Checkout(ctx *fiber.Ctx) error {
 	user := middleware.GetUser(ctx)
 

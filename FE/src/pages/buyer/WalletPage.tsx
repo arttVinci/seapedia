@@ -25,13 +25,15 @@ const WalletPage: React.FC = () => {
   const { mutate: topup, isPending: isTopupPending } = useWalletTopup();
 
   const [isTopupModalOpen, setIsTopupModalOpen] = useState(false);
+  const [topupAmount, setTopupAmount] = useState<number>(100000);
 
   const handleTopup = () => {
     topup(
-      { amount: 100000 },
+      { amount: topupAmount },
       {
         onSuccess: () => {
           setIsTopupModalOpen(false);
+          setTopupAmount(100000);
         },
       }
     );
@@ -169,12 +171,35 @@ const WalletPage: React.FC = () => {
               </div>
               <h3 className="text-2xl font-bold text-gray-900">Konfirmasi Top Up</h3>
               <p className="text-gray-500 mt-2 text-sm leading-relaxed">
-                Anda akan melakukan pengisian saldo simulasi (dummy) ke dompet Seapedia Pay sebesar
+                Pilih nominal pengisian saldo simulasi (dummy) ke dompet Seapedia Pay Anda.
               </p>
             </div>
             
-            <div className="bg-gray-50 rounded-2xl p-4 flex justify-center items-center mb-8 border border-gray-100">
-              <span className="text-3xl font-black text-blue-700 tracking-tight">{formatCurrency(100000)}</span>
+            <div className="mb-6">
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  50000, 100000, 200000, 
+                  500000, 1000000, 2000000, 
+                  5000000, 10000000, 20000000
+                ].map((amount) => (
+                  <button
+                    key={amount}
+                    onClick={() => setTopupAmount(amount)}
+                    className={`py-2 px-1 rounded-xl border text-sm font-bold transition-all ${
+                      topupAmount === amount
+                        ? 'bg-blue-50 border-blue-600 text-blue-700 shadow-sm'
+                        : 'bg-white border-gray-200 text-gray-600 hover:border-blue-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    {amount >= 1000000 ? `${amount / 1000000} Jt` : `${amount / 1000} rb`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-gray-50 rounded-2xl p-4 flex justify-between items-center mb-8 border border-gray-100">
+              <span className="text-sm font-bold text-gray-600">Total</span>
+              <span className="text-2xl font-black text-blue-700 tracking-tight">{formatCurrency(topupAmount)}</span>
             </div>
 
             <div className="flex flex-col gap-3">

@@ -6,7 +6,7 @@ export function DashboardShell() {
   const { activeRole } = useAuth();
 
   return (
-    <div className="mx-auto w-full max-w-[85rem] px-4 py-8 sm:px-6 lg:px-8 relative z-10">
+    <div className="mx-auto w-full max-w-[85rem] px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-col gap-8 lg:flex-row">
         {/* Sidebar */}
         <div className="hidden w-64 flex-shrink-0 lg:block sticky top-28 self-start max-h-[calc(100vh-7rem)] overflow-y-auto">
