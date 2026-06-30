@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
@@ -78,7 +79,15 @@ func now() int64 {
 }
 
 func main() {
-	dsn := "seapedia:seapedia123mysqlseapedia321@tcp(localhost:3306)/seapedia?charset=utf8mb4&parseTime=True&loc=Local"
+	username := os.Getenv("DB_USER")
+    password := os.Getenv("DB_PASS")
+    host     := os.Getenv("DB_HOST")
+    port     := os.Getenv("DB_PORT")
+    dbName   := os.Getenv("DB_NAME")
+
+    // Membuat DSN string
+    dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local&tls=true&tidb_skip_isolation_level_check=1", 
+        username, password, host, port, dbName)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("Failed to connect to db: %v", err)
