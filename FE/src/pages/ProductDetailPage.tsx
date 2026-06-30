@@ -253,12 +253,6 @@ export function ProductDetailPage() {
                 >
                   {addToCartMutation.isPending ? "Menambahkan..." : "+ Keranjang"}
                 </button>
-                <button
-                  disabled={product.stock < 1}
-                  className="w-full inline-flex items-center justify-center px-4 py-2.5 text-sm font-bold text-blue-600 bg-white border border-blue-600 rounded-lg hover:bg-blue-50 disabled:opacity-50"
-                >
-                  Beli Langsung
-                </button>
               </div>
             ) : (
               <p className="text-sm text-gray-500 text-center bg-gray-50 p-2 rounded-lg border border-gray-100">
