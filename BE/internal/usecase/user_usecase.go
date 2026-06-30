@@ -226,13 +226,18 @@ func (c *UserUseCase) Roles(ctx context.Context, authModel *model.Auth) (*model.
 		return nil, err
 	}
 
-	var roles []string
+	roleMap := make(map[string]bool)
 	for _, userRole := range userRoles {
-		roles = append(roles, userRole.Role)
+		roleMap[userRole.Role] = true
 	}
 
 	if user.IsAdmin {
-		roles = append(roles, "admin")
+		roleMap["admin"] = true
+	}
+
+	var roles []string
+	for role := range roleMap {
+		roles = append(roles, role)
 	}
 
 	if err := tx.Commit().Error; err != nil {

@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useLogin } from "../hooks/mutations/auth/useLogin";
+import { useSelectRole } from "../hooks/mutations/auth/useSelectRole";
 import { Mail, Lock, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { Button, Input } from "../components/ui";
+import authService from "../services/authService";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,7 +15,9 @@ export function LoginPage() {
   const [error, setError] = useState("");
 
   const loginMutation = useLogin();
+  const selectRoleMutation = useSelectRole();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,8 +26,28 @@ export function LoginPage() {
     loginMutation.mutate(
       { email, password },
       {
-        onSuccess: () => {
-          navigate("/select-role", { state: { fromLogin: true } });
+        onSuccess: async () => {
+          try {
+            const data = await authService.getRoles();
+            const roles = data.roles || [];
+            
+            if (roles.length > 0) {
+              const defaultRole = roles.includes("buyer") ? "buyer" : roles[0];
+              await selectRoleMutation.mutateAsync({ role: defaultRole as any });
+              await queryClient.invalidateQueries({ queryKey: ["roles"] });
+              
+              toast.success(`Berhasil masuk sebagai ${defaultRole}!`);
+              if (defaultRole === "buyer") {
+                navigate("/");
+              } else {
+                navigate(`/${defaultRole}`);
+              }
+            } else {
+              navigate("/select-role");
+            }
+          } catch (err) {
+             navigate("/select-role");
+          }
         },
         onError: (err: any) => {
           const errMsg =

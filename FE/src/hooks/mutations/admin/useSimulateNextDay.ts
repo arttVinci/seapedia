@@ -6,7 +6,7 @@ export const useSimulateNextDay = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: adminService.simulateNextDay,
+    mutationFn: () => adminService.simulateNextDay(),
     onSuccess: (data) => {
       toast.success(`Sistem berhasil maju ke Hari ${data.current_simulated_day}. ${data.processed_overdue} pesanan overdue diproses.`);
       queryClient.invalidateQueries({ queryKey: ["admin", "dashboard", "stats"] });

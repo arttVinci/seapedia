@@ -308,7 +308,7 @@ export function Navbar() {
                   )}
 
                   {/* Role Switcher or Buka Toko button */}
-                  {activeRole && (
+                  {activeRole ? (
                     <div className="flex items-center">
                       {availableRoles.length > 1 ? (
                         <div className="relative" ref={roleDropdownRef}>
@@ -391,9 +391,19 @@ export function Navbar() {
                         )
                       )}
                     </div>
+                  ) : (
+                    user && (
+                      <Link
+                        to="/select-role"
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors text-sm font-semibold"
+                      >
+                        <Users className="h-4 w-4" />
+                        Pilih Peran
+                      </Link>
+                    )
                   )}
 
-                  {activeRole && user && (
+                  {user && (
                     <div className="relative" ref={dropdownRef}>
                       <button
                         onClick={() => setDropdownOpen(!dropdownOpen)}
