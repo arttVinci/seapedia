@@ -1,6 +1,6 @@
 # PRD - SEAPEDIA Marketplace
 
-> **Single Source of Truth.** Seluruh dokumen turunan (System Map, SDD, Workflow, ERD, API Contract, Task Breakdown, hingga implementasi) HARUS mengacu pada dokumen ini, bukan pada slide/PDF Technical Challenge. Jika terjadi konflik antara dokumen ini dan sumber lain, dokumen ini yang berlaku.
+> **Single Source of Truth.** Seluruh dokumen turunan (System Map, SDD, Workflow, ERD, API Contract, Task Breakdown, hingga implementasi) HARUS mengacu pada dokumen ini. Jika terjadi konflik antara dokumen ini dan sumber lain, dokumen ini yang berlaku.
 >
 > Versi: 1.0 | Status: Baseline
 
