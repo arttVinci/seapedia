@@ -6,7 +6,7 @@ Dibangun dalam **5 hari** untuk mengejar deadline kompetisi (info kompetisi baru
 
 > ⏱️ Status: dikembangkan bertahap mengikuti 7 Tingkat di [`docs/PRD.md`](docs/PRD.md), saat ini progres ada di Tingkat 5 (modul Driver & Pengiriman). Lihat [`docs/system_map.md`](docs/system_map.md) untuk peta modul lengkap.
 
-<!-- 
+<!--
   TODO: tambahkan screenshot/GIF demo di sini, contoh:
   ![Demo Seapedia](docs/assets/demo.gif)
 -->
@@ -34,10 +34,10 @@ Dibangun dalam **5 hari** untuk mengejar deadline kompetisi (info kompetisi baru
 
 ## Live Demo
 
-| | URL |
-|-|-----|
-| 🌐 Frontend | [seapedia.pages.dev](https://seapedia.pages.dev) |
-| ⚙️ Backend API | [seapedia-api-97290399817.asia-southeast2.run.app/api](https://seapedia-api-97290399817.asia-southeast2.run.app/api) |
+|                | URL                                                                                                                  |
+| -------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 🌐 Frontend    | [seapedia.pages.dev](https://seapedia.pages.dev)                                                                     |
+| 🌐 Backend API | [seapedia-api-97290399817.asia-southeast2.run.app/api](https://seapedia-api-97290399817.asia-southeast2.run.app/api) |
 
 ## Demo Accounts
 
@@ -47,45 +47,48 @@ Login bisa menggunakan **username** atau **email**.
 
 **🛍️ Buyer** — Saldo dompet Rp 50.000.000
 
-| Username | Email |
-|----------|-------|
-| buyer1 | buyer1@seapedia.com |
-| buyer2 | buyer2@seapedia.com |
+| Username | Email               |
+| -------- | ------------------- |
+| buyer1   | buyer1@seapedia.com |
+| buyer2   | buyer2@seapedia.com |
 
-**🛵 Driver**
+**Driver**
 
-| Username | Email |
-|----------|-------|
-| driver1 | driver1@seapedia.com |
-| driver2 | driver2@seapedia.com |
+| Username | Email                |
+| -------- | -------------------- |
+| driver1  | driver1@seapedia.com |
+| driver2  | driver2@seapedia.com |
 
-**🏬 Seller**
+**Seller**
 
-| Username | Email | Toko |
-|----------|-------|------|
-| seller_apple | seller_apple@seapedia.com | iBox KW |
-| seller_fashion | seller_fashion@seapedia.com | Style OOTD |
-| seller_olahraga | seller_olahraga@seapedia.com | Sportivo |
-| seller_sepatu | seller_sepatu@seapedia.com | Shoe Center |
-| seller_rumah | seller_rumah@seapedia.com | Homey Living |
+| Username         | Email                         | Toko         |
+| ---------------- | ----------------------------- | ------------ |
+| seller_apple     | seller_apple@seapedia.com     | iBox KW      |
+| seller_fashion   | seller_fashion@seapedia.com   | Style OOTD   |
+| seller_olahraga  | seller_olahraga@seapedia.com  | Sportivo     |
+| seller_sepatu    | seller_sepatu@seapedia.com    | Shoe Center  |
+| seller_rumah     | seller_rumah@seapedia.com     | Homey Living |
+| seller_laptop    | seller_laptop@seapedia.com    | Laptop Store |
+| seller_handphone | seller_handphone@seapedia.com | HP Store     |
+| seller_gaming    | seller_gaming@seapedia.com    | Gaming Store |
 
-**🔧 Admin**
+**Admin**
 
-| Email |
-|-------|
+| Email              |
+| ------------------ |
 | admin@seapedia.com |
 
 ---
 
 ## Tech Stack
 
-| Layer | Teknologi |
-|-------|-----------|
-| Frontend | React 19 + TypeScript, Vite, TanStack React Query, React Router, Tailwind CSS v4, shadcn/ui, Radix UI, Axios, Framer Motion |
-| Backend | Go 1.25, Fiber v2, GORM, Viper (config), go-playground/validator, JWT (golang-jwt), bcrypt, Logrus |
-| Database | MySQL 8 (local/Docker) — TiDB Cloud (production) |
-| Media Storage | Cloudinary (upload gambar produk) |
-| Containerization | Docker & Docker Compose |
+| Layer            | Teknologi                                                                                                                   |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Frontend         | React 19 + TypeScript, Vite, TanStack React Query, React Router, Tailwind CSS v4, shadcn/ui, Radix UI, Axios, Framer Motion |
+| Backend          | Go 1.25, Fiber v2, GORM, Viper (config), go-playground/validator, JWT (golang-jwt), bcrypt, Logrus                          |
+| Database         | MySQL 8 (local/Docker) — TiDB Cloud (production)                                                                            |
+| Media Storage    | Cloudinary (upload gambar produk)                                                                                           |
+| Containerization | Docker & Docker Compose                                                                                                     |
 
 ## Arsitektur
 
@@ -251,6 +254,7 @@ docker compose up -d
 ```
 
 Menjalankan dua container:
+
 - `seapedia_mysql` — MySQL 8, expose ke `localhost:${DB_PORT_EXTERNAL}`
 - `seapedia_be` — backend Go + Fiber, expose ke `localhost:8080`
 
@@ -305,15 +309,16 @@ docker compose down -v       # stop & hapus container + volume DB (reset total)
 
 ## Deployment & Infra
 
-| Komponen | Layanan |
-|----------|---------|
-| Backend | Google Cloud Platform (GCP) |
-| Frontend | Cloudflare Pages |
-| Database | TiDB Cloud |
-| Media/Gambar | Cloudinary |
-| Monitoring & Auto-Fix | **Hermes** (agent otonom) |
+| Komponen              | Layanan                     |
+| --------------------- | --------------------------- |
+| Backend               | Google Cloud Platform (GCP) |
+| Frontend              | Cloudflare Pages            |
+| Database              | TiDB Cloud                  |
+| Media/Gambar          | Cloudinary                  |
+| Monitoring & Auto-Fix | **Hermes** (agent otonom)   |
 
 **Hermes** adalah agent otonom yang memantau log production di GCP secara real-time:
+
 - Jika menemukan error ringan, Hermes akan **memperbaikinya sendiri** dan membuat **Pull Request** ke repository.
 - Jika menemukan error berat, Hermes akan **melapor via Telegram**: penjelasan errornya apa, root cause-nya, dan langkah perbaikan yang disarankan — tanpa langsung mengubah kode.
 
@@ -321,16 +326,17 @@ docker compose down -v       # stop & hapus container + volume DB (reset total)
 
 Proyek ini dibangun dengan workflow multi-agent karena waktu pengerjaan yang sangat terbatas (5 hari sejak info kompetisi diterima). Pembagian kerjanya:
 
-| Tahap | Tool / Tempat Kerja | LLM yang Dipakai |
-|-------|----------------------|-------------------|
-| Perancangan (SDD, System Map, Workflow, Skills) | — | Claude Opus |
-| Planning Task | — | GLM, Claude Opus |
-| Implementasi / Coding | **Trae** (orkestrasi multi-agent coding) | DeepSeek V4 Pro, Gemini 3.1 Pro, Qwen 3.6 |
-| Review Code & Monitoring Agent | **Antigravity** (tempat kerja utama dev, untuk review & fix bug agent) | — |
-| QA / Review | — | GPT |
-| Monitoring Production & Auto-Fix | Hermes (agent otonom di GCP) | — |
+| Tahap                                           | Tool / Tempat Kerja                                                    | LLM yang Dipakai                          |
+| ----------------------------------------------- | ---------------------------------------------------------------------- | ----------------------------------------- |
+| Perancangan (SDD, System Map, Workflow, Skills) | —                                                                      | Claude Opus                               |
+| Planning Task                                   | —                                                                      | GLM, Claude Opus                          |
+| Implementasi / Coding                           | **Trae** (orkestrasi multi-agent coding)                               | DeepSeek V4 Pro, Gemini 3.1 Pro, Qwen 3.6 |
+| Review Code & Monitoring Agent                  | **Antigravity** (tempat kerja utama dev, untuk review & fix bug agent) | —                                         |
+| QA / Review                                     | —                                                                      | GPT                                       |
+| Monitoring Production & Auto-Fix                | Hermes (agent otonom di GCP)                                           | —                                         |
 
 Alur singkatnya:
+
 1. **Claude Opus** merancang dokumen desain teknis (SDD, system map) dan skill yang dipakai agent-agent implementasi.
 2. **GLM & Claude Opus** memecah desain jadi task-task konkret per modul/tingkat.
 3. Task dikerjakan oleh agent-agent coding di **Trae**, menggunakan DeepSeek V4 Pro, Gemini 3.1 Pro, dan Qwen 3.6 sebagai LLM penulis kode.
@@ -369,11 +375,11 @@ Final Total     = Subtotal - Discount + Delivery Fee + Tax
 
 **Delivery Fee per metode:**
 
-| Metode | Fee |
-|--------|-----|
-| `instant` | Rp 20.000 |
+| Metode     | Fee       |
+| ---------- | --------- |
+| `instant`  | Rp 20.000 |
 | `next_day` | Rp 15.000 |
-| `regular` | Rp 10.000 |
+| `regular`  | Rp 10.000 |
 
 ### Aturan Diskon (Voucher & Promo)
 
@@ -397,13 +403,14 @@ Sistem menggunakan **simulated day** (bukan waktu real) untuk kalkulasi overdue.
 
 **SLA per metode pengiriman:**
 
-| Metode | SLA (simulated day) |
-|--------|---------------------|
-| `instant` | 0 hari (harus diambil driver di hari yang sama) |
-| `next_day` | 1 hari |
-| `regular` | 3 hari |
+| Metode     | SLA (simulated day)                             |
+| ---------- | ----------------------------------------------- |
+| `instant`  | 0 hari (harus diambil driver di hari yang sama) |
+| `next_day` | 1 hari                                          |
+| `regular`  | 3 hari                                          |
 
 **Mekanisme auto-refund saat overdue:**
+
 1. Order dengan status `Sedang Dikemas` atau `Menunggu Pengirim` yang melewati `due_simulated_day` akan diubah statusnya ke `Dikembalikan`.
 2. `FinalTotal` dikembalikan penuh ke **wallet Buyer** dan dicatat sebagai transaksi `refund`.
 3. **Stok produk** di-restore sesuai quantity order item.
@@ -442,13 +449,13 @@ Frontend dibangun dengan **React + TypeScript**. Semua nilai variabel yang diren
 
 Backend menggunakan **go-playground/validator** untuk memvalidasi semua request body sebelum diproses usecase. Contoh aturan yang diterapkan:
 
-| Field | Rule |
-|-------|------|
-| `username` | `required, min=3, max=50` |
-| `email` | `required, email` |
-| `password` | `required, min=6` |
-| `role` | `oneof=buyer seller driver` |
-| `rating` (review) | `min=1, max=5` |
+| Field             | Rule                        |
+| ----------------- | --------------------------- |
+| `username`        | `required, min=3, max=50`   |
+| `email`           | `required, email`           |
+| `password`        | `required, min=6`           |
+| `role`            | `oneof=buyer seller driver` |
+| `rating` (review) | `min=1, max=5`              |
 
 Request yang tidak lolos validasi langsung dikembalikan dengan HTTP `400 Bad Request` dan pesan error yang deskriptif.
 
@@ -472,11 +479,13 @@ Request yang tidak lolos validasi langsung dikembalikan dengan HTTP `400 Bad Req
 Urutan ini bisa digunakan untuk menguji seluruh alur sistem dari awal hingga selesai menggunakan akun seed yang sudah tersedia (password semua: `admin123`).
 
 ### 1. Guest Flow
+
 1. Buka [seapedia.pages.dev](https://seapedia.pages.dev) tanpa login.
 2. Browse katalog produk dan buka detail produk.
 3. Submit review aplikasi (nama, rating, komentar) — tampil di homepage.
 
 ### 2. Buyer Flow
+
 1. Login sebagai `buyer1` → pilih role **Buyer**.
 2. Top-up wallet di menu Dompet.
 3. Tambahkan beberapa produk dari **satu toko** ke keranjang.
@@ -485,23 +494,27 @@ Urutan ini bisa digunakan untuk menguji seluruh alur sistem dari awal hingga sel
 6. Konfirmasi checkout → order muncul di riwayat pesanan.
 
 ### 3. Seller Flow
+
 1. Login sebagai `seller_apple` → pilih role **Seller**.
 2. Lihat order masuk di menu Pesanan dengan status `Sedang Dikemas`.
 3. Klik **Proses** → status berubah ke `Menunggu Pengirim`.
 
 ### 4. Driver Flow
+
 1. Login sebagai `driver1` → pilih role **Driver**.
 2. Buka menu Cari Job → job dari order tadi muncul.
 3. Ambil job → status order berubah ke `Sedang Dikirim`.
 4. Konfirmasi selesai → status berubah ke `Pesanan Selesai`, earning driver tercatat.
 
 ### 5. Admin Flow
+
 1. Login sebagai `admin@seapedia.com` → langsung masuk Admin Dashboard.
 2. Pantau statistik: total user, toko, produk, order, delivery.
 3. Buat Voucher atau Promo baru di menu Voucher/Promo.
 4. Tekan **+1 Hari** untuk memajukan simulated day — sistem otomatis mendeteksi order overdue, merefund wallet buyer, dan merestore stok.
 
 ### 6. Overdue Demo
+
 1. Buat order baru sebagai Buyer (jangan diambil driver).
 2. Login sebagai Admin → tekan **+1 Hari** berulang hingga melewati SLA.
 3. Order otomatis berubah ke `Dikembalikan`, saldo wallet Buyer bertambah kembali.
@@ -512,10 +525,10 @@ Urutan ini bisa digunakan untuk menguji seluruh alur sistem dari awal hingga sel
 
 Interactive API documentation tersedia via **Swagger UI** — dibangun otomatis dari annotation di source code menggunakan `swaggo/fiber-swagger`.
 
-| | URL |
-|-|-----|
+|                            | URL                                                                                                                                                |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 🔗 Swagger UI (production) | [seapedia-api-97290399817.asia-southeast2.run.app/swagger/index.html](https://seapedia-api-97290399817.asia-southeast2.run.app/swagger/index.html) |
-| 🔗 Swagger UI (local) | [localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html) |
+| 🔗 Swagger UI (local)      | [localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html)                                                                      |
 
 Swagger tersedia setelah container backend berjalan. Semua endpoint sudah terdokumentasi lengkap dengan request body, response schema, dan autentikasi Bearer Token — bisa dicoba langsung dari browser tanpa client lain.
 
