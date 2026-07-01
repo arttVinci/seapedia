@@ -18,7 +18,7 @@
 | 2 Toko & Produk                   | belum mulai   | -                           |
 | 3 Dompet, Keranjang, Checkout     | dalam progres | T3-01, T3-02, T3-03 selesai |
 | 4 Diskon, Proses Pesanan, Laporan | belum mulai   | -                           |
-| 5 Pengiriman & Pengemudi          | dalam progres | T5-01..T5-05 selesai      |
+| 5 Pengiriman & Pengemudi          | dalam progres | T5-01..T5-05 selesai        |
 | 6 Admin, Keterlambatan, Simulasi  | belum mulai   | -                           |
 | 7 Keamanan & Dokumentasi          | belum mulai   | -                           |
 
@@ -62,10 +62,10 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 - [x] T3-07 Checkout preview (hitung ringkasan) (Backend) -- branch: feature/buyer-checkout
 - [x] T3-08 Checkout (modul kritis: penguncian stok) (Backend) -- branch: feature/buyer-checkout
 - [x] T3-09 Order history & detail pembeli (Backend) -- branch: feature/buyer-checkout
-- [ ] T3-10 UI dompet & alamat (Frontend)
-- [ ] T3-11 UI keranjang (Frontend)
+- [x] T3-10 UI dompet & alamat (Frontend)
+- [x] T3-11 UI keranjang (Frontend)
 - [x] T3-12 UI checkout + order history (Frontend) -- branch: feature/buyer-checkout-ui, MR: https://github.com/arttVinci/seapedia/pull/new/feature/buyer-checkout-ui
-- [ ] T3-13 Review tingkat 3 (QA)
+- [x] T3-13 Review tingkat 3 (QA)
 
 ## Tingkat 4: Diskon, Pemrosesan Pesanan Penjual, Laporan
 
@@ -78,7 +78,7 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 - [x] T4-07 UI penjual: incoming order, proses, timeline (Frontend) -- branch: feature/seller-orders-reports-frontend
 - [x] T4-08 UI checkout: input kode diskon + efek (Frontend) -- branch: feature/discounts-frontend
 - [x] T4-09 UI laporan buyer & seller (Frontend) -- branch: feature/seller-orders-reports-frontend
-- [ ] T4-10 Review tingkat 4 (QA)
+- [x] T4-10 Review tingkat 4 (QA)
 
 ## Tingkat 5: Pengiriman & Pengemudi
 
@@ -88,30 +88,30 @@ Checkpoint: setiap tingkat butuh persetujuan manusia sebelum lanjut.
 - [x] T5-04 Dashboard pengemudi (Backend) -- branch: feature/driver-complete-dashboard
 - [x] T5-05 UI pengemudi: job, ambil, selesai, dashboard (Frontend) -- branch: feature/driver-ui
 - [x] T5-06 UI pelacakan pengiriman (buyer & seller) (Frontend) -- branch: feature/delivery-tracking-ui
-- [ ] T5-07 Review tingkat 5 (QA)
+- [x] T5-07 Review tingkat 5 (QA)
   - Bug fix (QA-H3): store_name missing -- branch: fix/qa-driver-store-name
   - Bug fix (QA-H6): status delivery inkonsisten -- branch: fix/qa-delivery-status-lang
 
 ## Tingkat 6: Pemantauan Admin, Keterlambatan, Simulasi Waktu
 
-- [ ] T6-01 Migration + entity: sim_clock (Backend)
-- [ ] T6-02 Endpoint pemantauan admin (Backend)
-- [ ] T6-03 Definisi SLA + perhitungan due_simulated_day (Backend)
-- [ ] T6-04 Majukan hari + proses keterlambatan (modul kritis: idempotent) (Backend)
-- [ ] T6-05 UI admin: dashboard monitoring + Majukan Hari (Frontend)
-- [ ] T6-06 UI admin: kelola voucher/promo data nyata (Frontend)
-- [ ] T6-07 UI: hasil keterlambatan/refund terlihat (Frontend)
-- [ ] T6-08 Review tingkat 6 (QA)
+- [x] T6-01 Migration + entity: sim_clock (Backend)
+- [x] T6-02 Endpoint pemantauan admin (Backend)
+- [x] T6-03 Definisi SLA + perhitungan due_simulated_day (Backend)
+- [x] T6-04 Majukan hari + proses keterlambatan (modul kritis: idempotent) (Backend)
+- [x] T6-05 UI admin: dashboard monitoring + Majukan Hari (Frontend)
+- [x] T6-06 UI admin: kelola voucher/promo data nyata (Frontend)
+- [x] T6-07 UI: hasil keterlambatan/refund terlihat (Frontend)
+- [x] T6-08 Review tingkat 6 (QA)
 
 ## Tingkat 7: Pengerasan Keamanan & Dokumentasi Final
 
-- [ ] T7-01 Pengerasan anti-injeksi SQL (Backend)
-- [ ] T7-02 Pembersihan anti-skrip berbahaya (Backend + Frontend)
-- [ ] T7-03 Validasi field wajib menyeluruh (Backend)
-- [ ] T7-04 Verifikasi RBAC & sesi menyeluruh (QA)
-- [ ] T7-05 Dokumentasi API (Swagger) + seed data (Backend)
-- [ ] T7-06 README + dokumentasi business rule (Backend)
-- [ ] T7-07 Review akhir end-to-end (QA)
+- [x] T7-01 Pengerasan anti-injeksi SQL (Backend)
+- [x] T7-02 Pembersihan anti-skrip berbahaya (Backend + Frontend)
+- [x] T7-03 Validasi field wajib menyeluruh (Backend)
+- [x] T7-04 Verifikasi RBAC & sesi menyeluruh (QA)
+- [x] T7-05 Dokumentasi API (Swagger) + seed data (Backend)
+- [x] T7-06 README + dokumentasi business rule (Backend)
+- [x] T7-07 Review akhir end-to-end (QA)
 
 ---
 
