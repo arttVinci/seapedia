@@ -24,7 +24,10 @@ Dibangun dalam **5 hari** untuk mengejar deadline kompetisi (info kompetisi baru
 - [Deployment & Infra](#deployment--infra)
 - [Workflow Pengembangan (Multi-Agent AI)](#workflow-pengembangan-multi-agent-ai)
 - [Fitur Utama](#fitur-utama)
+- [Aturan Bisnis](#aturan-bisnis)
+- [Security Notes](#security-notes)
 - [API Docs](#api-docs)
+- [Demo Flow (End-to-End)](#demo-flow-end-to-end)
 - [Dokumentasi Lengkap](#dokumentasi-lengkap)
 
 ---
@@ -348,6 +351,163 @@ Alur singkatnya:
 - **Voucher & Promo** — Sistem kode diskon, validasi masa berlaku & kuota
 - **Admin Dashboard** — Monitoring toko, produk, voucher, dan promo
 
+## Aturan Bisnis
+
+### Keranjang Single-Store
+
+Seapedia adalah marketplace multi-seller. Satu keranjang hanya boleh berisi produk dari **satu toko**. Jika Buyer mencoba menambahkan produk dari toko yang berbeda, sistem menolak dengan error `409 Conflict`. Buyer harus mengosongkan keranjang terlebih dahulu sebelum bisa berbelanja di toko lain. Aturan ini ditegakkan di backend (`cart_usecase.go`) dan ditampilkan dengan pesan konflik di UI.
+
+### Kalkulasi Checkout
+
+```
+Subtotal        = Σ (harga × qty) semua item
+Discount        = nominal dari Voucher atau Promo (jika dipakai)
+Delivery Fee    = bergantung metode pengiriman
+Tax (PPN 12%)   = (Subtotal - Discount) × 12%
+Final Total     = Subtotal - Discount + Delivery Fee + Tax
+```
+
+**Delivery Fee per metode:**
+
+| Metode | Fee |
+|--------|-----|
+| `instant` | Rp 20.000 |
+| `next_day` | Rp 15.000 |
+| `regular` | Rp 10.000 |
+
+### Aturan Diskon (Voucher & Promo)
+
+- Hanya **satu kode diskon** yang bisa digunakan per checkout.
+- Sistem mencari kode di tabel Promo terlebih dahulu, kemudian Voucher — keduanya tidak bisa digabung dalam satu transaksi.
+- Voucher memiliki **expiry date** dan **kuota penggunaan** (`remaining_usage`). Keduanya divalidasi saat checkout; jika kedaluwarsa atau kuota habis, checkout ditolak.
+- Promo hanya memiliki **expiry date**.
+- Diskon tidak boleh membuat subtotal menjadi negatif.
+
+### Driver Earning
+
+Driver mendapatkan **80% dari delivery fee** setiap kali berhasil menyelesaikan pengiriman. Earning dicatat di tabel `deliveries` saat delivery dibuat, dan ditampilkan di driver dashboard beserta riwayat job.
+
+```
+Driver Earning = Delivery Fee × 0.8
+```
+
+### Overdue SLA & Auto-Refund
+
+Sistem menggunakan **simulated day** (bukan waktu real) untuk kalkulasi overdue. Admin dapat menekan tombol **+1 Hari** di dashboard untuk memajukan hari simulasi. Setiap kali hari dimajukan, sistem mengecek order yang melewati SLA-nya.
+
+**SLA per metode pengiriman:**
+
+| Metode | SLA (simulated day) |
+|--------|---------------------|
+| `instant` | 0 hari (harus diambil driver di hari yang sama) |
+| `next_day` | 1 hari |
+| `regular` | 3 hari |
+
+**Mekanisme auto-refund saat overdue:**
+1. Order dengan status `Sedang Dikemas` atau `Menunggu Pengirim` yang melewati `due_simulated_day` akan diubah statusnya ke `Dikembalikan`.
+2. `FinalTotal` dikembalikan penuh ke **wallet Buyer** dan dicatat sebagai transaksi `refund`.
+3. **Stok produk** di-restore sesuai quantity order item.
+4. Status history disimpan dengan timestamp dan catatan `"SLA Overdue"`.
+5. Proses ini bersifat atomik (dalam satu database transaction) sehingga tidak terjadi double-refund.
+
+> Karena overdue hanya dipicu sebelum driver mengambil pesanan, seller income belum pernah dikreditkan — sehingga tidak diperlukan reversal income penjual.
+
+### Main Order Lifecycle
+
+```
+[Checkout] → Sedang Dikemas
+                  ↓ (Seller proses)
+            Menunggu Pengirim
+                  ↓ (Driver ambil job)
+             Sedang Dikirim
+                  ↓ (Driver konfirmasi selesai)
+            Pesanan Selesai
+
+[Overdue / SLA lewat] → Dikembalikan
+```
+
+---
+
+## Security Notes
+
+### SQL Injection
+
+Seluruh akses database menggunakan **GORM ORM** dengan query builder dan parameterized binding. Tidak ada raw string concatenation untuk membentuk query SQL. Untuk operasi atomik khusus (take job driver), digunakan `tx.Exec()` dengan placeholder `?` — bukan string interpolation.
+
+### XSS (Cross-Site Scripting)
+
+Frontend dibangun dengan **React + TypeScript**. Semua nilai variabel yang dirender ke DOM melalui JSX (`{value}`) secara otomatis di-escape oleh React — tidak ada penggunaan `dangerouslySetInnerHTML`. Review/komentar publik dirender sebagai teks biasa, bukan HTML mentah.
+
+### Input Validation
+
+Backend menggunakan **go-playground/validator** untuk memvalidasi semua request body sebelum diproses usecase. Contoh aturan yang diterapkan:
+
+| Field | Rule |
+|-------|------|
+| `username` | `required, min=3, max=50` |
+| `email` | `required, email` |
+| `password` | `required, min=6` |
+| `role` | `oneof=buyer seller driver` |
+| `rating` (review) | `min=1, max=5` |
+
+Request yang tidak lolos validasi langsung dikembalikan dengan HTTP `400 Bad Request` dan pesan error yang deskriptif.
+
+### Session & Token
+
+- Autentikasi menggunakan **JWT (HS256)** dengan expiry **72 jam**.
+- Saat logout, **JTI (JWT ID)** token disimpan ke tabel `revoked_tokens` (denylist). Setiap request berikutnya dicek apakah JTI-nya sudah direvoke.
+- Token expired dibersihkan dari tabel denylist secara periodik berdasarkan kolom `expired_at`.
+
+### Role-Based Access Control (RBAC)
+
+- **Active role** disimpan langsung di dalam JWT payload — bukan hanya di frontend.
+- Setiap grup route (`/api/seller`, `/api/buyer`, `/api/driver`, `/api/admin`) dilindungi oleh `AuthMiddleware` (validasi token) + `RoleMiddleware` (verifikasi active role).
+- Validasi ownership dilakukan di level usecase: seller hanya bisa memodifikasi produk/order miliknya sendiri, driver hanya bisa mengambil job yang belum diambil driver lain.
+- Backend tidak mempercayai informasi role yang datang dari request body atau query param — semua diambil dari JWT yang sudah diverifikasi.
+
+---
+
+## Demo Flow (End-to-End)
+
+Urutan ini bisa digunakan untuk menguji seluruh alur sistem dari awal hingga selesai menggunakan akun seed yang sudah tersedia (password semua: `admin123`).
+
+### 1. Guest Flow
+1. Buka [seapedia.pages.dev](https://seapedia.pages.dev) tanpa login.
+2. Browse katalog produk dan buka detail produk.
+3. Submit review aplikasi (nama, rating, komentar) — tampil di homepage.
+
+### 2. Buyer Flow
+1. Login sebagai `buyer1` → pilih role **Buyer**.
+2. Top-up wallet di menu Dompet.
+3. Tambahkan beberapa produk dari **satu toko** ke keranjang.
+4. Coba tambahkan produk dari toko lain → sistem menolak (konflik single-store).
+5. Buka halaman Checkout → pilih metode pengiriman → masukkan kode voucher/promo (bisa dibuat via Admin) → lihat ringkasan subtotal, diskon, ongkir, PPN 12%, total.
+6. Konfirmasi checkout → order muncul di riwayat pesanan.
+
+### 3. Seller Flow
+1. Login sebagai `seller_apple` → pilih role **Seller**.
+2. Lihat order masuk di menu Pesanan dengan status `Sedang Dikemas`.
+3. Klik **Proses** → status berubah ke `Menunggu Pengirim`.
+
+### 4. Driver Flow
+1. Login sebagai `driver1` → pilih role **Driver**.
+2. Buka menu Cari Job → job dari order tadi muncul.
+3. Ambil job → status order berubah ke `Sedang Dikirim`.
+4. Konfirmasi selesai → status berubah ke `Pesanan Selesai`, earning driver tercatat.
+
+### 5. Admin Flow
+1. Login sebagai `admin@seapedia.com` → langsung masuk Admin Dashboard.
+2. Pantau statistik: total user, toko, produk, order, delivery.
+3. Buat Voucher atau Promo baru di menu Voucher/Promo.
+4. Tekan **+1 Hari** untuk memajukan simulated day — sistem otomatis mendeteksi order overdue, merefund wallet buyer, dan merestore stok.
+
+### 6. Overdue Demo
+1. Buat order baru sebagai Buyer (jangan diambil driver).
+2. Login sebagai Admin → tekan **+1 Hari** berulang hingga melewati SLA.
+3. Order otomatis berubah ke `Dikembalikan`, saldo wallet Buyer bertambah kembali.
+
+---
+
 ## API Docs
 
 Interactive API documentation tersedia via **Swagger UI** — dibangun otomatis dari annotation di source code menggunakan `swaggo/fiber-swagger`.
@@ -359,11 +519,4 @@ Interactive API documentation tersedia via **Swagger UI** — dibangun otomatis 
 
 Swagger tersedia setelah container backend berjalan. Semua endpoint sudah terdokumentasi lengkap dengan request body, response schema, dan autentikasi Bearer Token — bisa dicoba langsung dari browser tanpa client lain.
 
-> Untuk endpoint yang memerlukan autentikasi, klik **Authorize** di Swagger UI dan masukkan token dengan format: `Bearer <token>`
-
-## Dokumentasi Lengkap
-
-- [PRD (Product Requirement Document)](docs/PRD.md)
-- [SDD (Software Design Document)](docs/SDD.md)
-- [System Map](docs/system_map.md)
-- [Api Docs](BE/docs)
+> Untuk endpoint yang memerlukan autentikasi, klik **Authorize** di Swagger UI dan masukkan token dengan format: `Be
