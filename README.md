@@ -4,7 +4,7 @@ Platform e-commerce fullstack yang menghubungkan **Pembeli**, **Penjual**, dan *
 
 Dibangun dalam **5 hari** untuk mengejar deadline kompetisi (info kompetisi baru diketahui saat waktu sudah mepet), menggunakan **multi-agent AI workflow** sebagai tim development.
 
-> ⏱️ Status: dikembangkan bertahap mengikuti 7 Tingkat di [`docs/PRD.md`](docs/PRD.md), saat ini progres ada di Tingkat 5 (modul Driver & Pengiriman). Lihat [`docs/system_map.md`](docs/system_map.md) untuk peta modul lengkap.
+> ⏱️ Status: dikembangkan bertahap mengikuti 7 Tingkat di [`docs/PRD.md`](docs/PRD.md). Lihat [`docs/system_map.md`](docs/system_map.md) untuk peta modul lengkap.
 
 <!--
   TODO: tambahkan screenshot/GIF demo di sini, contoh:
